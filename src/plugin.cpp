@@ -80,6 +80,16 @@ Plugin::~Plugin
 
 // --- METHODS ---
 
+void
+Plugin::analyze
+(
+	File & file
+)
+const
+{
+	
+}
+
 std::string
 Plugin::find_library
 (

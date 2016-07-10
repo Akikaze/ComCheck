@@ -47,7 +47,7 @@ void
 Core::load_plugins
 ()
 {
-	std::string address = "plugins/" ;
+	std::string address = "./plugins" ;
 	std::vector< std::string > list_directories ;
 	DIR * directory = opendir( address.c_str() ) ;
 	struct dirent * ent ;
@@ -67,7 +67,7 @@ Core::load_plugins
 	}
 	else
 	{
-		std::cerr << "Error when loading plugins directory²" << std::endl ;
+		std::cerr << "Error when loading plugins directory" << std::endl ;
 	}
 	
 	// Create Plugin objects for each directory found

@@ -31,7 +31,7 @@ class IPlugin
 		///
 		/// \brief Destructor
 		///
-		virtual ~IPlugin() = 0 ;
+		virtual ~IPlugin() ;
 		
 		// --- GETTERS ---
 		///
@@ -68,7 +68,7 @@ class IPlugin
 		/// For each line, it figures out if the line contains comments or not.
 		/// At the end, it stores the data in the File object.
 		///
-		virtual void analyze( File & file ) = 0 ;
+		virtual void analyze( File & file ) const = 0 ;
 } ;
 
 #endif // IPLUGIN_HPP

@@ -65,7 +65,7 @@ class Plugin
 		/// \brief Analyze function
 		/// \param file Reference on a File object 
 		///
-		virtual void analyze( File & file ) ;
+		virtual void analyze( File & file ) const ;
 		
 		///
 		/// \brief Tell if the plugin is correctly load
