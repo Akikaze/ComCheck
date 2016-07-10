@@ -15,6 +15,7 @@ class File
     public :
 
         // --- CONSTRUCTORS ---
+        
         ///
         /// \brief Constructor
         /// \param name Name of the file
@@ -35,10 +36,10 @@ class File
             { return name_ ; }
 
         ///
-        /// \brief Getter numbers of lines
+        /// \brief Getter All lines info
         /// \return Array which contains number of lines, commented lines, mixed lines and uncommented lines
         ///
-        std::array< unsigned int, 4 > get_all_lines()
+        std::array< unsigned int, 4 > get_report()
             { std::array< unsigned int, 4 > output = { all_lines_, nbr_comments_, nbr_mix_, nbr_uncomments_ } ;
               return output ; }
 
@@ -56,6 +57,12 @@ class File
                          const unsigned int & nbr_uncomments ) ;
 
     protected :
+		
+		// --- CONSTRUCTORS ---
+		///
+		/// \brief Constructor
+		///
+		File() ;
 
         // --- ATTRIBUTES ---
         std::string name_ ; ///< Name of the file

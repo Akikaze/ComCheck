@@ -10,6 +10,12 @@
 // --- CONSTRUCTORS ---
 
 File::File
+()
+{
+	
+}
+
+File::File
 (
     const std::string & name
 )

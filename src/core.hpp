@@ -11,7 +11,17 @@
 #include <cstring>
 #include <dirent.h>
 
+#include "file.hpp"
 #include "plugin.hpp"
+
+/*
+ * Core's step :
+ * 0 -> start step
+ * 1 -> directory set
+ * 2 -> language set
+ * 3 -> preparation done
+ * 4 -> analyze done
+ */
 
 class Core
 {
@@ -32,11 +42,11 @@ class Core
 		
 		// --- SETTERS ---
 		///
-		/// \brief Setter for project's repository
-		/// \param address Address of project's repository
+		/// \brief Setter for project's directory
+		/// \param address Address of project's directory
 		///
-		inline void set_repository( const std::string & address )
-			{ repository_ = address ; }
+		inline void set_directory( const std::string & address )
+			{ directory_ = address ; }
 
 		// --- METHODS ---
 		///
@@ -71,9 +81,11 @@ class Core
 		void unload_plugins() ;
 		
 		// --- ATTRIBUTES ---
-		std::string repository_ ; ///< Address of project's repository
+		Plugin * chosen_plugin_ ; ///< Index of the chosen plugin
+		std::string directory_ ; ///< Address of project's repository
+		std::vector< File * > files_ ; ///< List of files
 		std::vector< Plugin * > plugins_ ; ///< List of plugins
-		unsigned short chosen_plugin_ ; ///< Index of the chosen plugin
+		unsigned short step_ ; ///< Step of the analyze (cf comments in introduction)
 		
 		// --- STATIC ATTRIBUTES ---
 		static Core * _instance_ ; ///< Single instance of Core		

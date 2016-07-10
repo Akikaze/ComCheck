@@ -36,7 +36,7 @@ operator<<
 
 	for( cit = array.cbegin() ; cit != array.cend() ; ++cit )
 	{
-		os << *cit << std::endl ;
+		os << std::distance( array.cbegin(), cit ) << " : "  << *cit << std::endl ;
 	}
 
 	os << "---------" ;
@@ -92,7 +92,7 @@ operator<<
 
 	for( cit = vector.cbegin() ; cit != vector.cend() ; ++cit )
 	{
-		os << *cit << std::endl ;
+		os << std::distance( vector.cbegin(), cit ) << " : " << *cit << std::endl ;
 	}
 
 	os << "---------" ;

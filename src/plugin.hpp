@@ -83,6 +83,16 @@ class Plugin
 		inline bool operator<( const Plugin & plugin ) const
 			{ return ( rank_ < plugin.get_rank() ) ; }
 		
+		/*
+		///
+		/// \brief Operator <<
+		/// \param os Output stream
+		/// \return Stream with plugin language in it
+		///
+		inline std::ostream operator<<( std::ostream & os ) const
+			{ os << language_ ;
+			  return os ; }*/
+		
 	protected :
 		
 		// --- CONSTRUCTORS ---

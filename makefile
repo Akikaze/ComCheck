@@ -1,7 +1,7 @@
 # DEFINITION DES ACRONYMES
 CC 	= 	g++
 CFLAGS 	= 	-std=c++11
-LDFLAGS =	-ldl
+LDFLAGS =	-ldl -g
 SRC 	= 	file.cpp \
 			iplugin.cpp \
 			plugin.cpp \
@@ -32,5 +32,5 @@ mrproper : clean
 	
 # WHY
 why :
-	g++ -std=c++11 src/file.cpp src/iplugin.cpp src/plugin.cpp src/core.cpp src/main.cpp -ldl -o prog.exe
+	g++ -std=c++11 src/file.cpp src/iplugin.cpp src/plugin.cpp src/core.cpp src/main.cpp -ldl -g -o prog.exe
 
