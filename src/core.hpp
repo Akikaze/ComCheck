@@ -11,6 +11,8 @@
 #include <cstring>
 #include <dirent.h>
 
+#include "plugin.hpp"
+
 class Core
 {
 	public :
@@ -35,7 +37,20 @@ class Core
 		///
 		inline void set_repository( const std::string & address )
 			{ repository_ = address ; }
-		
+
+		// --- METHODS ---
+		///
+		/// \brief Loop for text mode
+		///
+		void loop() ;
+
+		///
+		/// \brief Prepare the analyze
+		///
+		/// Looking for every files matching plugin's extensions and create a File object for each file.
+		///
+		void prepare() ;
+
 	protected :
 	
 		// --- CONSTRUCTORS ---
@@ -48,11 +63,17 @@ class Core
 		///
 		/// \brief Load plugins
 		///
-		void load_plugins() ;		
+		void load_plugins() ;
+
+		///
+		/// \brief Unload plugins
+		///
+		void unload_plugins() ;
 		
 		// --- ATTRIBUTES ---
 		std::string repository_ ; ///< Address of project's repository
 		std::vector< Plugin * > plugins_ ; ///< List of plugins
+		unsigned short chosen_plugin_ ; ///< Index of the chosen plugin
 		
 		// --- STATIC ATTRIBUTES ---
 		static Core * _instance_ ; ///< Single instance of Core		

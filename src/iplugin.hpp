@@ -10,6 +10,7 @@
 
 #include <climits>
 
+#include "file.hpp"
 #include "std.hpp"
 
 ///
@@ -39,7 +40,7 @@ class IPlugin
 		///
 		/// Return a list of extensions in a vector of string : { .c , .h , ... }.
 		///
-		virtual std::vector< std::string > get_extensions() = 0 ;
+		virtual const std::vector< std::string > get_extensions() const = 0 ;
 		
 		///
 		/// \brief Getter for language
@@ -47,7 +48,7 @@ class IPlugin
 		///
 		/// Return the language in order to be known by the system.
 		///
-		virtual inline std::string get_language() = 0 ;
+		virtual const std::string get_language() const = 0 ;
 		
 		///
 		/// \brief Getter for rank
@@ -55,20 +56,19 @@ class IPlugin
 		///
 		/// Return a rank in order to sort each plugin
 		///
-		virtual inline unsigned short get_rank()
+		virtual inline const unsigned short get_rank() const
 			{ return USHRT_MAX - 1 ; }
 		
 		// --- METHODS ---
 		///
 		/// \brief Analyze function
-		/// \param filename Name of file ready for analyze
-		/// \return Array which contains number of non-empty lines, commented lines, mixed lines and uncommented lines
+		/// \param file Reference on a File object
 		///
-		/// This function make the magic part : it scans the file by counting the number of lines.
+		/// This function make the magic part : it scans the File object by counting the number of lines.
 		/// For each line, it figures out if the line contains comments or not.
-		/// At the end, it returns each type of comments in an array.
+		/// At the end, it stores the data in the File object.
 		///
-		virtual std::array< unsigned int, 4 > analyze( const std::string & filename ) = 0 ;
+		virtual void analyze( File & file ) = 0 ;
 } ;
 
 #endif // IPLUGIN_HPP

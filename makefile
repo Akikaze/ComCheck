@@ -1,7 +1,8 @@
 # DEFINITION DES ACRONYMES
 CC 	= 	g++
-CFLAGS 	= 	-std=c++11 -std=gnu++11 -Wall
-SRC 	= 	src/plugin.cpp \
+CFLAGS 	= 	-std=c++11 -Wall
+SRC 	= 	src/file.cpp \
+			src/plugin.cpp \
 			src/core.cpp \
 			src/main.cpp
 			

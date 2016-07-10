@@ -9,6 +9,8 @@
 #define MAIN_HPP
 
 #include <cstdlib>
+
+#include "core.hpp"
 #include "std.hpp"
 
 #endif // MAIN_HPP

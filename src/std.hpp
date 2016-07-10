@@ -8,7 +8,7 @@
 #ifndef STD_HPP
 #define STD_HPP
 
-#include <array>
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -35,12 +35,7 @@ operator<<
 
 	for( cit = array.cbegin() ; cit != array.cend() ; ++cit )
 	{
-		os << ( *cit )[ 0 ] ;
-		for( std::size_t n = 1 ; n < N ; ++n )
-		{
-			os << " --- " << ( *cit )[ n ] ;
-		}
-		os <<  std::endl ;
+		os << *cit << std::endl ;
 	}
 
 	os << "---------" ;

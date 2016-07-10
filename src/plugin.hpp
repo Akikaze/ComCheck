@@ -36,37 +36,36 @@ class Plugin
 		/// \brief Getter for address
 		/// \return Address of plugin's directory
 		///
-		inline std::string get_adress() const
+		inline const std::string get_adress() const
 			{ return address_ ; }
 		
 		///
 		/// \brief Getter for extensions
 		/// \return List of extensions for plugin's language
 		///
-		virtual std::vector< std::string > get_extensions()
+		virtual const std::vector< std::string > get_extensions() const
 			{ return extensions_ ; }
 		
 		///
 		/// \brief Getter for language
 		/// \return Language analyzed by the plugin
 		///
-		virtual inline std::string get_language()
+		virtual inline const std::string get_language() const
 			{ return language_ ; }
 		
 		///
 		/// \brief Getter for rank
 		/// \return Rank of the plugin
 		///
-		virtual inline unsigned short get_rank()
+		virtual inline const unsigned short get_rank() const
 			{ return rank_ ; }
 		
 		// --- METHODS ---
 		///
 		/// \brief Analyze function
-		/// \param filename Name of file ready for analyze
-		/// \return Array which contains number of non-empty lines, commented lines, mixed lines and uncommented lines
+		/// \param file Reference on a File object 
 		///
-		virtual std::array< unsigned int, 4 > analyze( const std::string & filename ) ;
+		virtual void analyze( File & file ) ;
 		
 		///
 		/// \brief Tell if the plugin is correctly load
@@ -101,12 +100,12 @@ class Plugin
 		std::string find_library( const std::string & ) const ;
 	
 		// --- ATTRIBUTES ---
-		IPlugin * pointer_ ;
-		std::string address_ ;
-		std::string language_ ;
-		std::vector< std::string > extensions_ ;
-		unsigned short rank_ ;
-		void * lib_descriptor_ ;
+		IPlugin * pointer_ ; ///< Pointer on the plugin
+		std::string address_ ; ///< Address of the plugin directory
+		std::string language_ ; ///< Language of the plugin
+		std::vector< std::string > extensions_ ; ///< List of all extensions for the plugin's language
+		unsigned short rank_ ; ///< Rank of the plugin
+		void * lib_descriptor_ ; ///< Descriptor for the plugin
 } ;
 
 #endif // PLUGIN_HPP

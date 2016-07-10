@@ -24,7 +24,7 @@ Core::Core
 Core::~Core
 ()
 {
-	
+	unload_plugins() ;
 }
 
 // --- GETTERS ---
@@ -49,7 +49,7 @@ Core::load_plugins
 {
 	std::string address = "plugins/" ;
 	std::vector< std::string > list_directories ;
-	DIR * directory = opendir( address ) ;
+	DIR * directory = opendir( address.c_str() ) ;
 	struct dirent * ent ;
 	
 	// List all directories
@@ -60,7 +60,7 @@ Core::load_plugins
 			if( strcmp( ent->d_name, "." ) != 0 &&
 				strcmp( ent->d_name, ".." ) != 0  )
 			{
-				list_directories.push_back( address_ + "/" + ent->d_name ) ;
+				list_directories.push_back( address + "/" + ent->d_name ) ;
 			}
 		}
 		closedir( directory ) ;
@@ -74,9 +74,31 @@ Core::load_plugins
 	for( std::vector< std::string >::const_iterator cit = list_directories.cbegin() ;
 		 cit != list_directories.cend() ; ++cit )
 	{
-		this->push_back( new Plugin( *cit ) ) ;
+		plugins_.push_back( new Plugin( *cit ) ) ;
 	}
 	
 	// Sort plugins by their rank
-	std::sort( this->begin(), this->end(), PluginComparator() ) ;
+	std::sort( plugins_.begin(), plugins_.end(), PointerComparator() ) ;
+}
+
+void
+Core::loop
+()
+{
+	std::string choice = "" ;
+
+	while( choice != "quit" )
+	{
+		std::cin >> choice ;
+	}
+}
+
+void
+Core::unload_plugins
+()
+{
+	while( plugins_.begin() != plugins_.end() )
+	{
+		delete plugins_[ 0 ] ;
+	}
 }
