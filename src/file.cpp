@@ -1,3 +1,10 @@
+///
+/// \file file.cpp
+/// \brief Source code for file object
+/// \author David Feraud
+/// \version 1
+///
+
 #include "file.hpp"
 
 // --- CONSTRUCTORS ---

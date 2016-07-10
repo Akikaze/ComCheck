@@ -1,3 +1,10 @@
+///
+/// \file file.hpp
+/// \brief Header for file object
+/// \author David Feraud
+/// \version 1
+///
+
 #ifndef FILE_HPP
 #define FILE_HPP
 

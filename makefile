@@ -1,11 +1,11 @@
 # DEFINITION DES ACRONYMES
 CC 	= 	g++
-CFLAGS 	= 	-std=c++11 -Wall
-SRC 	= 	src/file.cpp \
-			src/plugin.cpp \
-			src/core.cpp \
-			src/main.cpp
-			
+CFLAGS 	= 	-std=c++11 -Wall -Wextra -ansi -pedantic -g -pg
+SRC 	= 	file.cpp \
+			plugin.cpp \
+			core.cpp \
+			main.cpp
+
 OBJ 	= 	$(SRC:.cpp=.o)
 EXEC	=	prog.exe
 
@@ -17,5 +17,13 @@ $(EXEC): $(OBJ)
 	$(CC) -o $@ $^
 
 # FABRICATION DES (.o) A PARTIR DES (.cpp)
-src/%.o: %.cpp
+%.o: src/%.cpp
 	$(CC) -c $(CFLAGS) $<
+
+# CLEAN
+clean :
+	rm -rf $(OBJ)
+
+# MRPROPER
+mrproper : clean
+	rm -rf $(EXEC)
