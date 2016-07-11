@@ -46,6 +46,45 @@ Core::get_instance
 // --- METHODS ---
 
 void
+Core::analyze
+()
+{
+	std::array< unsigned int, 4 > counters ;
+	std::array< unsigned int, 4 > tmp ;
+	std::ifstream stream ;
+	std::string line ;
+	std::string name ;
+	std::vector< File * >::const_iterator cit ;
+	unsigned count = 0 ;
+	
+	for( cit = files_.cbegin() ; cit != files_.cend() ; ++cit )
+	{
+		name = ( *cit )->get_name() ;
+		stream.open( name, std::ios::in ) ;
+		
+		if( stream )
+		{
+			counters = { 0, 0, 0, 0 } ;
+			
+			while( getline( stream, line ) )
+			{
+				tmp = chosen_plugin_->analyze( line ) ;
+				counters += tmp ;
+			}
+			
+			stream.close() ;
+			( *cit )->store_info( counters ) ;
+		}
+		else
+		{
+			std::cerr << "Error loading file : " << name << std::endl ;
+		}
+		
+		++count ;
+	}
+}
+
+void
 Core::load_plugins
 ()
 {
@@ -87,6 +126,57 @@ Core::load_plugins
 	std::sort( plugins_.begin(), plugins_.end(), PointerComparator() ) ;
 }
 
+std::vector< std::string >
+Core::list_files
+()
+{
+	std::vector< std::string > result ;
+	std::vector< std::string > list_directories ;
+	list_directories.push_back( directory_ ) ;
+	
+	DIR * directory ;
+	unsigned char isFile = 0x8 ;
+	struct dirent * ent ;
+	
+	while( !( list_directories.empty() ) )
+	{
+		directory = opendir( list_directories[ 0 ].c_str() ) ;
+		
+		while( ( ent = readdir( directory ) ) != NULL )
+		{
+			/*
+			if( strcmp( ent->d_name, "." ) != 0 &&
+				strcmp( ent->d_name, ".." ) != 0 &&
+				ent->d_type == isDirectory )
+			{
+				// list_directories.push_back( address + "/" + ent->d_name ) ;
+			}
+			else if( ent->d_type == isFile )
+			{
+				std::vector< std::string > extensions = plugins_->get_extensions() ;
+				std::vector< std::string >::const_iterator cit = extensions.cbegin() ;
+				
+				while( cit != extensions.cend() )
+				{
+					
+					
+					++cit
+				}
+				
+				if( cit != extensions.cend() )
+				{
+					result.add( 
+				}
+			}
+			*/
+		}
+		
+		closedir( directory ) ;
+	}
+	
+	return result ;
+}
+
 void
 Core::loop
 ()
@@ -97,7 +187,6 @@ Core::loop
 	while( choice != "quit" )
 	{
 		std::cout << std::endl ;
-		//system( "clear" ) ;
 		
 		std::cout << "===== ComCheck =====" << std::endl ;
 		
@@ -110,6 +199,7 @@ Core::loop
 			if( step_ >= 3 )
 			{
 				std::cout << "ANALYZING" << std::endl ;
+				analyze() ;
 			}
 			else
 			{
@@ -215,6 +305,7 @@ Core::loop
 			if( step_ >= 2 )
 			{
 				std::cout << "PREPARING" << std::endl ;
+				prepare() ;
 			}
 			else
 			{
@@ -226,6 +317,7 @@ Core::loop
 			if( step_ >= 4 )
 			{
 				std::cout << "REPORTING" << std::endl ;
+				report() ;
 			}
 			else
 			{
@@ -245,6 +337,34 @@ Core::loop
 			std::cout << "This command is not recognized." << std::endl ;
 			std::cout << "ask 'help' if you want information about your options." << std::endl ;
 		}
+	}
+}
+
+void
+Core::prepare
+()
+{
+	std::vector< std::string > list = list_files() ;
+	std::vector< std::string >::const_iterator cit ;
+	unsigned int count = 0 ;
+	
+	for( cit = list.cbegin() ; cit != list.cend() ; ++cit )
+	{
+		files_.push_back( new File( *cit ) ) ;
+		++count ;
+	}
+}
+
+void
+Core::report
+()
+{
+	std::vector< File * >::const_iterator cit ;
+	
+	for( cit = files_.cbegin() ; cit != files_.cend() ; ++cit )
+	{
+		std::cout << ( *cit )->get_name() << " : " ;
+		std::cout << ( *cit )->get_report() << std::endl ;
 	}
 }
 

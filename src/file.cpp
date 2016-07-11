@@ -41,14 +41,11 @@ File::~File
 void
 File::store_info
 (
-    const unsigned int & all_lines,
-    const unsigned int & nbr_comments,
-    const unsigned int & nbr_mix,
-    const unsigned int & nbr_uncomments
+	std::array< unsigned int, 4 > & array
 )
 {
-    all_lines_ = all_lines ;
-    nbr_comments_ = nbr_comments ;
-    nbr_mix_ = nbr_mix ;
-    nbr_uncomments_ = nbr_uncomments ;
+    all_lines_ = array[ 0 ] ;
+    nbr_comments_ = array[ 1 ] ;
+    nbr_mix_ = array[ 2 ] ;
+    nbr_uncomments_ = array[ 3 ] ;
 }

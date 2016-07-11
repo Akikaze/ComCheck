@@ -10,6 +10,7 @@
 
 #include <dlfcn.h>
 
+#include "file.hpp"
 #include "iplugin.hpp"
 #include "std.hpp"
 
@@ -61,11 +62,18 @@ class Plugin
 			{ return rank_ ; }
 		
 		// --- METHODS ---
+		
 		///
 		/// \brief Analyze function
-		/// \param file Reference on a File object 
 		///
-		virtual void analyze( File & file ) const ;
+		void analyze() ;
+		
+		///
+		/// \brief Analyze function from IPlugin
+		/// \param line Line for the analyze
+		/// \return Array which contains number of lines, commented lines, mixed lines and uncommented lines
+		///
+		virtual std::array< unsigned int, 4 > analyze( const std::string & line ) const ;
 		
 		///
 		/// \brief Tell if the plugin is correctly load
@@ -83,15 +91,14 @@ class Plugin
 		inline bool operator<( const Plugin & plugin ) const
 			{ return ( rank_ < plugin.get_rank() ) ; }
 		
-		/*
 		///
 		/// \brief Operator <<
 		/// \param os Output stream
 		/// \return Stream with plugin language in it
 		///
-		inline std::ostream operator<<( std::ostream & os ) const
+		inline std::ostream & operator<<( std::ostream & os ) const
 			{ os << language_ ;
-			  return os ; }*/
+			  return os ; }
 		
 	protected :
 		
@@ -113,6 +120,7 @@ class Plugin
 		IPlugin * pointer_ ; ///< Pointer on the plugin
 		std::string address_ ; ///< Address of the plugin directory
 		std::string language_ ; ///< Language of the plugin
+		std::vector< File * > files_ ; ///< List of File objects
 		std::vector< std::string > extensions_ ; ///< List of all extensions for the plugin's language
 		unsigned short rank_ ; ///< Rank of the plugin
 		void * lib_descriptor_ ; ///< Descriptor for the plugin

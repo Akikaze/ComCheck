@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <array>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -36,11 +37,32 @@ operator<<
 
 	for( cit = array.cbegin() ; cit != array.cend() ; ++cit )
 	{
-		os << std::distance( array.cbegin(), cit ) << " : "  << *cit << std::endl ;
+		os << *cit << std::endl ;
 	}
 
 	os << "---------" ;
 	return os ;
+}
+
+///
+/// \brief Operator +=
+/// \param a1 First array for addition and compute result
+/// \param a2 Second array for addition
+///
+template < typename T, size_t N >
+std::array< T, N >
+operator+=
+(
+	std::array< T, N > & a1,
+	std::array< T, N > & a2
+)
+{
+	for( size_t n = 0 ; n < N ; ++n )
+	{
+		a1[ n ] += a2[ n ] ;
+	}
+	
+	return a1 ;
 }
 
 // --- POINTER ---
@@ -92,7 +114,7 @@ operator<<
 
 	for( cit = vector.cbegin() ; cit != vector.cend() ; ++cit )
 	{
-		os << std::distance( vector.cbegin(), cit ) << " : " << *cit << std::endl ;
+		os << *cit << std::endl ;
 	}
 
 	os << "---------" ;

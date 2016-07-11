@@ -10,7 +10,6 @@
 
 #include <climits>
 
-#include "file.hpp"
 #include "std.hpp"
 
 ///
@@ -68,7 +67,7 @@ class IPlugin
 		/// For each line, it figures out if the line contains comments or not.
 		/// At the end, it stores the data in the File object.
 		///
-		virtual void analyze( File & file ) const = 0 ;
+		virtual std::array< unsigned int, 4 > analyze( const std::string & line ) const = 0 ;
 } ;
 
 #endif // IPLUGIN_HPP

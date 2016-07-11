@@ -80,14 +80,14 @@ Plugin::~Plugin
 
 // --- METHODS ---
 
-void
+std::array< unsigned int, 4 >
 Plugin::analyze
 (
-	File & file
+	const std::string & line
 )
 const
 {
-	
+	return pointer_->analyze( line ) ;
 }
 
 std::string

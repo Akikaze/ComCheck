@@ -28,7 +28,7 @@ class File
         ///
         ~File() ;
 
-        // --- GETTERS / SETTERS ---
+        // --- GETTERS ---
         ///
         /// \brief Getter on the name
         ///
@@ -46,15 +46,9 @@ class File
         // --- METHODS ---
         ///
         /// \brief Store every info about the file
-        /// \param all_lines Number of lines in the file
-        /// \param nbr_comments Number of commented lines
-        /// \param nbr_mix Number of mixed lines
-        /// \param nbr_uncomments Number of uncommented lines
+        /// \param array Array which contains number of lines, commented lines, mixed lines and uncommented lines
         ///
-        void store_info( const unsigned int & all_lines,
-                         const unsigned int & nbr_comments,
-                         const unsigned int & nbr_mix,
-                         const unsigned int & nbr_uncomments ) ;
+        void store_info( std::array< unsigned int, 4 > & array ) ;
 
     protected :
 		

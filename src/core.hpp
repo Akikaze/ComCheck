@@ -50,6 +50,13 @@ class Core
 
 		// --- METHODS ---
 		///
+		/// \brief Analyze method
+		///
+		/// Call the analyse method of the plugin for each lines of each files
+		///
+		void analyze() ;
+		
+		///
 		/// \brief Loop for text mode
 		///
 		void loop() ;
@@ -60,6 +67,13 @@ class Core
 		/// Looking for every files matching plugin's extensions and create a File object for each file.
 		///
 		void prepare() ;
+		
+		///
+		/// \brief Report the analyze
+		///
+		/// List all files_ data
+		///
+		void report() ;
 
 	protected :
 	
@@ -70,6 +84,11 @@ class Core
 		Core() ;
 		
 		// --- METHODS ---
+		///
+		/// \brief List all files without looking at them
+		///
+		std::vector< std::string > list_files() ;
+		
 		///
 		/// \brief Load plugins
 		///
