@@ -42,7 +42,7 @@ C::analyze
 		initialize_before = true ;
 	}
 	
-	while( itStart != itStop )
+	while( itStart != itStop ) // erase all comments
 	{
 		if( initialize_before == false )
 		{

@@ -9,7 +9,7 @@ SRC 	= 	file.cpp \
 			main.cpp
 
 OBJ 	= 	$(SRC:.cpp=.o)
-EXEC	=	prog.exe
+EXEC	=	prog
 
 # EXECUTION
 all: $(EXEC)

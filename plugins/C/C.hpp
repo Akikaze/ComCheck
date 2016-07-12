@@ -65,7 +65,7 @@ class C
 		std::string::iterator ffo_iterator( std::string & line, const std::string & string ) const ;
 	
 		// --- ATTRIBUTES ---
-		bool comment_started ;
+		bool comment_started ; ///< signal for a comment which started previously
 } ;
 
 #endif // C_HPP
