@@ -50,7 +50,7 @@ Core::analyze
 ()
 {
 	std::array< unsigned int, 4 > counters ;
-	std::array< unsigned int, 4 > tmp ;
+	unsigned short tmp = 0 ;
 	std::ifstream stream ;
 	std::string line ;
 	std::string name ;
@@ -68,12 +68,23 @@ Core::analyze
 			
 			while( getline( stream, line ) )
 			{
-				tmp = chosen_plugin_->analyze( line ) ;
-				counters += tmp ;
+				clear_line( line ) ; // remove all useless characters
+				
+				if( !( line.empty() ) )
+				{
+					tmp = chosen_plugin_->analyze( line ) ; // get back information about the line
+					
+					counters[ 0 ]++ ; // add a line
+					
+					if( tmp > 0 && tmp < 4 )
+					{
+						counters[ tmp ]++ ; // add info about the line
+					}
+				}
 			}
 			
 			stream.close() ;
-			( *cit )->store_info( counters ) ;
+			( *cit )->store_info( counters ) ; // set info in the File object
 		}
 		else
 		{
@@ -81,6 +92,31 @@ Core::analyze
 		}
 		
 		++count ;
+	}
+}
+
+void
+Core::clear_line
+(
+	std::string & line
+)
+{
+	unsigned int i = 0 ;
+	unsigned int length = line.length() ;
+	
+	while( i < length )
+	{
+		if( int( line[ i ] ) == 9 || // tab
+			int( line[ i ] ) == 10 || // new line
+			int( line[ i ] ) == 32 ) // ' '
+		{
+			line.erase( line.begin() + i ) ;
+			--length ;
+		}
+		else
+		{
+			++i ;
+		}
 	}
 }
 
@@ -372,8 +408,9 @@ void
 Core::unload_plugins
 ()
 {
-	while( plugins_.begin() != plugins_.end() )
-	{
-		delete plugins_[ 0 ] ;
+	for( std::vector< Plugin * >::iterator it = plugins_.begin() ;
+		 it != plugins_.end() ; ++it )
+	{		
+		delete *it ;
 	}
 }

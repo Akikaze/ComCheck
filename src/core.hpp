@@ -85,6 +85,12 @@ class Core
 		
 		// --- METHODS ---
 		///
+		/// \brief Clear all spaces in a line
+		/// \param line Reference on the line
+		///
+		void clear_line( std::string & line ) ;
+		
+		///
 		/// \brief List all files without looking at them
 		///
 		std::vector< std::string > list_files() ;

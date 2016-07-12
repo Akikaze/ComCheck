@@ -64,16 +64,11 @@ class Plugin
 		// --- METHODS ---
 		
 		///
-		/// \brief Analyze function
-		///
-		void analyze() ;
-		
-		///
 		/// \brief Analyze function from IPlugin
 		/// \param line Line for the analyze
-		/// \return Array which contains number of lines, commented lines, mixed lines and uncommented lines
+		/// \return 1 if the line is commented, 2 if it's a mix and 3 if it is uncommented
 		///
-		virtual std::array< unsigned int, 4 > analyze( const std::string & line ) const ;
+		virtual unsigned short analyze( const std::string & line ) ;
 		
 		///
 		/// \brief Tell if the plugin is correctly load
@@ -90,16 +85,7 @@ class Plugin
 		///
 		inline bool operator<( const Plugin & plugin ) const
 			{ return ( rank_ < plugin.get_rank() ) ; }
-		
-		///
-		/// \brief Operator <<
-		/// \param os Output stream
-		/// \return Stream with plugin language in it
-		///
-		inline std::ostream & operator<<( std::ostream & os ) const
-			{ os << language_ ;
-			  return os ; }
-		
+				
 	protected :
 		
 		// --- CONSTRUCTORS ---
@@ -125,5 +111,16 @@ class Plugin
 		unsigned short rank_ ; ///< Rank of the plugin
 		void * lib_descriptor_ ; ///< Descriptor for the plugin
 } ;
+
+
+///
+/// \brief Operator <<
+/// \param os Output stream
+/// \param p Pointer on a plugin
+/// \return Stream with plugin language in it
+///
+inline std::ostream & operator<<( std::ostream & os, const Plugin * p )
+	{ os << p->get_language() ;
+	  return os ; }
 
 #endif // PLUGIN_HPP

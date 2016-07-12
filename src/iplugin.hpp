@@ -62,12 +62,14 @@ class IPlugin
 		///
 		/// \brief Analyze function
 		/// \param file Reference on a File object
+		/// \return 1 if the line is commented, 2 if it's a mix and 3 if it is uncommented
 		///
-		/// This function make the magic part : it scans the File object by counting the number of lines.
-		/// For each line, it figures out if the line contains comments or not.
-		/// At the end, it stores the data in the File object.
+		/// This method make the magic part : it analyzes the line in order
+		/// to understand if it's a commented line, a mixed line or a uncommented
+		/// line. It returns 1 if it is commented, 2 if it is mixed and 3 if 
+		/// it is not commented.
 		///
-		virtual std::array< unsigned int, 4 > analyze( const std::string & line ) const = 0 ;
+		virtual unsigned short analyze( const std::string & line ) = 0 ;
 } ;
 
 #endif // IPLUGIN_HPP
