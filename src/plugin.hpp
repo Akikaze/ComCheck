@@ -10,6 +10,7 @@
 
 #include <dlfcn.h>
 
+#include "file.hpp"
 #include "iplugin.hpp"
 #include "std.hpp"
 
@@ -61,11 +62,13 @@ class Plugin
 			{ return rank_ ; }
 		
 		// --- METHODS ---
+		
 		///
-		/// \brief Analyze function
-		/// \param file Reference on a File object 
+		/// \brief Analyze function from IPlugin
+		/// \param line Line for the analyze
+		/// \return 1 if the line is commented, 2 if it's a mix and 3 if it is uncommented
 		///
-		virtual void analyze( File & file ) const ;
+		virtual unsigned short analyze( const std::string & line ) ;
 		
 		///
 		/// \brief Tell if the plugin is correctly load
@@ -82,7 +85,7 @@ class Plugin
 		///
 		inline bool operator<( const Plugin & plugin ) const
 			{ return ( rank_ < plugin.get_rank() ) ; }
-		
+				
 	protected :
 		
 		// --- CONSTRUCTORS ---
@@ -107,5 +110,16 @@ class Plugin
 		unsigned short rank_ ; ///< Rank of the plugin
 		void * lib_descriptor_ ; ///< Descriptor for the plugin
 } ;
+
+
+///
+/// \brief Operator <<
+/// \param os Output stream
+/// \param p Pointer on a plugin
+/// \return Stream with plugin language in it
+///
+inline std::ostream & operator<<( std::ostream & os, const Plugin * p )
+	{ os << p->get_language() ;
+	  return os ; }
 
 #endif // PLUGIN_HPP

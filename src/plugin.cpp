@@ -31,23 +31,12 @@ Plugin::Plugin
 	
 	// open the shared library
 	lib_descriptor_ = dlopen( find_library( address ).c_str(), RTLD_LAZY ) ;
-	if ( ( error = dlerror() ) != NULL )
+	if ( ( error = dlerror() ) == NULL )
 	{
-		std::cout << error << std::endl ;
-	}
-	else
-	{
-		bool fail = false ;
-		
 		// find the load function
 		IPlugin * ( * load )() = ( IPlugin * ( * )() ) dlsym ( lib_descriptor_, "load" ) ;
-		if ( ( error = dlerror() ) != NULL )
-		{
-			fail = true ;
-			std::cout << error << std::endl ;
-		}
 		
-		if( fail != true )
+		if ( ( error = dlerror() ) == NULL )
 		{
 			// create the pointer to the plugin
 			pointer_ = ( IPlugin * ) load() ;
@@ -57,6 +46,14 @@ Plugin::Plugin
 			language_ = pointer_->get_language() ;
 			rank_ = pointer_->get_rank() ;
 		}
+		else
+		{
+			std::cout << error << std::endl ;
+		}
+	}
+	else
+	{
+		std::cout << error << std::endl ;
 	}
 }
 
@@ -80,14 +77,13 @@ Plugin::~Plugin
 
 // --- METHODS ---
 
-void
+unsigned short
 Plugin::analyze
 (
-	File & file
+	const std::string & line
 )
-const
 {
-	
+	return pointer_->analyze( line ) ;
 }
 
 std::string

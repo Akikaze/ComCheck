@@ -1,0 +1,32 @@
+#echo "> Compilation of each plugin"
+#g++ -Wall -Werror -std=c++11 -fPIC -shared src/iplugin.cpp plugins/C/C.cpp -o plugins/C/C.so
+#g++ -Wall -Werror -std=c++11 -fPIC -shared src/iplugin.cpp plugins/CPP/CPP.cpp -o plugins/CPP/CPP.so
+
+# 1 - find directories in plugins/
+# 2 - find name of each directory
+# 3 - for each directory
+    # 4 - find if the .so exist
+        # 5 - if no : compilation
+        # 6 - if yes :
+            # 7 - find the last time code
+            # 8 - check if the time code is .so time code
+                # 9 - if yes : nothing
+                # 10 - if no : compilation
+
+
+list=`ls -l ./plugins/ | tr s ' ' | cut -d' ' -f1,11`
+length=`echo $list | wc -c`
+length=`expr $length - 6`
+list=`echo $list | tail -c $length`
+
+bool=0
+directories=""
+
+for elt in $list
+do
+    case $bool in
+        0) if [ `echo $elt | head -c1` == 'd' ] ; then bool=1 ; else bool=2 ; fi ;;
+        1) directories=`echo $directories $elt` ; bool=0 ;;
+        2) bool=0 ;;
+    esac
+done

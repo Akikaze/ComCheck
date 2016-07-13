@@ -15,6 +15,7 @@ class File
     public :
 
         // --- CONSTRUCTORS ---
+        
         ///
         /// \brief Constructor
         /// \param name Name of the file
@@ -27,7 +28,7 @@ class File
         ///
         ~File() ;
 
-        // --- GETTERS / SETTERS ---
+        // --- GETTERS ---
         ///
         /// \brief Getter on the name
         ///
@@ -35,27 +36,27 @@ class File
             { return name_ ; }
 
         ///
-        /// \brief Getter numbers of lines
+        /// \brief Getter All lines info
         /// \return Array which contains number of lines, commented lines, mixed lines and uncommented lines
         ///
-        std::array< unsigned int, 4 > get_all_lines()
+        std::array< unsigned int, 4 > get_report()
             { std::array< unsigned int, 4 > output = { all_lines_, nbr_comments_, nbr_mix_, nbr_uncomments_ } ;
               return output ; }
 
         // --- METHODS ---
         ///
         /// \brief Store every info about the file
-        /// \param all_lines Number of lines in the file
-        /// \param nbr_comments Number of commented lines
-        /// \param nbr_mix Number of mixed lines
-        /// \param nbr_uncomments Number of uncommented lines
+        /// \param array Array which contains number of lines, commented lines, mixed lines and uncommented lines
         ///
-        void store_info( const unsigned int & all_lines,
-                         const unsigned int & nbr_comments,
-                         const unsigned int & nbr_mix,
-                         const unsigned int & nbr_uncomments ) ;
+        void store_info( std::array< unsigned int, 4 > & array ) ;
 
     protected :
+		
+		// --- CONSTRUCTORS ---
+		///
+		/// \brief Constructor
+		///
+		File() ;
 
         // --- ATTRIBUTES ---
         std::string name_ ; ///< Name of the file

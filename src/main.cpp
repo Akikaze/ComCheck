@@ -23,6 +23,6 @@ main
 	Core * core = Core::get_instance() ;
 	core->loop() ;
 	delete core ;
-
+	
 	return EXIT_SUCCESS ;
 }
