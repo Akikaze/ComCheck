@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #echo "> Compilation of each plugin"
 #g++ -Wall -Werror -std=c++11 -fPIC -shared src/iplugin.cpp plugins/C/C.cpp -o plugins/C/C.so
 #g++ -Wall -Werror -std=c++11 -fPIC -shared src/iplugin.cpp plugins/CPP/CPP.cpp -o plugins/CPP/CPP.so
@@ -30,3 +31,18 @@ do
         2) bool=0 ;;
     esac
 done
+=======
+# List of all plugins
+
+echo "> List of all plugins"
+
+# Compilation of each plugin
+
+echo "> Compilation of each plugin"
+g++ -Wall -Werror -std=c++11 -fPIC -shared src/iplugin.cpp plugins/C/C.cpp -o plugins/C/C.so
+
+# Compilation of the program
+
+echo "> Compilation of the program"
+g++ -std=c++11 src/file.cpp src/iplugin.cpp src/plugin.cpp src/core.cpp src/main.cpp -ldl -g -o prog.exe
+>>>>>>> adce5fa7ea4ff9469ad1406937c7a885b9dd5e01

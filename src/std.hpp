@@ -56,7 +56,11 @@ std::array< T, N >
 operator+=
 (
 	std::array< T, N > & a1,
+<<<<<<< HEAD
 	std::array< T, N > a2
+=======
+	std::array< T, N > & a2
+>>>>>>> adce5fa7ea4ff9469ad1406937c7a885b9dd5e01
 )
 {
 	for( size_t n = 0 ; n < N ; ++n )

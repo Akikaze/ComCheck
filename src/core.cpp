@@ -17,7 +17,10 @@ Core::Core
 ()
 : chosen_plugin_( NULL )
 , directory_( "" )
+<<<<<<< HEAD
 , step_( 0 )
+=======
+>>>>>>> adce5fa7ea4ff9469ad1406937c7a885b9dd5e01
 {
 	load_plugins() ;
 }
@@ -366,7 +369,21 @@ Core::loop
 		}
 		else if( choice == "reset" )
 		{
+<<<<<<< HEAD
 			reset() ;			
+=======
+			directory_ = "" ;
+			chosen_plugin_ = NULL ;
+			
+			std::vector< File * >::const_iterator cit ;
+			for( cit = files_.cbegin(); cit != files_.cend() ; ++cit )
+			{
+				files_.erase( cit ) ;
+			}
+			
+			step_ = 0 ;
+			
+>>>>>>> adce5fa7ea4ff9469ad1406937c7a885b9dd5e01
 			std::cout << "===== ######## =====" << std::endl ;
 		}
 		else if( choice != "quit" ) // last choice
@@ -397,6 +414,7 @@ Core::report
 ()
 {
 	std::vector< File * >::const_iterator cit ;
+<<<<<<< HEAD
 	std::array< unsigned int, 4 > counters = { 0, 0, 0, 0 } ;
 	
 	for( cit = files_.cbegin() ; cit != files_.cend() ; ++cit )
@@ -429,6 +447,14 @@ Core::reset
 	}
 	
 	step_ = 0 ;
+=======
+	
+	for( cit = files_.cbegin() ; cit != files_.cend() ; ++cit )
+	{
+		std::cout << ( *cit )->get_name() << " : " ;
+		std::cout << ( *cit )->get_report() << std::endl ;
+	}
+>>>>>>> adce5fa7ea4ff9469ad1406937c7a885b9dd5e01
 }
 
 void
