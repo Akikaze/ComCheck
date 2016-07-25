@@ -366,7 +366,18 @@ Core::loop
 		}
 		else if( choice == "reset" )
 		{
-			reset() ;			
+			reset() ;
+			
+			directory_ = "" ;
+			chosen_plugin_ = NULL ;
+			
+			std::vector< File * >::const_iterator cit ;
+			for( cit = files_.cbegin(); cit != files_.cend() ; ++cit )
+			{
+				files_.erase( cit ) ;
+			}
+			
+			step_ = 0 ;
 			std::cout << "===== ######## =====" << std::endl ;
 		}
 		else if( choice != "quit" ) // last choice
