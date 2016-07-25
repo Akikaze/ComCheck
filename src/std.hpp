@@ -35,10 +35,12 @@ operator<<
 
 	os << "---------" << std::endl ;
 
-	for( cit = array.cbegin() ; cit != array.cend() ; ++cit )
+	os << *( array.cbegin() ) ;
+	for( cit = array.cbegin() + 1 ; cit != array.cend() ; ++cit )
 	{
-		os << *cit << std::endl ;
+		os << " - " << *cit ;
 	}
+	os << std::endl ;
 
 	os << "---------" ;
 	return os ;
@@ -54,7 +56,7 @@ std::array< T, N >
 operator+=
 (
 	std::array< T, N > & a1,
-	std::array< T, N > & a2
+	std::array< T, N > a2
 )
 {
 	for( size_t n = 0 ; n < N ; ++n )

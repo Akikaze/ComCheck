@@ -1,13 +1,42 @@
-# List of all plugins
+list=`ls -l ./plugins/ | tr s ' ' | cut -d' ' -f1,11`
+length=`echo $list | wc -c`
+length=`expr $length - 6`
+list=`echo $list | tail -c $length`
 
-echo "> List of all plugins"
+bool=0
+directories=""
 
-# Compilation of each plugin
+for elt in $list
+do
+	case $bool in
+		0) if [ `echo $elt | head -c1` == 'd' ] ; then bool=1 ; else bool=2 ; fi ;;
+		1) directories=`echo $directories $elt` ; bool=0 ;;
+		2) bool=0 ;;
+	esac
+done
 
-echo "> Compilation of each plugin"
-g++ -Wall -Werror -std=c++11 -fPIC -shared src/iplugin.cpp plugins/C/C.cpp -o plugins/C/C.so
-
-# Compilation of the program
-
-echo "> Compilation of the program"
-g++ -std=c++11 src/file.cpp src/iplugin.cpp src/plugin.cpp src/core.cpp src/main.cpp -ldl -g -o prog.exe
+for d in $directories
+do
+	if [ -f ./plugins/$d/$d.so ]
+	then
+		bool=0
+		for f in `ls ./plugins/$d/`
+		do
+			if [ `date -r ./plugins/$d/$f +%s` -gt `date -r ./plugins/$d/$d.so +%s` ]
+			then
+				echo "Date of $f greater than date of $d.so"
+				bool=1
+				break
+			fi
+		done
+	
+		if [ $bool == 1 ]
+		then
+			echo "Update compilation of plugin $d"
+			g++ -Wall -Werror -std=c++11 -fPIC -shared ./src/iplugin.cpp ./plugins/$d/*.cpp -o ./plugins/$d/$d.so
+		fi
+	else
+		echo "Compilation of plugin $d"
+		g++ -Wall -Werror -std=c++11 -fPIC -shared ./src/iplugin.cpp ./plugins/$d/*.cpp -o ./plugins/$d/$d.so
+	fi
+done

@@ -17,6 +17,7 @@ Core::Core
 ()
 : chosen_plugin_( NULL )
 , directory_( "" )
+, step_( 0 )
 {
 	load_plugins() ;
 }
@@ -26,6 +27,7 @@ Core::Core
 Core::~Core
 ()
 {
+	reset() ;
 	unload_plugins() ;
 }
 
@@ -364,17 +366,7 @@ Core::loop
 		}
 		else if( choice == "reset" )
 		{
-			directory_ = "" ;
-			chosen_plugin_ = NULL ;
-			
-			std::vector< File * >::const_iterator cit ;
-			for( cit = files_.cbegin(); cit != files_.cend() ; ++cit )
-			{
-				files_.erase( cit ) ;
-			}
-			
-			step_ = 0 ;
-			
+			reset() ;			
 			std::cout << "===== ######## =====" << std::endl ;
 		}
 		else if( choice != "quit" ) // last choice
@@ -405,12 +397,38 @@ Core::report
 ()
 {
 	std::vector< File * >::const_iterator cit ;
+	std::array< unsigned int, 4 > counters = { 0, 0, 0, 0 } ;
 	
 	for( cit = files_.cbegin() ; cit != files_.cend() ; ++cit )
 	{
-		std::cout << ( *cit )->get_name() << " : " ;
+		std::cout << ( *cit )->get_name() << " : " << std::endl ;
 		std::cout << ( *cit )->get_report() << std::endl ;
+		counters += ( *cit )->get_report() ;
 	}
+	
+	std::cout << std::endl ;
+	std::cout << "===== REPORT =====" << std::endl ;
+	std::cout << "Lines : " << counters[ 0 ] << std::endl ;
+	std::cout << "Commented : " << counters[ 1 ] << std::endl ;
+	std::cout << "Mixed : " << counters[ 2 ] << std::endl ;
+	std::cout << "Uncommented : " << counters[ 3 ] << std::endl ;
+	std::cout << std::endl ;
+}
+
+void
+Core::reset
+()
+{
+	directory_ = "" ;
+	chosen_plugin_ = NULL ;
+	
+	while( files_.begin() != files_.end() )
+	{
+		delete files_[ 0 ] ;
+		files_.erase( files_.begin() ) ;
+	}
+	
+	step_ = 0 ;
 }
 
 void

@@ -61,7 +61,7 @@ Plugin::Plugin
 
 Plugin::~Plugin
 ()
-{	
+{
 	if( pointer_ != NULL )
 	{
 		// release the plugin

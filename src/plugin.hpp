@@ -106,7 +106,6 @@ class Plugin
 		IPlugin * pointer_ ; ///< Pointer on the plugin
 		std::string address_ ; ///< Address of the plugin directory
 		std::string language_ ; ///< Language of the plugin
-		std::vector< File * > files_ ; ///< List of File objects
 		std::vector< std::string > extensions_ ; ///< List of all extensions for the plugin's language
 		unsigned short rank_ ; ///< Rank of the plugin
 		void * lib_descriptor_ ; ///< Descriptor for the plugin

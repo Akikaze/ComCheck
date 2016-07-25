@@ -99,6 +99,11 @@ class Core
 		/// \brief Load plugins
 		///
 		void load_plugins() ;
+		
+		///
+		/// \brief Reset everything
+		///
+		void reset() ;
 
 		///
 		/// \brief Unload plugins
