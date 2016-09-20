@@ -226,10 +226,10 @@ Core::find_plugin
 {
 	// loop preparation
 	IPlugin * plugin = nullptr ;
-	QList< IPlugin * >::const_iterator cit = list_plugins_.cbegin() ;
+	QList< IPlugin * >::const_iterator cit = list_plugins_.constBegin() ;
 
 	// look for a plugin which use this language
-	while( cit != list_plugins_.cend() && plugin == nullptr )
+	while( cit != list_plugins_.constEnd() && plugin == nullptr )
 	{
 		if( ( *cit )->get_language() == language )
 		{

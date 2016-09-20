@@ -1,11 +1,13 @@
+QMAKE_CXXFLAGS += -std=c++11
+
 QT += core
 QT -= gui
 
 CONFIG += c++11
-
-TARGET = console
 CONFIG += console
 CONFIG -= app_bundle
+
+TARGET = console
 
 TEMPLATE = app
 

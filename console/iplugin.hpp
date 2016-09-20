@@ -48,6 +48,7 @@ class IPlugin
 		QString	language_ ; ///< Language of the plugin
 		unsigned short rank_ ; ///< Rank of the plugin (by default 65534)
 } ;
+
 Q_DECLARE_INTERFACE( IPlugin, "ComCheck.IPlugin" )
 
 class Comp_IPlugin

@@ -25,3 +25,9 @@ TestPlugin::get_type
 	Q_UNUSED( line ) ;
     return CC_Flag::ERROR ;
 }
+
+#if QT_VERSION < 0x0500000
+
+	Q_EXPORT_PLUGIN2( plugin_TestPlugin, TestPlugin )
+
+#endif
