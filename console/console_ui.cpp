@@ -2,9 +2,11 @@
 
 ConsoleUI::ConsoleUI
 (
-	QObject * parent
+	QObject * parent,
+	bool welcomed
 )
 : IUI( parent )
+, welcomed_( welcomed )
 {
 
 }
@@ -23,14 +25,7 @@ ConsoleUI::commands
 {
 	Q_UNUSED( param_list ) ;
 
-	/*
-	std::cout << "List of all commands:" << std::endl ;
-	std::cout << std::endl ;
-
-	std::cout << "\t" << "To list every possibility you have: commands" << std::endl ;
-	std::cout << "\t" << "To help you out: help" << std::endl ;
-	std::cout << "\t" << "To close the execution: quit" << std::endl ;
-	*/
+	// display like man
 }
 
 QStringList
@@ -67,9 +62,45 @@ ConsoleUI::help
 	QStringList param_list
 )
 {
+	param_list.erase( param_list.begin() ) ;
+
 	if( param_list.isEmpty() )
 	{
-		// display main help
+		// default size of a terminal
+		// -->                                                                               <--
+
+		std::cout << std::endl ;
+		std::cout << "\t" << TITLE( "What is ComCheck?" ) << std::endl ;
+		std::cout << std::endl ;
+
+		std::cout << "ComCheck is a little tool used for analyzing source code files and counting how" << std::endl ;
+		std::cout << "many comments are written in these files, regardless of programming language." << std::endl ;
+		std::cout << std::endl ;
+
+		std::cout << "Obviously, C++ comments are not written like HTML comments which don't either" << std::endl ;
+		std::cout << "look like PHP comments. But what is common between every langage is the fact" << std::endl ;
+		std::cout << "that they require files which contain lines." << std::endl ;
+		std::cout << "This is why ComCheck looks every folder of a project and lists every files" << std::endl ;
+		std::cout << "before checking, for each file, the type of each line (code, comment or mix)." << std::endl ;
+		std::cout << std::endl ;
+
+		std::cout << "But, for determining if a line is a comment, ComCheck needs to know how are" << std::endl ;
+		std::cout << "written comments in every langage. And this is really hard for a static system." << std::endl ;
+		std::cout << "To be able to understand even future langage still not invented, ComCheck uses" << std::endl ;
+		std::cout << "a system of modules that you can plug directly in ComCheck. By default, ComCheck" << std::endl ;
+		std::cout << "brings a module for C++. But if you know how to use C++ and QtCreator, you can" << std::endl ;
+		std::cout << "create your own module for a specific language." << std::endl ;
+		std::cout << std::endl ;
+
+		std::cout << "A module defines the file extension, to avoid looking for JAVA comments in Ruby" << std::endl ;
+		std::cout << "files, and how to get the type of a specific line. Those modules are stored in" << std::endl ;
+		std::cout << "dynamic librairies (.so or .a and .dl according to your operating system)." << std::endl ;
+		std::cout << std::endl ;
+
+		std::cout << "\t" << TITLE( "How to use ComCheck?" ) << std::endl ;
+		std::cout << std::endl ;
+
+
 	}
 	else
 	{
@@ -87,7 +118,10 @@ ConsoleUI::process
 	QStringList param_list ;
 
 	// display the welcome message
-	welcome() ;
+	if( welcomed_ == true )
+	{
+		welcome() ;
+	}
 
 	while( ! close )
 	{
@@ -137,15 +171,18 @@ ConsoleUI::welcome
 ()
 {
 	std::cout << std::endl ;
-	std::cout << "\t\t\t" << "/==========================================\\" << std::endl ;
-	std::cout << "\t\t\t" << "|                 COMCHECK                 |" << std::endl ;
-	std::cout << "\t\t\t" << "\\==========================================/" << std::endl ;
+	std::cout << "\t\t" << "/==========================================\\" << std::endl ;
+	std::cout << "\t\t" << "|                 COMCHECK                 |" << std::endl ;
+	std::cout << "\t\t" << "\\==========================================/" << std::endl ;
 	std::cout << std::endl ;
 
-	std::cout << "\t" << "" << std::endl ;
+	// default size of a terminal
+	// -->                                                                               <--
 
+	std::cout << "ComCheck is a little tool used for analyzing source code files and counting how" << std::endl ;
+	std::cout << "many comments are written in these files, regardless of programming language." << std::endl ;
 	std::cout << std::endl ;
 
-	std::cout << "\t" << "If you don't know how it works, maybe the command 'help' could do its job." << std::endl ;
+	std::cout << "If you don't know how to use it, maybe the command 'help' could do its job." << std::endl ;
 	std::cout << std::endl ;
 }

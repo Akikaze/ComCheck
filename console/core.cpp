@@ -12,6 +12,7 @@ Core::Core
 , report_( nullptr )
 , root_( nullptr )
 , UI_( nullptr )
+, welcomed_( true )
 {
 	// get plugins
 	list_plugins_ = list_plugins() ;
@@ -49,6 +50,14 @@ Core::Core
 				directory_ = ".." ;
 				interfaced_ = false ;
 				plugin_ = find_plugin( "Test" ) ;
+				welcomed_ = false ;
+			}
+
+			//welcomed
+			if( QString( argv[ i ] ) == "-w" ||
+				QString( argv[ i ] ) == "-welcomed" )
+			{
+				welcomed_ = false ;
 			}
 		}
 	}
@@ -233,7 +242,7 @@ Core::create_UI
 	}
 	else
 	{
-		UI_ = new ConsoleUI( parent ) ;
+		UI_ = new ConsoleUI( parent, welcomed_ ) ;
 	}
 
 	return UI_ ;

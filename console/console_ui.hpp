@@ -1,6 +1,7 @@
 #ifndef CONSOLE_UI_HPP
 #define CONSOLE_UI_HPP
 
+#include "colors.hpp"
 #include "iui.hpp"
 #include "std.hpp"
 
@@ -15,7 +16,7 @@ class ConsoleUI
 		/// \brief Constructor
 		/// \param parent Parent for this QObject
 		///
-		ConsoleUI( QObject * parent = 0 ) ;
+		ConsoleUI( QObject * parent = 0, bool welcomed = true ) ;
 
 		// --- DESTRUCTORS ---
 
@@ -56,6 +57,10 @@ class ConsoleUI
 		/// \brief Display the welcome message
 		///
 		void welcome() ;
+
+		// --- ATTRIBUTES ---
+
+		bool welcomed_ ; ///< Signal for a nice welcoming message
 } ;
 
 #endif // CONSOLE_UI_HPP

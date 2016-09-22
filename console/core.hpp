@@ -91,6 +91,7 @@ class Core
 		CC_Report * report_ ; ///< Current report used
 		CC_Folder *	root_ ; ///< Root of the tree view
 		IUI * UI_ ; ///< User interface
+		bool welcomed_ ; ///< Signal for a nice welcoming message
 
 } ;
 
