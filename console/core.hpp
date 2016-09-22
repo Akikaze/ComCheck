@@ -1,6 +1,7 @@
 #ifndef CORE_HPP
 #define CORE_HPP
 
+#include "console_ui.hpp"
 #include "iplugin.hpp"
 
 class Core
@@ -32,6 +33,11 @@ class Core
 		///
 		CC_Folder *	create_tree_view() ;
 
+		///
+		/// \brief Create a user interface graphical or not
+		///	\return A pointer to an class which inherit from IUI
+		///
+		IUI * create_UI( QObject * parent = 0 ) ;
 
 		///
 		/// \brief Make report from a specific folder
@@ -78,12 +84,13 @@ class Core
 		// --- ATTRIBUTES ---
 
 		QString	directory_ ; ///< Address of project's repository
-		bool interfaced_ ; ///< If signal are need
+		bool interfaced_ ; ///< Signal for graphical interface
 		QList< IPlugin * > list_plugins_ ; ///< List of plugins
 		QMap< CC_Folder *, CC_Report * > map_reports_ ; ///< Map of reports sort by folder
 		IPlugin * plugin_ ; ///< Current plugin used
 		CC_Report * report_ ; ///< Current report used
 		CC_Folder *	root_ ; ///< Root of the tree view
+		IUI * UI_ ; ///< User interface
 
 } ;
 

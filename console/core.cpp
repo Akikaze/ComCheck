@@ -11,6 +11,7 @@ Core::Core
 , plugin_( nullptr )
 , report_( nullptr )
 , root_( nullptr )
+, UI_( nullptr )
 {
 	// get plugins
 	list_plugins_ = list_plugins() ;
@@ -57,6 +58,7 @@ Core::~Core
 ()
 {
 	delete root_ ;
+	delete UI_ ;
 
 	// release plugins
 	while( !( list_plugins_.empty() ) )
@@ -75,6 +77,7 @@ Core::~Core
 	plugin_ = nullptr ;
 	report_ = nullptr ;
 	root_ = nullptr ;
+	UI_ = nullptr ;
 }
 
 void
@@ -216,6 +219,24 @@ Core::create_tree_view
 	}
 
 	return root_ ;
+}
+
+IUI *
+Core::create_UI
+(
+	QObject * parent
+)
+{
+	if( interfaced_ == true )
+	{
+		std::cout << "Currently, there is no graphical interface available." << std::endl ;
+	}
+	else
+	{
+		UI_ = new ConsoleUI( parent ) ;
+	}
+
+	return UI_ ;
 }
 
 IPlugin *

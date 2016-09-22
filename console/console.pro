@@ -12,11 +12,15 @@ TARGET = console
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    core.cpp
+    core.cpp \
+    iui.cpp \
+    console_ui.cpp
 
 HEADERS += \
     core.hpp \
     iplugin.hpp \
     qt.hpp \
     std.hpp \
-    structures.hpp
+    structures.hpp \
+    iui.hpp \
+    console_ui.hpp

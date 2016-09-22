@@ -8,5 +8,6 @@
 #include <QPluginLoader>
 #include <QString>
 #include <QStringList>
+#include <QTimer>
 
 #endif // QT_HPP
