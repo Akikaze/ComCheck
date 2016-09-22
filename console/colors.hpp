@@ -3,7 +3,7 @@
 
 #include <QtPlugin>
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_UNIX
 
 #define F_RST  "\x1B[0m"
 #define F_RED  "\x1B[31m"
@@ -29,7 +29,7 @@
 
 #endif
 
-#ifdef Q_OS_UNIX
+#ifdef Q_OS_WIN
 
 
 
