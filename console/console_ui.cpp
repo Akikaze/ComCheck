@@ -7,8 +7,17 @@ ConsoleUI::ConsoleUI
 )
 : IUI( parent )
 , welcomed_( welcomed )
+, cols_( 0 )
+, lines_( 0 )
+, rows_( 0 )
 {
 
+	find_console() ;
+
+	if( cols_ == 0 || rows_ == 0 )
+	{
+		std::cout << "Impossible to get console size." << std::endl ;
+	}
 }
 
 ConsoleUI::~ConsoleUI
@@ -18,14 +27,31 @@ ConsoleUI::~ConsoleUI
 }
 
 void
-ConsoleUI::commands
+ConsoleUI::display_paragraph
 (
-	QStringList param_list
+	std::string paragraph
 )
 {
-	Q_UNUSED( param_list ) ;
+	std::cout << paragraph << std::endl ;
+}
 
-	// display like man
+void
+ConsoleUI::display_text
+(
+	std::string text
+)
+{
+
+}
+
+void
+ConsoleUI::display_title
+(
+	std::string title
+)
+{
+	std::cout << title << std::endl ;
+	std::cout << std::endl ;
 }
 
 QStringList
@@ -57,55 +83,29 @@ ConsoleUI::filter_command
 }
 
 void
-ConsoleUI::help
-(
-	QStringList param_list
-)
+ConsoleUI::find_console
+()
 {
-	param_list.erase( param_list.begin() ) ;
+#ifdef Q_OS_UNIX
 
-	if( param_list.isEmpty() )
-	{
-		// default size of a terminal
-		// -->                                                                               <--
+	struct winsize w ;
+	ioctl( STDOUT_FILENO, TIOCGWINSZ, &w ) ;
 
-		std::cout << std::endl ;
-		// std::cout << "\t" << TITLE( "What is ComCheck?" ) << std::endl ;
-		TITLE( "What is ComCheck?" ) ;
-		std::cout << std::endl ;
+	cols_ = w.ws_col ;
+	rows_ = w.ws_row ;
 
-		std::cout << "ComCheck is a little tool used for analyzing source code files and counting how" << std::endl ;
-		std::cout << "many comments are written in these files, regardless of programming language." << std::endl ;
-		std::cout << std::endl ;
+#endif
 
-		std::cout << "Obviously, C++ comments are not written like HTML comments which don't either" << std::endl ;
-		std::cout << "look like PHP comments. But what is common between every langage is the fact" << std::endl ;
-		std::cout << "that they require files which contain lines." << std::endl ;
-		std::cout << "This is why ComCheck looks every folder of a project and lists every files" << std::endl ;
-		std::cout << "before checking, for each file, the type of each line (code, comment or mix)." << std::endl ;
-		std::cout << std::endl ;
+#ifdef Q_OS_WIN
 
-		std::cout << "But, for determining if a line is a comment, ComCheck needs to know how are" << std::endl ;
-		std::cout << "written comments in every langage. And this is really hard for a static system." << std::endl ;
-		std::cout << "To be able to understand even future langage still not invented, ComCheck uses" << std::endl ;
-		std::cout << "a system of modules that you can plug directly in ComCheck. By default, ComCheck" << std::endl ;
-		std::cout << "brings a module for C++. But if you know how to use C++ and QtCreator, you can" << std::endl ;
-		std::cout << "create your own module for a specific language." << std::endl ;
-		std::cout << std::endl ;
+	CONSOLE_SCREEN_BUFFER_INFO csbi ;
 
-		std::cout << "A module defines the file extension, to avoid looking for JAVA comments in Ruby" << std::endl ;
-		std::cout << "files, and how to get the type of a specific line. Those modules are stored in" << std::endl ;
-		std::cout << "dynamic librairies (.so or .a and .dl according to your operating system)." << std::endl ;
-		std::cout << std::endl ;
+	GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &csbi ) ;
+	columns_ = csbi.srWindow.Right - csbi.srWindow.Left + 1 ;
+	lines_ = csbi.dwCursorPosition.Y ;
+	rows_ = csbi.srWindow.Bottom - csbi.srWindow.Top + 1 ;
 
-		// std::cout << "\t" << TITLE( "How to use ComCheck?" ) << std::endl ;
-		TITLE( "How to use ComCheck?" ) ;
-		std::cout << std::endl ;
-	}
-	else
-	{
-		// display help for a specific command
-	}
+#endif
 }
 
 void

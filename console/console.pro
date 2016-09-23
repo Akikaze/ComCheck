@@ -14,7 +14,8 @@ TEMPLATE = app
 SOURCES += main.cpp \
     core.cpp \
     iui.cpp \
-    console_ui.cpp
+    console_ui.cpp \
+    console_ui_commands.cpp
 
 HEADERS += \
     core.hpp \

@@ -5,6 +5,10 @@
 #include <fstream>
 #include <iostream>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 ///
 /// \brief Operator += for array
 /// \param a First array
