@@ -1,5 +1,42 @@
 #include "console_ui.hpp"
 
+void
+find_console
+(
+	int signum
+)
+{
+	Q_UNUSED( signum ) ;
+	qDebug() << "Get information about console" ;
+
+#ifdef Q_OS_UNIX
+
+	struct winsize w ;
+	ioctl( STDOUT_FILENO, TIOCGWINSZ, &w ) ;
+
+	ConsoleUI::_cols_ = w.ws_col ;
+	ConsoleUI::_lines_ = 0 ;
+	ConsoleUI::_rows_ = w.ws_row ;
+
+#endif
+
+#ifdef Q_OS_WIN
+
+	CONSOLE_SCREEN_BUFFER_INFO csbi ;
+
+	GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &csbi ) ;
+	ConsoleUI::_cols_ = csbi.srWindow.Right - csbi.srWindow.Left + 1 ;
+	ConsoleUI::_lines_ = csbi.dwCursorPosition.Y ;
+	ConsoleUI::_rows_ = csbi.srWindow.Bottom - csbi.srWindow.Top + 1 ;
+
+#endif
+
+}
+
+unsigned int ConsoleUI::_cols_ = 0 ;
+unsigned int ConsoleUI::_lines_ = 0 ;
+unsigned int ConsoleUI::_rows_ = 0 ;
+
 ConsoleUI::ConsoleUI
 (
 	QObject * parent,
@@ -7,14 +44,14 @@ ConsoleUI::ConsoleUI
 )
 : IUI( parent )
 , welcomed_( welcomed )
-, cols_( 0 )
-, lines_( 0 )
-, rows_( 0 )
 {
+	// handle the signal of WINdow CHange
+	signal( SIGWINCH, find_console ) ;
 
-	find_console() ;
+	// get size and position
+	find_console( 0 ) ;
 
-	if( cols_ == 0 || rows_ == 0 )
+	if( _cols_ == 0 || _rows_ == 0 )
 	{
 		std::cout << "Impossible to get console size." << std::endl ;
 	}
@@ -41,7 +78,7 @@ ConsoleUI::display_text
 	std::string text
 )
 {
-
+	Q_UNUSED( text ) ;
 }
 
 void
@@ -80,32 +117,6 @@ ConsoleUI::filter_command
 	}
 
 	return list ;
-}
-
-void
-ConsoleUI::find_console
-()
-{
-#ifdef Q_OS_UNIX
-
-	struct winsize w ;
-	ioctl( STDOUT_FILENO, TIOCGWINSZ, &w ) ;
-
-	cols_ = w.ws_col ;
-	rows_ = w.ws_row ;
-
-#endif
-
-#ifdef Q_OS_WIN
-
-	CONSOLE_SCREEN_BUFFER_INFO csbi ;
-
-	GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &csbi ) ;
-	columns_ = csbi.srWindow.Right - csbi.srWindow.Left + 1 ;
-	lines_ = csbi.dwCursorPosition.Y ;
-	rows_ = csbi.srWindow.Bottom - csbi.srWindow.Top + 1 ;
-
-#endif
 }
 
 void

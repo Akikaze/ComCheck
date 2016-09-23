@@ -1,9 +1,15 @@
 #ifndef CONSOLE_UI_HPP
 #define CONSOLE_UI_HPP
 
+#include <csignal>
+
 #include "colors.hpp"
 #include "iui.hpp"
 #include "std.hpp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #ifdef Q_OS_UNIX
 #include <sys/ioctl.h>
@@ -33,6 +39,12 @@ class ConsoleUI
 		///
 		virtual ~ConsoleUI() ;
 
+		// --- ATTRIBUTES ---
+
+		static unsigned int _cols_ ; ///< Number of columns in the console
+		static unsigned int _lines_ ; ///< Number of lines currently used in the console
+		static unsigned int _rows_ ; ///< Number of rows in the console
+
 	protected :
 
 		// --- COMMANDS ---
@@ -50,7 +62,6 @@ class ConsoleUI
 		void help( QStringList param_list ) ;
 
 		// --- MEMBERS
-
 
 		///
 		/// \brief Display common paragraph
@@ -78,11 +89,6 @@ class ConsoleUI
 		QStringList filter_command( QString command ) ;
 
 		///
-		/// \brief Get information about the console (width, height, position)
-		///
-		void find_console() ;
-
-		///
 		/// \brief Launch the loop
 		///
 		virtual void process() ;
@@ -92,12 +98,19 @@ class ConsoleUI
 		///
 		void welcome() ;
 
+		///
+		/// \brief Handle the WINdow CHange signal
+		///
+		void WINCH_handler( int signum ) ;
+
 		// --- ATTRIBUTES ---
 
 		bool welcomed_ ; ///< Signal for a nice welcoming message
-		unsigned int cols_ ; ///< Number of columns in the console
-		unsigned int lines_ ; ///< Number of lines currently used in the console
-		unsigned int rows_ ; ///< Number of rows in the console
 } ;
+
+///
+/// \brief Get information about the console (width, height, position)
+///
+void find_console( int signum ) ;
 
 #endif // CONSOLE_UI_HPP
