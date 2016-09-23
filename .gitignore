@@ -30,3 +30,4 @@
 
 # Qt compilation folder
 build-*
+*.user
