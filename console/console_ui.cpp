@@ -99,8 +99,6 @@ ConsoleUI::help
 
 		std::cout << "\t" << TITLE( "How to use ComCheck?" ) << std::endl ;
 		std::cout << std::endl ;
-
-
 	}
 	else
 	{

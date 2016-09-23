@@ -5,7 +5,7 @@
 
 #ifdef Q_OS_UNIX
 
-#define F_RST  "\x1B[0m"
+#define RST  "\x1B[0m"
 #define F_RED  "\x1B[31m"
 #define F_GRN  "\x1B[32m"
 #define F_YEL  "\x1B[33m"
