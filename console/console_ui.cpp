@@ -70,7 +70,8 @@ ConsoleUI::help
 		// -->                                                                               <--
 
 		std::cout << std::endl ;
-		std::cout << "\t" << TITLE( "What is ComCheck?" ) << std::endl ;
+		// std::cout << "\t" << TITLE( "What is ComCheck?" ) << std::endl ;
+		TITLE( "What is ComCheck?" ) ;
 		std::cout << std::endl ;
 
 		std::cout << "ComCheck is a little tool used for analyzing source code files and counting how" << std::endl ;
@@ -97,7 +98,8 @@ ConsoleUI::help
 		std::cout << "dynamic librairies (.so or .a and .dl according to your operating system)." << std::endl ;
 		std::cout << std::endl ;
 
-		std::cout << "\t" << TITLE( "How to use ComCheck?" ) << std::endl ;
+		// std::cout << "\t" << TITLE( "How to use ComCheck?" ) << std::endl ;
+		TITLE( "How to use ComCheck?" ) ;
 		std::cout << std::endl ;
 	}
 	else
