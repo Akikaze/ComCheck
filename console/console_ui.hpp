@@ -3,13 +3,13 @@
 
 #include <csignal>
 
-#include "colors.hpp"
-#include "iui.hpp"
-#include "std.hpp"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include "colors.hpp"
+#include "iui.hpp"
+#include "std.hpp"
 
 #ifdef Q_OS_UNIX
 #include <sys/ioctl.h>
@@ -17,6 +17,7 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#define SIGWINCH 28
 #endif
 
 class ConsoleUI

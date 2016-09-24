@@ -23,7 +23,7 @@ TestPlugin::get_type
 )
 {
 	Q_UNUSED( line ) ;
-    return CC_Flag::ERROR ;
+	return CC_Flag::CC_ERROR ;
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)

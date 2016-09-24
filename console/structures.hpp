@@ -16,12 +16,12 @@
 ///
 enum CC_Flag
 {
-	ERROR = 0,
-	COMMENT,
-	MIXED,
-	CODE,
-	// DOXYGEN
-	MAX
+	CC_ERROR = 0,
+	CC_COMMENT,
+	CC_MIXED,
+	CC_CODE,
+	// CC_DOXYGEN
+	CC_Flag_Size
 } ;
 
 // --- CC_File ---
@@ -39,7 +39,7 @@ struct CC_File
 
 	// content
 	bool analysed ; ///< true if array is fulfill
-	std::array< unsigned int, CC_Flag::MAX > array ; ///< array for lines' type
+	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for lines' type
 } ;
 
 // --- CC_Folder ---
@@ -69,7 +69,7 @@ struct CC_Report
 	 CC_Folder * folder ; ///< folder studied in this report
 
 	// content
-	std::array< unsigned int, CC_Flag::MAX > array ; ///< array for all lines studied
+	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for all lines studied
 	QList< CC_File * > list_files ; ///< list of files studied in the report
 	QList< double >	percents ; ///< percentages
 

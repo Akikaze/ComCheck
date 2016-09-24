@@ -23,7 +23,7 @@ class IUI
 		///
 		/// \brief Destructor
 		///
-		virtual ~IUI() ;
+		virtual ~IUI() = 0 ;
 
 	public slots :
 

@@ -1,6 +1,5 @@
 #include "qt.hpp"
 #include "core.hpp"
-#include "iui.hpp"
 
 int main( int argc, char ** argv )
 {

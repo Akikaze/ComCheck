@@ -111,7 +111,7 @@ Core::analyse_file
 
 				file->array[ 0 ] += 1 ; // add a line
 
-				if( flag != CC_Flag::ERROR )
+				if( flag != CC_Flag::CC_ERROR )
 				{
 					file->array[ flag ] += 1 ; // add info about the line
 				}
