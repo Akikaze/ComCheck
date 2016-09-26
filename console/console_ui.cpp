@@ -2,10 +2,9 @@
 
 unsigned int ConsoleUI::_cols_ = 0 ;
 unsigned int ConsoleUI::_rows_ = 0 ;
-QStringList ConsoleUI::_text_ = QStringList() ;
 
 #ifdef Q_OS_UNIX
-struct winsize ConsoleUI::_w_ = struct winsize ;
+struct winsize ConsoleUI::_w_ ;
 #endif
 
 #ifdef Q_OS_WIN
@@ -18,6 +17,7 @@ ConsoleUI::ConsoleUI
 	bool welcomed
 )
 : IUI( parent )
+, buffer_( QStringList() )
 , welcomed_( welcomed )
 {
 
@@ -27,18 +27,14 @@ ConsoleUI::ConsoleUI
 
 	// handle the signal of WINdow CHange
 	signal( SIGWINCH, UNIX_console_size ) ;
-
-	// get size of the console
-	UNIX_console_size() ;
 #endif
 
 #ifdef Q_OS_WIN
 	// clean the console
 	system( "cls" ) ;
-
-	// get size of the console
-	WIN_console_size() ;
 #endif
+
+	console_size() ;
 
 	if( _cols_ == 0 || _rows_ == 0 )
 	{
@@ -59,14 +55,14 @@ ConsoleUI::align_line
 	CUI_TextAlignment alignment
 )
 {
-	if( alignement != CUI_LEFT )
+	if( alignment != CUI_LEFT )
 	{
 		QString blank = "" ;
 		unsigned int spaces = _cols_ - line.length() ;
 
 		if( alignment == CUI_CENTER )
 		{
-			spaces / 2 ;
+			spaces /= 2 ;
 		}
 
 		for( unsigned int i = 0 ; i < spaces ; ++i )
@@ -88,6 +84,105 @@ ConsoleUI::align_line
 }
 
 void
+ConsoleUI::bufferize_text
+(
+	QString text
+)
+{
+	if( text.isEmpty() )
+	{
+		buffer_.push_back( "" ) ;
+	}
+	else
+	{
+		while( ( unsigned int )( text.length() ) > _cols_ )
+		{
+			unsigned int pos = _cols_ - 1 ;
+
+			while( text[ pos ] != ' ' )
+			{
+				pos-- ;
+			}
+
+			buffer_.push_back( text.left( pos ) ) ;
+			text.remove( 0, pos + 1 ) ;
+		}
+
+		buffer_.push_back( text ) ;
+	}
+}
+
+void
+ConsoleUI::bufferize_title
+(
+	QString title
+)
+{
+	buffer_.push_back( color_text( title, CUI_White ) ) ;
+	buffer_.push_back( "" ) ;
+}
+
+QString
+ConsoleUI::color_text
+(
+	QString text,
+	CUI_TextColor color
+)
+{
+
+#ifdef Q_OS_UNIX
+
+	QString tmp = "\x1B[1m" ; // bold
+	// QString tmp = "\x1B[4m" ; // underline
+
+	switch( color )
+	{
+		case CUI_Red :
+			tmp += "\x1B[31m" ; // red
+			break ;
+
+		case CUI_Green :
+			tmp += "\x1B[32m" ; // green
+			break ;
+
+		case CUI_Yellow :
+			tmp += "\x1B[33m" ; // yellow
+			break ;
+
+		case CUI_Blue :
+			tmp += "\x1B[34m" ; // blue
+			break ;
+
+		case CUI_Magenta :
+			tmp += "\x1B[35m" ; // magenta
+			break ;
+
+		case CUI_Cyan :
+			tmp += "\x1B[36m" ; // cyan
+			break ;
+
+		case CUI_White :
+			tmp += "\x1B[37m" ; // white
+			break ;
+	}
+
+	tmp += text ;
+	tmp += "\x1B[0m" ; // reset
+
+	text = tmp ;
+
+#endif
+
+#ifdef Q_OS_WIN
+
+
+
+#endif
+
+	return text ;
+}
+
+void
 ConsoleUI::console_size
 ()
 {
@@ -101,48 +196,38 @@ ConsoleUI::console_size
 }
 
 void
-ConsoleUI::display_paragraph
-(
-	std::string paragraph
-)
+ConsoleUI::display_buffer
+()
 {
-	std::cout << paragraph << std::endl ;
-}
+	unsigned int count = 0 ;
+	bool endByEnter = true ;
 
-void
-ConsoleUI::display_text
-(
-	std::string text,
-	CUI_TextAlignment alignment
-)
-{
-	bool change = false ;
-	QStringList division = QString( text.c_str() ).split( ' ' ) ;
-	QString last = _text_.last() ;
-
-	while( !change && !( division.empty() ) )
+	while( ! buffer_.empty() )
 	{
-		last += division.front() + ' ' ;
-		division.erase( division.begin() ) ;
+		std::cout << buffer_.first().toStdString() ;
+		count++ ;
 
-		if( !( division.empty() ) )
+		if( count < _rows_ )
 		{
-			change = ( ( last.size() + ( division.front() ).size() ) + 1 > _cols_ ) ;
+			std::cout << std::endl ;
 		}
+		else
+		{
+			endByEnter = false ;
+		}
+
+		buffer_.erase( buffer_.begin() ) ;
+
+		while( ( ! buffer_.empty() ) &&
+			   ( count > _rows_ - 1 ) &&
+			   ( getchar() != 10 ) ) ;
 	}
 
-
-
-}
-
-void
-ConsoleUI::display_title
-(
-	std::string title
-)
-{
-	std::cout << title << std::endl ;
-	std::cout << std::endl ;
+	if( endByEnter == false )
+	{
+		std::cout << std::endl ;
+		std::cout << std::endl ;
+	}
 }
 
 QStringList
@@ -186,6 +271,7 @@ ConsoleUI::process
 	if( welcomed_ == true )
 	{
 		welcome() ;
+		display_buffer() ;
 	}
 
 	while( ! close )
@@ -194,7 +280,7 @@ ConsoleUI::process
 		param_list.clear() ;
 
 		// get the command line
-		std::cout << "CC:> " ;
+		std::cout << color_text( "CC:> ", CUI_Green ).toStdString() ;
 		std::getline( std::cin, tmp ) ;
 		command = QString( tmp.c_str() ).simplified() ;
 
@@ -235,28 +321,30 @@ void
 ConsoleUI::welcome
 ()
 {
-	std::cout << std::endl ;
-	std::cout << "\t\t" << "/==========================================\\" << std::endl ;
-	std::cout << "\t\t" << "|                 COMCHECK                 |" << std::endl ;
-	std::cout << "\t\t" << "\\==========================================/" << std::endl ;
-	std::cout << std::endl ;
+	bufferize_text() ;
+	buffer_.push_back( align_line( "/================\\", CUI_CENTER ) ) ;
+	buffer_.push_back( align_line( "|    COMCHECK    |", CUI_CENTER ) ) ;
+	buffer_.push_back( align_line( "\\================/", CUI_CENTER ) ) ;
+	bufferize_text() ;
 
-	// default size of a terminal
-	// -->                                                                               <--
+	bufferize_text( "ComCheck is a little tool used for analysing source code files and counting how many comments are written in these files, regardless of programming language." ) ;
+	bufferize_text() ;
 
-	std::cout << "ComCheck is a little tool used for analyzing source code files and counting how" << std::endl ;
-	std::cout << "many comments are written in these files, regardless of programming language." << std::endl ;
-	std::cout << std::endl ;
+	bufferize_text( "If you don't know how to use it, maybe the command 'help' could do its job !" ) ;
+	bufferize_text() ;
 
-	std::cout << "If you don't know how to use it, maybe the command 'help' could do its job." << std::endl ;
-	std::cout << std::endl ;
+	display_buffer() ;
 }
 
 #ifdef Q_OS_UNIX
 void
 ConsoleUI::UNIX_console_size
-()
+(
+	int signum
+)
 {
+	Q_UNUSED( signum ) ;
+
 	ioctl( STDOUT_FILENO, TIOCGWINSZ, &_w_ ) ;
 	ConsoleUI::_cols_ = _w_.ws_col ;
 	ConsoleUI::_rows_ = _w_.ws_row ;

@@ -50,7 +50,6 @@ Core::Core
 				directory_ = ".." ;
 				interfaced_ = false ;
 				plugin_ = find_plugin( "Test" ) ;
-				welcomed_ = false ;
 			}
 
 			//welcomed

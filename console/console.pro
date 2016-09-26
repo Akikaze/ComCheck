@@ -24,5 +24,5 @@ HEADERS += \
     std.hpp \
     structures.hpp \
     iui.hpp \
-    console_ui.hpp \
-    colors.hpp
+    colors.hpp \
+    console_ui.hpp

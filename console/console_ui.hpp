@@ -1,10 +1,10 @@
-#ifndef CONSOLE_UI_HPP
-#define CONSOLE_UI_HPP
+#ifndef CONSOLE_UI__HPP
+#define CONSOLE_UI__HPP
 
 #include <csignal>
+#include <cstdio>
+#include <cstdlib>
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #include "colors.hpp"
@@ -24,7 +24,19 @@ enum CUI_TextAlignment
 	CUI_LEFT = 0,
 	CUI_CENTER,
 	CUI_RIGHT
-};
+} ;
+
+enum CUI_TextColor
+{
+	CUI_Black = 0,
+	CUI_Red,
+	CUI_Green,
+	CUI_Yellow,
+	CUI_Blue,
+	CUI_Magenta,
+	CUI_Cyan,
+	CUI_White
+} ;
 
 class ConsoleUI
 : public IUI
@@ -72,27 +84,34 @@ class ConsoleUI
 		QString align_line( QString line, CUI_TextAlignment alignment = CUI_LEFT ) ;
 
 		///
+		/// \brief Bufferize common text
+		/// \param text Text
+		///
+		void bufferize_text( QString text = "" ) ;
+
+		///
+		/// \brief Bufferize title in color
+		/// \param title Title
+		///
+		void bufferize_title( QString title ) ;
+
+		///
+		/// \brief Color text according to the OS
+		/// \param text Text
+		/// \param color Color for the text
+		/// \return string with encrypted character for colorization
+		///
+		QString color_text( QString text, CUI_TextColor color ) ;
+
+		///
 		/// \brief Get the size of the console
 		///
 		static void console_size() ;
 
 		///
-		/// \brief Display common paragraph
-		/// \param paragraph Paragraph
+		/// \brief Display the whole buffer which contain strings
 		///
-		void display_paragraph( std::string text ) ;
-
-		///
-		/// \brief Display common text according to the console's size
-		/// \param text Text
-		///
-		void display_text( std::string text, CUI_TextAlignment alignment = CUI_LEFT  ) ;
-
-		///
-		/// \brief Display title
-		/// \param title Title
-		///
-		void display_title( std::string title ) ;
+		void display_buffer() ;
 
 		///
 		/// \brief Filter a command thanks to ' '
@@ -115,7 +134,7 @@ class ConsoleUI
 
 		static unsigned int _cols_ ; ///< Number of columns in the console
 		static unsigned int _rows_ ; ///< Number of rows in the console
-		static QStringList _text_ ; ///<
+		QStringList buffer_ ; ///< Buffer of text
 		bool welcomed_ ; ///< Signal for a nice welcoming message
 
 		// --- OS EXLUSIVE ---
@@ -126,7 +145,7 @@ class ConsoleUI
 		///
 		/// \brief Get the size of the console
 		///
-		static void UNIX_console_size() ;
+		static void UNIX_console_size( int signum = 0 ) ;
 #endif
 
 #ifdef Q_OS_WIN
@@ -140,4 +159,4 @@ class ConsoleUI
 
 } ;
 
-#endif // CONSOLE_UI_HPP
+#endif // CONSOLE_UI__HPP
