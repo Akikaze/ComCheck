@@ -17,8 +17,14 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
-#define SIGWINCH 28
 #endif
+
+enum CUI_TextAlignment
+{
+	CUI_LEFT = 0,
+	CUI_CENTER,
+	CUI_RIGHT
+};
 
 class ConsoleUI
 : public IUI
@@ -40,12 +46,6 @@ class ConsoleUI
 		///
 		virtual ~ConsoleUI() ;
 
-		// --- ATTRIBUTES ---
-
-		static unsigned int _cols_ ; ///< Number of columns in the console
-		static unsigned int _lines_ ; ///< Number of lines currently used in the console
-		static unsigned int _rows_ ; ///< Number of rows in the console
-
 	protected :
 
 		// --- COMMANDS ---
@@ -65,6 +65,18 @@ class ConsoleUI
 		// --- MEMBERS
 
 		///
+		/// \brief Add space to align text correctly
+		/// \param line Text line
+		/// \param alignment Left, center or right
+		///
+		QString align_line( QString line, CUI_TextAlignment alignment = CUI_LEFT ) ;
+
+		///
+		/// \brief Get the size of the console
+		///
+		static void console_size() ;
+
+		///
 		/// \brief Display common paragraph
 		/// \param paragraph Paragraph
 		///
@@ -74,7 +86,7 @@ class ConsoleUI
 		/// \brief Display common text according to the console's size
 		/// \param text Text
 		///
-		void display_text( std::string text ) ;
+		void display_text( std::string text, CUI_TextAlignment alignment = CUI_LEFT  ) ;
 
 		///
 		/// \brief Display title
@@ -99,19 +111,33 @@ class ConsoleUI
 		///
 		void welcome() ;
 
-		///
-		/// \brief Handle the WINdow CHange signal
-		///
-		void WINCH_handler( int signum ) ;
-
 		// --- ATTRIBUTES ---
 
+		static unsigned int _cols_ ; ///< Number of columns in the console
+		static unsigned int _rows_ ; ///< Number of rows in the console
+		static QStringList _text_ ; ///<
 		bool welcomed_ ; ///< Signal for a nice welcoming message
-} ;
 
-///
-/// \brief Get information about the console (width, height, position)
-///
-void find_console( int signum ) ;
+		// --- OS EXLUSIVE ---
+
+#ifdef Q_OS_UNIX
+		static struct winsize _w_ ; ///<
+
+		///
+		/// \brief Get the size of the console
+		///
+		static void UNIX_console_size() ;
+#endif
+
+#ifdef Q_OS_WIN
+		static CONSOLE_SCREEN_BUFFER_INFO _csbi_ ; ///<
+
+		///
+		/// \brief Get the size of the console
+		///
+		static void WIN_console_size() ;
+#endif
+
+} ;
 
 #endif // CONSOLE_UI_HPP
