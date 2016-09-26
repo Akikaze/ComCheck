@@ -28,7 +28,6 @@ enum CUI_TextAlignment
 
 enum CUI_TextColor
 {
-	CUI_Black = 0,
 	CUI_Red,
 	CUI_Green,
 	CUI_Yellow,

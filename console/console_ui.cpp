@@ -129,55 +129,28 @@ ConsoleUI::color_text
 	CUI_TextColor color
 )
 {
-
-#ifdef Q_OS_UNIX
-
 	QString tmp = "\x1B[1m" ; // bold
 	// QString tmp = "\x1B[4m" ; // underline
 
 	switch( color )
 	{
-		case CUI_Red :
-			tmp += "\x1B[31m" ; // red
-			break ;
-
-		case CUI_Green :
-			tmp += "\x1B[32m" ; // green
-			break ;
-
-		case CUI_Yellow :
-			tmp += "\x1B[33m" ; // yellow
-			break ;
-
-		case CUI_Blue :
-			tmp += "\x1B[34m" ; // blue
-			break ;
-
-		case CUI_Magenta :
-			tmp += "\x1B[35m" ; // magenta
-			break ;
-
-		case CUI_Cyan :
-			tmp += "\x1B[36m" ; // cyan
-			break ;
-
-		case CUI_White :
-			tmp += "\x1B[37m" ; // white
-			break ;
+		case CUI_Red : tmp += "\x1B[31m" ; break ;
+		case CUI_Green : tmp += "\x1B[32m" ; break ;
+		case CUI_Yellow : tmp += "\x1B[33m" ; break ;
+		case CUI_Blue : tmp += "\x1B[34m" ; break ;
+		case CUI_Magenta : tmp += "\x1B[35m" ; break ;
+		case CUI_Cyan : tmp += "\x1B[36m" ;	break ;
+#ifdef Q_OS_UNIX
+		case CUI_White : tmp += "\x1B[37m" ; break ;
+#endif
+#ifdef Q_OS_WIN
+		case CUI_White : tmp += "\x0" ; break ;
+#endif
 	}
 
 	tmp += text ;
 	tmp += "\x1B[0m" ; // reset
-
 	text = tmp ;
-
-#endif
-
-#ifdef Q_OS_WIN
-
-
-
-#endif
 
 	return text ;
 }
@@ -357,7 +330,7 @@ ConsoleUI::WIN_console_size
 ()
 {
 	GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &_csbi_ ) ;
-	ConsoleUI::_cols_ = _csbi_.srWindow.Right - _csbi_.srWindow.Left + 1 ;
-	ConsoleUI::_rows_ = _csbi_.srWindow.Bottom - _csbi_.srWindow.Top + 1 ;
+	ConsoleUI::_cols_ = _csbi_.srWindow.Right - _csbi_.srWindow.Left ;
+	ConsoleUI::_rows_ = _csbi_.srWindow.Bottom - _csbi_.srWindow.Top ;
 }
 #endif
