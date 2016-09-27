@@ -13,10 +13,10 @@ CONSOLE_SCREEN_BUFFER_INFO ConsoleUI::_csbi_ = CONSOLE_SCREEN_BUFFER_INFO() ;
 
 ConsoleUI::ConsoleUI
 (
-	QObject * parent,
+	QObject * core,
 	bool welcomed
 )
-: IUI( parent )
+: IUI( core )
 , buffer_( QStringList() )
 , welcomed_( welcomed )
 {
@@ -39,6 +39,10 @@ ConsoleUI::ConsoleUI
 	if( _cols_ == 0 || _rows_ == 0 )
 	{
 		std::cout << "Impossible to get console size." << std::endl ;
+		std::cout << "By default, the size will be 80x60." << std::endl ;
+
+		_cols_ = 80 ;
+		_rows_ = 60 ;
 	}
 }
 
@@ -254,8 +258,11 @@ ConsoleUI::process
 
 		// get the command line
 		std::cout << color_text( "CC:> ", CUI_Green ).toStdString() ;
+
 		std::getline( std::cin, tmp ) ;
 		command = QString( tmp.c_str() ).simplified() ;
+
+		tmp = "" ;
 
 		// check the command
 		if( !( command.isEmpty() ) )
@@ -269,9 +276,29 @@ ConsoleUI::process
 			{
 				commands( param_list ) ;
 			}
+			else if( param_list.front() == "analyze" )
+			{
+				analyze( param_list ) ;
+			}
+			else if( param_list.front() == "directory" )
+			{
+				directory( param_list ) ;
+			}
 			else if( param_list.front() == "help" )
 			{
 				help( param_list ) ;
+			}
+			else if( param_list.front() == "info" )
+			{
+				info( param_list ) ;
+			}
+			else if( param_list.front() == "language" )
+			{
+				language( param_list ) ;
+			}
+			else if( param_list.front() == "preparation" )
+			{
+				preparation( param_list ) ;
 			}
 			else if( param_list.front() == "quit" )
 			{
@@ -288,6 +315,8 @@ ConsoleUI::process
 	std::cout << std::endl ;
 	std::cout << "\t" << "Goodbye, see you later !" << std::endl ;
 	std::cout << std::endl ;
+
+	emit finished() ;
 }
 
 void

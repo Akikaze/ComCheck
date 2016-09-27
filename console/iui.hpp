@@ -1,7 +1,9 @@
 #ifndef IUI_HPP
 #define IUI_HPP
 
-#include "qt.hpp"
+#include "structures.hpp"
+
+class Core ;
 
 class IUI
 : public QObject
@@ -16,14 +18,14 @@ class IUI
 		/// \brief Constructor
 		/// \param parent Parent for this QObject
 		///
-		IUI( QObject * parent = 0 ) ;
+		IUI( QObject * core ) ;
 
 		// --- DESTRUCTORS ---
 
 		///
 		/// \brief Destructor
 		///
-		virtual ~IUI() = 0 ;
+		~IUI() ;
 
 	public slots :
 
@@ -42,6 +44,10 @@ class IUI
 		// --- MEMBERS ---
 
 		virtual void process() = 0 ;
+
+		// --- ATTRIBUTES ---
+
+		Core * core_ ; ///< Pointer to the core
 
 } ;
 

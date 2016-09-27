@@ -25,19 +25,77 @@ class Core
 		///
 		~Core() ;
 
+		// --- GETTERS / SETTERS ---
+
+		///
+		/// \brief Get the variable directory_
+		/// \return Name of the directory
+		///
+		inline QString get_directory()
+			{ return directory_ ; }
+
+		///
+		/// \brief Set the variable directory_
+		/// \param directory Name of the directory
+		///
+		inline void set_directory( QString directory )
+			{ directory_ = directory ; }
+
+		///
+		/// \brief Get the variable plugin_
+		/// \return IPlugin
+		///
+		inline QList< IPlugin * > get_list_plugins()
+			{ return list_plugins_ ; }
+
+		///
+		/// \brief Get the variable plugin_
+		/// \return IPlugin
+		///
+		inline IPlugin * get_plugin()
+			{ return plugin_ ; }
+
+		///
+		/// \brief Set the variable plugin_
+		/// \param IPlugin
+		///
+		inline void set_plugin( IPlugin * plugin )
+			{ plugin_ = plugin ; }
+
+		///
+		/// \brief Get the variable report_
+		/// \return CC_Report
+		///
+		inline CC_Report * get_report()
+			{ return report_ ; }
+
+		///
+		/// \brief Get the variable root_
+		/// \return CC_Folder
+		///
+		inline CC_Folder * get_root()
+			{ return root_ ; }
+
 		// --- MEMBERS ---
 
 		///
 		/// \brief Create a tree view from directory_
 		/// \return A CC_Folder that represent the root of the tree view
 		///
-		CC_Folder *	create_tree_view() ;
+		unsigned int create_tree_view() ;
 
 		///
 		/// \brief Create a user interface graphical or not
 		///	\return A pointer to an class which inherit from IUI
 		///
-		IUI * create_UI( QObject * parent = 0 ) ;
+		IUI * create_UI( QObject * core ) ;
+
+		///
+		/// \brief Find a plugin associated to a language
+		/// \param language String searched in the plugins' list
+		/// \return Plugin which treats this language
+		///
+		IPlugin * find_plugin( QString language ) ;
 
 		///
 		/// \brief Make report from a specific folder
@@ -51,10 +109,10 @@ class Core
 		// --- MEMBERS ---
 
 		///
-		/// \brief Analyse a file to fulfill its array
-		/// \param file File which need to be analysed
+		/// \brief analyze a file to fulfill its array
+		/// \param file File which need to be analyzed
 		///
-		void analyse_file( CC_File * file ) ;
+		void analyze_file( CC_File * file ) ;
 
 		///
 		/// \brief Clear all spaces in a line
@@ -67,13 +125,6 @@ class Core
 		/// \param report Report without statistical value
 		///
 		void compute_report( CC_Report * report ) ;
-
-		///
-		/// \brief Find a plugin associated to a language
-		/// \param language String searched in the plugins' list
-		/// \return Plugin which treats this language
-		///
-		IPlugin * find_plugin( QString language ) ;
 
 		///
 		/// \brief List all plugins

@@ -14,6 +14,9 @@ Core::Core
 , UI_( nullptr )
 , welcomed_( true )
 {
+	// initialize map
+	map_reports_ = QMap< CC_Folder *, CC_Report * >() ;
+
 	// get plugins
 	list_plugins_ = list_plugins() ;
 
@@ -47,7 +50,7 @@ Core::Core
 			if( QString( argv[ i ] ) == "-t" ||
 				QString( argv[ i ] ) == "--test" )
 			{
-				directory_ = ".." ;
+				directory_ = "../console/" ;
 				interfaced_ = false ;
 				plugin_ = find_plugin( "Test" ) ;
 			}
@@ -65,9 +68,6 @@ Core::Core
 Core::~Core
 ()
 {
-	delete root_ ;
-	delete UI_ ;
-
 	// release plugins
 	while( !( list_plugins_.empty() ) )
 	{
@@ -82,6 +82,9 @@ Core::~Core
 		map_reports_.erase( map_reports_.begin() ) ;
 	}
 
+	delete root_ ;
+	delete UI_ ;
+
 	plugin_ = nullptr ;
 	report_ = nullptr ;
 	root_ = nullptr ;
@@ -89,7 +92,7 @@ Core::~Core
 }
 
 void
-Core::analyse_file
+Core::analyze_file
 (
 	CC_File * file
 )
@@ -117,7 +120,7 @@ Core::analyse_file
 			}
 		}
 
-		file->analysed = true ;
+		file->analyzed = true ;
 	}
 }
 
@@ -158,7 +161,7 @@ Core::compute_report
 	report->divergence = sqrt( report->variance ) ;
 }
 
-CC_Folder *
+unsigned int
 Core::create_tree_view
 ()
 {
@@ -166,8 +169,21 @@ Core::create_tree_view
 	if( directory_.isEmpty() ||
 		plugin_ == nullptr )
 	{
-		return nullptr ;
+		return 0 ;
 	}
+
+	unsigned int result = 0 ;
+
+#ifdef Q_OS_UNIX
+	if( directory_.at( directory_.size() - 1) != '/' )
+	{
+		directory_ += '/' ;
+	}
+#endif
+
+#ifdef Q_OS_WIN
+
+#endif
 
 	// root value
 	root_ = new CC_Folder() ;
@@ -200,7 +216,7 @@ Core::create_tree_view
 			// new folder
 			new_folder = new CC_Folder() ;
 			new_folder->parent = current ;
-			new_folder->name = current->name + "/" + *cit ;
+			new_folder->name = current->name + *cit ;
 
 			// store the folder in its parent
 			current->list_folders.push_back( new_folder ) ;
@@ -214,25 +230,26 @@ Core::create_tree_view
 		{
 			// new file
 			new_file = new CC_File() ;
-			new_file->name = current->name + "/" + *cit ;
+			new_file->name = current->name + *cit ;
 			new_file->folder = current ;
-			new_file->analysed = false ;
+			new_file->analyzed = false ;
 
 			// store the file in its folder
 			current->list_files.push_back( new_file ) ;
+			result++ ;
 		}
 
 		// delete the parent folder at the end of its treatment
 		list_folders.erase( list_folders.begin() ) ;
 	}
 
-	return root_ ;
+	return result ;
 }
 
 IUI *
 Core::create_UI
 (
-	QObject * parent
+	QObject * core
 )
 {
 	if( interfaced_ == true )
@@ -241,7 +258,7 @@ Core::create_UI
 	}
 	else
 	{
-		UI_ = new ConsoleUI( parent, welcomed_ ) ;
+		UI_ = new ConsoleUI( core, welcomed_ ) ;
 	}
 
 	return UI_ ;
@@ -264,6 +281,8 @@ Core::find_plugin
 		{
 			plugin = ( *cit ) ;
 		}
+
+		++cit ;
 	}
 
 	return plugin ;
@@ -278,17 +297,21 @@ Core::list_plugins
 
 	QString dir = "../plugins" ;
 	QDir plugin_directory = QDir( dir ) ;
-
 	// look for every plugin
 	foreach( QString file, plugin_directory.entryList( QDir::Files ) )
 	{
+		/*
+		 * ----- WARNING -----
+		 * There are memory leaks due to the QPluginLoader.
+		 */
+
+
 		// load the plugin
 		file = dir + "/" + file ;
 		QPluginLoader loader( file ) ;
-		loader.load() ;
 
 		// if it's the right plugin format
-		if( loader.isLoaded() == true )
+		if( loader.load() == true )
 		{
 			plugin = qobject_cast< IPlugin * >( loader.instance() ) ;
 			list.push_back( plugin ) ;
@@ -317,7 +340,7 @@ Core::make_report
 		folder = root_ ;
 	}
 
-	// find if the folder was analysed before
+	// find if the folder was analyzed before
 	CC_Report * tmp = map_reports_.value( folder, nullptr ) ;
 
 	if( tmp == nullptr )
@@ -327,6 +350,8 @@ Core::make_report
 
 		// loop preparation
 		QList< CC_Folder * > list_folder = folder->list_folders ;
+		list_folder.push_front( folder ) ;
+
 		QList< CC_File * >::const_iterator cit_File ;
 		QList< CC_Folder * >::const_iterator cit_Folder ;
 		CC_Folder * current = nullptr ;
@@ -343,13 +368,13 @@ Core::make_report
 				list_folder.push_front( *cit_Folder ) ;
 			}
 
-			// analyse files of the current folder
+			// analyze files of the current folder
 			for( cit_File = current->list_files.begin() ; cit_File != current->list_files.end() ; ++cit_File )
 			{
-				// check if the file is analysed
-				if( ( *cit_File )->analysed == false )
+				// check if the file is analyzed
+				if( ( *cit_File )->analyzed == false )
 				{
-					analyse_file( *cit_File ) ;
+					analyze_file( *cit_File ) ;
 				}
 
 				report_->list_files.push_back( *cit_File ) ;

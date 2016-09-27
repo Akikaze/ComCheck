@@ -1,4 +1,5 @@
 #include "console_ui.hpp"
+#include "core.hpp"
 
 void
 ConsoleUI::commands
@@ -6,9 +7,83 @@ ConsoleUI::commands
 	QStringList param_list
 )
 {
-	Q_UNUSED( param_list ) ;
+	param_list.erase( param_list.begin() ) ;
 
 	// display like man
+}
+
+void
+ConsoleUI::analyze
+(
+	QStringList param_list
+)
+{
+	param_list.erase( param_list.begin() ) ;
+	core_->make_report() ;
+}
+
+void
+ConsoleUI::directory
+(
+	QStringList param_list
+)
+{
+	param_list.erase( param_list.begin() ) ;
+
+	QString directory ;
+	std::string tmp ;
+	bool try_again = true ;
+
+	while( try_again )
+	{
+		// ask for a directory
+		if( param_list.empty() )
+		{
+			std::cout << "Address of project folder ? " ;
+
+			// get answer
+			std::getline( std::cin, tmp ) ;
+			directory = tmp.c_str() ;
+
+			// flush
+			tmp = "" ;
+		}
+		else
+		{
+			for( int i = 0 ; i < param_list.size() ; ++i )
+			{
+				// directory
+				if( QString( param_list[ i ] ) == "-d" )
+				{
+					// get the answer in the next parameter
+					directory = param_list[ ++i ] ;
+				}
+			}
+
+			param_list.clear() ;
+		}
+
+		// check if the directory exists
+		QDir test( directory ) ;
+		if( directory.isEmpty() || test.exists() )
+		{
+			try_again = false ;
+		}
+		else
+		{
+			std::cout << "This directory is not found by the system." << std::endl ;
+		}
+	}
+
+	if( !( directory.isEmpty() ) )
+	{
+		// set the directory in the core
+		core_->set_directory( directory ) ;
+	}
+	else
+	{
+		std::cout << "Nothing was done." << std::endl ;
+	}
 }
 
 void
@@ -17,8 +92,8 @@ ConsoleUI::help
 	QStringList param_list
 )
 {
-	std::cout << std::endl ;
 	param_list.erase( param_list.begin() ) ;
+	std::cout << std::endl ;
 
 	if( param_list.isEmpty() )
 	{
@@ -45,4 +120,120 @@ ConsoleUI::help
 	{
 		// display help for a specific command
 	}
+}
+
+void
+ConsoleUI::info
+(
+	QStringList param_list
+)
+{
+	param_list.erase( param_list.begin() ) ;
+
+	QString directory = core_->get_directory() ;
+	if( !( directory.isEmpty() ) )
+	{
+		std::cout << color_text( "Project directory: ", CUI_White ).toStdString() ;
+		std::cout << core_->get_directory().toStdString() << std::endl ;
+	}
+
+	IPlugin * plugin = core_->get_plugin() ;
+	if( plugin != nullptr )
+	{
+		std::cout << color_text( "Project language: ", CUI_White ).toStdString() ;
+		std::cout << core_->get_plugin()->get_language().toStdString() << std::endl ;
+	}
+}
+
+void
+ConsoleUI::language
+(
+	QStringList param_list
+)
+{
+	param_list.erase( param_list.begin() ) ;
+
+	QString language ;
+	QList< IPlugin * > list = core_->get_list_plugins() ;
+	IPlugin * plugin = nullptr ;
+	std::string tmp ;
+	bool try_again = true ;
+
+	while( try_again )
+	{
+		// ask for a plugin language
+		if( param_list.empty() )
+		{
+			std::cout << "The system handles:" << std::endl ;
+			for( int i = 0 ; i < list.size() ; ++i )
+			{
+				tmp = color_text( list[ i ]->get_language(), CUI_White ).toStdString() ;
+				std::cout << "\t" << tmp << std::endl ;
+				tmp = "" ;
+			}
+
+			std::cout << "Language? " ;
+
+			// get answer
+			std::getline( std::cin, tmp ) ;
+			language = tmp.c_str() ;
+
+			// flush
+			tmp = "" ;
+		}
+		else
+		{
+			for( int i = 0 ; i < param_list.size() ; ++i )
+			{
+				// language
+				if( QString( param_list[ i ] ) == "-l" )
+				{
+					// get the answer in the next parameter
+					language = param_list[ ++i ] ;
+				}
+			}
+
+			param_list.clear() ;
+		}
+
+		if( language.isEmpty() )
+		{
+			try_again = false ;
+		}
+		else
+		{
+			plugin = core_->find_plugin( language ) ;
+
+			if( plugin != nullptr )
+			{
+				try_again = false ;
+			}
+			else
+			{
+				std::cout << "This language is not handled by the system." << std::endl ;
+			}
+		}
+	}
+
+	if( !( language.isEmpty() ) )
+	{
+		// choose the plugin in the core
+		core_->set_plugin( plugin ) ;
+	}
+	else
+	{
+		std::cout << "Nothing was done." << std::endl ;
+	}
+}
+
+void
+ConsoleUI::preparation
+(
+	QStringList param_list
+)
+{
+	param_list.erase( param_list.begin() ) ;
+	unsigned int number_files = core_->create_tree_view() ;
+
+	std::cout << "This project contains " << number_files << " files." << std::endl ;
 }

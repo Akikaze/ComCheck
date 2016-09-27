@@ -1,18 +1,19 @@
 #include "iui.hpp"
+#include "core.hpp"
 
 IUI::IUI
 (
-	QObject * parent
+	QObject * core
 )
-	: QObject( parent )
+: QObject( core )
 {
-
+	core_ = ( Core * )( core ) ;
 }
 
 IUI::~IUI
 ()
 {
-
+	core_ = nullptr ;
 }
 
 void

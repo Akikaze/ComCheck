@@ -1,17 +1,15 @@
 #ifndef CONSOLE_UI__HPP
 #define CONSOLE_UI__HPP
 
-#include <csignal>
 #include <cstdio>
 #include <cstdlib>
 
 #include <unistd.h>
 
-#include "colors.hpp"
 #include "iui.hpp"
-#include "std.hpp"
 
 #ifdef Q_OS_UNIX
+#include <csignal>
 #include <sys/ioctl.h>
 #endif
 
@@ -48,7 +46,7 @@ class ConsoleUI
 		/// \brief Constructor
 		/// \param parent Parent for this QObject
 		///
-		ConsoleUI( QObject * parent = 0, bool welcomed = true ) ;
+		ConsoleUI( QObject * core, bool welcomed = true ) ;
 
 		// --- DESTRUCTORS ---
 
@@ -65,13 +63,43 @@ class ConsoleUI
 		/// \brief Display the result of the command 'commands'
 		/// \param param_list List of parameters for the command
 		///
+		void analyze( QStringList param_list ) ;
+
+		///
+		/// \brief Display the result of the command 'commands'
+		/// \param param_list List of parameters for the command
+		///
 		void commands( QStringList param_list ) ;
+
+		///
+		/// \brief Display the result of the command 'directory'
+		/// \param param_list List of parameters for the command
+		///
+		void directory( QStringList param_list ) ;
 
 		///
 		/// \brief Display the result of the command 'help'
 		/// \param param_list List of parameters for the command
 		///
 		void help( QStringList param_list ) ;
+
+		///
+		/// \brief Display the result of the command 'help'
+		/// \param param_list List of parameters for the command
+		///
+		void info( QStringList param_list ) ;
+
+		///
+		/// \brief Display the result of the command 'plugin'
+		/// \param param_list List of parameters for the command
+		///
+		void language( QStringList param_list ) ;
+
+		///
+		/// \brief Display the result of the command 'preparation'
+		/// \param param_list List of parameters for the command
+		///
+		void preparation( QStringList param_list ) ;
 
 		// --- MEMBERS
 
@@ -133,6 +161,7 @@ class ConsoleUI
 
 		static unsigned int _cols_ ; ///< Number of columns in the console
 		static unsigned int _rows_ ; ///< Number of rows in the console
+
 		QStringList buffer_ ; ///< Buffer of text
 		bool welcomed_ ; ///< Signal for a nice welcoming message
 

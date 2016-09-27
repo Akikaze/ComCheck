@@ -38,7 +38,7 @@ struct CC_File
 	CC_Folder * folder ; ///< folder of the file
 
 	// content
-	bool analysed ; ///< true if array is fulfill
+	bool analyzed ; ///< true if array is fulfill
 	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for lines' type
 } ;
 
