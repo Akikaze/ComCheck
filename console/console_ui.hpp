@@ -101,6 +101,12 @@ class ConsoleUI
 		///
 		void preparation( QStringList param_list ) ;
 
+		///
+		/// \brief Display the result of the command 'tree'
+		/// \param param_list List of parameters for the command
+		///
+		void tree( QStringList param_list ) ;
+
 		// --- MEMBERS
 
 		///
@@ -139,6 +145,20 @@ class ConsoleUI
 		/// \brief Display the whole buffer which contain strings
 		///
 		void display_buffer() ;
+
+		///
+		/// \brief Display a name in tree view
+		/// \param name Name of the file or the folder
+		/// \param level Size of indentation
+		///
+		void display_name( QString name, bool isFile, unsigned int level ) ;
+
+		///
+		/// \brief Display the tree view
+		/// \param folder Root of the tree view
+		/// \param level Size of indentation
+		///
+		void display_tree( const CC_Folder * folder, unsigned int level = 0 ) ;
 
 		///
 		/// \brief Filter a command thanks to ' '

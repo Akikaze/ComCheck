@@ -23,7 +23,7 @@ ConsoleUI::ConsoleUI
 
 #ifdef Q_OS_UNIX
 	// clean the console
-	system( "clear" ) ;
+	// system( "clear" ) ;
 
 	// handle the signal of WINdow CHange
 	signal( SIGWINCH, UNIX_console_size ) ;
@@ -31,7 +31,7 @@ ConsoleUI::ConsoleUI
 
 #ifdef Q_OS_WIN
 	// clean the console
-	system( "cls" ) ;
+	// system( "cls" ) ;
 #endif
 
 	console_size() ;
@@ -207,6 +207,67 @@ ConsoleUI::display_buffer
 	}
 }
 
+void
+ConsoleUI::display_name
+(
+	QString name,
+	bool isFile,
+	unsigned int level
+)
+{
+	unsigned int pos = 0 ;
+
+#ifdef Q_OS_UNIX
+	pos = name.toStdString().find_last_of( '/' ) + 1 ;
+#endif
+
+#ifdef Q_OS_WIN
+
+#endif
+
+	name = name.right( name.size() - pos ) ;
+
+	if( !isFile )
+	{
+		name = color_text( name, CUI_Blue ) ;
+	}
+
+	QString prefix = " " ;
+	if( level != 0 )
+	{
+		prefix += "|   " ;
+	}
+
+	for( unsigned int i = 1 ; i < level ; ++i )
+	{
+		prefix += "|   " ;
+	}
+
+	prefix += "|---" ;
+	bufferize_text( prefix + name ) ;
+}
+
+void
+ConsoleUI::display_tree
+(
+	const CC_Folder * folder,
+	unsigned int level
+)
+{
+	QList< CC_File * > list_files = folder->list_files ;
+	for( int i = 0 ; i < list_files.size() ; ++i )
+	{
+		display_name( list_files[ i ]->name, true, level ) ;
+	}
+
+	QList< CC_Folder * > list_folders = folder->list_folders ;
+	for( int i = 0 ; i < list_folders.size() ; ++i )
+	{
+		display_name( list_folders[ i ]->name, false, level ) ;
+		display_tree( list_folders[ i ], level + 1 ) ;
+	}
+}
+
 QStringList
 ConsoleUI::filter_command
 (
@@ -276,6 +337,7 @@ ConsoleUI::process
 			{
 				commands( param_list ) ;
 			}
+			// COMMANDS
 			else if( param_list.front() == "analyze" )
 			{
 				analyze( param_list ) ;
@@ -300,6 +362,11 @@ ConsoleUI::process
 			{
 				preparation( param_list ) ;
 			}
+			else if( param_list.front() == "tree" )
+			{
+				tree( param_list ) ;
+			}
+			// QUIT
 			else if( param_list.front() == "quit" )
 			{
 				close = true ;
@@ -315,8 +382,6 @@ ConsoleUI::process
 	std::cout << std::endl ;
 	std::cout << "\t" << "Goodbye, see you later !" << std::endl ;
 	std::cout << std::endl ;
-
-	emit finished() ;
 }
 
 void

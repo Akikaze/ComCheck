@@ -82,12 +82,37 @@ Core::~Core
 		map_reports_.erase( map_reports_.begin() ) ;
 	}
 
-	delete root_ ;
+	// release tree view
+	if( root_ != nullptr )
+	{
+		CC_Folder * current = nullptr ;
+		QList< CC_Folder * > list = { root_ } ;
+
+		while( !( list.empty() ) )
+		{
+			current = list.front() ;
+			list += current->list_folders ;
+
+			while( !( current->list_files.empty() ) )
+			{
+				delete current->list_files[ 0 ] ;
+				current->list_files.erase( current->list_files.begin() ) ;
+			}
+
+			list.erase( list.begin() ) ;
+			delete current ;
+		}
+
+		root_ = nullptr ;
+	}
+
 	delete UI_ ;
+
+	// TEST WITHOUT INSERT IN MAP
+	delete report_ ;
 
 	plugin_ = nullptr ;
 	report_ = nullptr ;
-	root_ = nullptr ;
 	UI_ = nullptr ;
 }
 
@@ -161,6 +186,76 @@ Core::compute_report
 	report->divergence = sqrt( report->variance ) ;
 }
 
+CC_Folder *
+Core::create_branch
+(
+	QString name_folder
+)
+{
+	CC_File * file = nullptr ;
+	CC_Folder * folder = nullptr ;
+
+	QList< CC_File * > list_files ;
+	QList< CC_File * >::const_iterator cit_File ;
+	QList< CC_Folder * > list_folders ;
+	QList< CC_Folder * >::const_iterator cit_Folder ;
+
+	QStringList list_folders_name ;
+	QStringList list_files_name ;
+	QStringList::const_iterator cit ;
+
+	QDir directory( name_folder ) ;
+
+	// get folders and files name
+	list_folders_name =  directory.entryList( QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable | QDir::Executable ) ;
+	list_files_name =  directory.entryList( plugin_->get_extensions(), QDir::Files | QDir::Readable ) ;
+
+	// create a CC_File for each file
+	for( cit = list_files_name.constBegin() ; cit != list_files_name.constEnd() ; ++cit )
+	{
+		// new file
+		file = new CC_File() ;
+		file->name = name_folder + "/" + *cit ;
+		file->analyzed = false ;
+
+		// store the file in its folder
+		list_files.push_back( file ) ;
+	}
+
+	// check each folder in this one
+	for( cit = list_folders_name.constBegin() ; cit != list_folders_name.constEnd() ; ++cit )
+	{
+		folder = create_branch( name_folder + "/" + *cit ) ;
+
+		if( folder != nullptr )
+		{
+			list_folders.push_back( folder ) ;
+		}
+	}
+
+	if( ! list_files.empty() || ! list_folders.empty() )
+	{
+		folder = new CC_Folder() ;
+		folder->name = name_folder ;
+
+		for( cit_File = list_files.begin() ; cit_File != list_files.end() ; ++cit_File )
+		{
+			( *cit_File )->folder = folder ;
+		}
+
+		for( cit_Folder = list_folders.begin() ; cit_Folder != list_folders.end() ; ++cit_Folder )
+		{
+			( *cit_Folder )->parent = folder ;
+		}
+
+		folder->list_files = list_files ;
+		folder->list_folders = list_folders ;
+
+	}
+
+	return folder ;
+}
+
 unsigned int
 Core::create_tree_view
 ()
@@ -175,9 +270,9 @@ Core::create_tree_view
 	unsigned int result = 0 ;
 
 #ifdef Q_OS_UNIX
-	if( directory_.at( directory_.size() - 1) != '/' )
+	if( directory_.at( directory_.size() - 1) == '/' )
 	{
-		directory_ += '/' ;
+		directory_ = directory_.left( directory_.size() - 1 ) ;
 	}
 #endif
 
@@ -185,72 +280,15 @@ Core::create_tree_view
 
 #endif
 
-	// root value
-	root_ = new CC_Folder() ;
-	root_->name = directory_ ;
-	root_->parent = nullptr ;
+	root_ = create_branch( directory_ ) ;
 
-	// loop preparation
-	CC_Folder * current = nullptr ;
-	CC_Folder * new_folder = nullptr ;
-	CC_File * new_file = nullptr ;
-	QStringList list_directories ;
-	QStringList list_files ;
-	QStringList::const_iterator cit ;
-
-	QList< CC_Folder * > list_folders ;
-	list_folders.push_back( root_ ) ;
-
-	while( !( list_folders.empty() ) )
-	{
-		// find the current folder
-		current = list_folders[ 0 ] ;
-		QDir directory( current->name ) ;
-
-		// get directories and files in the folder
-		list_directories =  directory.entryList( QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable | QDir::Executable ) ;
-		list_files =  directory.entryList( plugin_->get_extensions(), QDir::Files | QDir::Readable ) ;
-
-		for( cit = list_directories.constBegin() ; cit != list_directories.constEnd() ; ++cit )
-		{
-			// new folder
-			new_folder = new CC_Folder() ;
-			new_folder->parent = current ;
-			new_folder->name = current->name + *cit ;
-
-			// store the folder in its parent
-			current->list_folders.push_back( new_folder ) ;
-
-			// add the new folder to the list of folder
-			list_folders.push_back( new_folder ) ;
-		}
-
-		//
-		for( cit = list_files.constBegin() ; cit != list_files.constEnd() ; ++cit )
-		{
-			// new file
-			new_file = new CC_File() ;
-			new_file->name = current->name + *cit ;
-			new_file->folder = current ;
-			new_file->analyzed = false ;
-
-			// store the file in its folder
-			current->list_files.push_back( new_file ) ;
-			result++ ;
-		}
-
-		// delete the parent folder at the end of its treatment
-		list_folders.erase( list_folders.begin() ) ;
-	}
-
+	// ATTENTION CHANGEMENT
 	return result ;
 }
 
 IUI *
 Core::create_UI
-(
-	QObject * core
-)
+()
 {
 	if( interfaced_ == true )
 	{
@@ -258,7 +296,7 @@ Core::create_UI
 	}
 	else
 	{
-		UI_ = new ConsoleUI( core, welcomed_ ) ;
+		UI_ = new ConsoleUI( this, welcomed_ ) ;
 	}
 
 	return UI_ ;
@@ -297,15 +335,10 @@ Core::list_plugins
 
 	QString dir = "../plugins" ;
 	QDir plugin_directory = QDir( dir ) ;
+
 	// look for every plugin
 	foreach( QString file, plugin_directory.entryList( QDir::Files ) )
 	{
-		/*
-		 * ----- WARNING -----
-		 * There are memory leaks due to the QPluginLoader.
-		 */
-
-
 		// load the plugin
 		file = dir + "/" + file ;
 		QPluginLoader loader( file ) ;
@@ -392,7 +425,7 @@ Core::make_report
 		compute_report( report_ ) ;
 
 		// add this report in the list
-		map_reports_.insert( folder, report_ ) ;
+		//map_reports_.insert( folder, report_ ) ;
 	}
 	else
 	{

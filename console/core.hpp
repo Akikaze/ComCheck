@@ -28,59 +28,59 @@ class Core
 		// --- GETTERS / SETTERS ---
 
 		///
-		/// \brief Get the variable directory_
+		/// \brief Getter of the variable directory_
 		/// \return Name of the directory
 		///
-		inline QString get_directory()
+		inline const QString get_directory() const
 			{ return directory_ ; }
 
 		///
-		/// \brief Set the variable directory_
+		/// \brief Setter of the variable directory_
 		/// \param directory Name of the directory
 		///
 		inline void set_directory( QString directory )
 			{ directory_ = directory ; }
 
 		///
-		/// \brief Get the variable plugin_
+		/// \brief Getter of the variable plugin_
 		/// \return IPlugin
 		///
-		inline QList< IPlugin * > get_list_plugins()
+		inline const QList< IPlugin * > get_list_plugins() const
 			{ return list_plugins_ ; }
 
 		///
-		/// \brief Get the variable plugin_
+		/// \brief Getter of the variable plugin_
 		/// \return IPlugin
 		///
-		inline IPlugin * get_plugin()
+		inline const IPlugin * get_plugin() const
 			{ return plugin_ ; }
 
 		///
-		/// \brief Set the variable plugin_
+		/// \brief Setter of the variable plugin_
 		/// \param IPlugin
 		///
 		inline void set_plugin( IPlugin * plugin )
 			{ plugin_ = plugin ; }
 
 		///
-		/// \brief Get the variable report_
+		/// \brief Getter of the variable report_
 		/// \return CC_Report
 		///
-		inline CC_Report * get_report()
+		inline const CC_Report * get_report() const
 			{ return report_ ; }
 
 		///
-		/// \brief Get the variable root_
+		/// \brief Getter of the variable root_
 		/// \return CC_Folder
 		///
-		inline CC_Folder * get_root()
+		inline const CC_Folder * get_root() const
 			{ return root_ ; }
 
 		// --- MEMBERS ---
 
 		///
 		/// \brief Create a tree view from directory_
-		/// \return A CC_Folder that represent the root of the tree view
+		/// \return Number of files in the tree view
 		///
 		unsigned int create_tree_view() ;
 
@@ -88,7 +88,7 @@ class Core
 		/// \brief Create a user interface graphical or not
 		///	\return A pointer to an class which inherit from IUI
 		///
-		IUI * create_UI( QObject * core ) ;
+		IUI * create_UI() ;
 
 		///
 		/// \brief Find a plugin associated to a language
@@ -125,6 +125,12 @@ class Core
 		/// \param report Report without statistical value
 		///
 		void compute_report( CC_Report * report ) ;
+
+		///
+		/// \brief Create a branch of the view
+		/// \return A CC_Folder that represent the branch of the tree view
+		///
+		CC_Folder * create_branch( QString name_folder ) ;
 
 		///
 		/// \brief List all plugins

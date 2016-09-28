@@ -25,3 +25,6 @@ HEADERS += \
     structures.hpp \
     iui.hpp \
     console_ui.hpp
+
+OTHER_FILES += \
+    README.md

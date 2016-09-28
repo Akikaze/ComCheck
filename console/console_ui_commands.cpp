@@ -130,14 +130,14 @@ ConsoleUI::info
 {
 	param_list.erase( param_list.begin() ) ;
 
-	QString directory = core_->get_directory() ;
+	const QString directory = core_->get_directory() ;
 	if( !( directory.isEmpty() ) )
 	{
 		std::cout << color_text( "Project directory: ", CUI_White ).toStdString() ;
 		std::cout << core_->get_directory().toStdString() << std::endl ;
 	}
 
-	IPlugin * plugin = core_->get_plugin() ;
+	const IPlugin * plugin = core_->get_plugin() ;
 	if( plugin != nullptr )
 	{
 		std::cout << color_text( "Project language: ", CUI_White ).toStdString() ;
@@ -236,4 +236,21 @@ ConsoleUI::preparation
 	unsigned int number_files = core_->create_tree_view() ;
 
 	std::cout << "This project contains " << number_files << " files." << std::endl ;
+}
+
+void
+ConsoleUI::tree
+(
+	QStringList param_list
+)
+{
+	param_list.erase( param_list.begin() ) ;
+
+	const CC_Folder * folder = core_->get_root() ;
+
+
+	bufferize_text( folder->name ) ;
+
+	display_tree( folder ) ;
+	display_buffer() ;
 }
