@@ -1,10 +1,12 @@
-Bugs and issues:
+# Some weird code explanation:
 
-When you ask for the creation of a report, with the console interface, the insertion of
-the new report in the map provokes a problem with signals. If you try to quit after this,
-the 'quit' command will display the ending message but it will not stop the execution.
+In the core, map_reports_ is a QList< QPair< CC_Folder *, CC_Report * > > instead of a
+QMap< CC_Folder *, CC_Report * >. I have tried to use a QMap or even a std::map but the
+insertion during the method make_report block the quit function of QCoreApplication.
+That means, you can't leave the program without creating memory leaks. I was not able to
+understand how solving this problem. Thus I have chosen to avoid it.
 
-Memory leaks:
+# Memory leaks:
 
 If you valgrind the execution of ComCheck, it is going to show some memory issues. Those
 issues come from different places and are caused by Qt :
@@ -50,13 +52,13 @@ The execution of the .exec() of QCoreApplication makes valgrind add then:
 
 At the end, valgrind display this report :
 
-==32100== HEAP SUMMARY:
-==32100==     in use at exit: 28,090 bytes in 87 blocks
-==32100==   total heap usage: 1,772 allocs, 1,685 frees, 356,296 bytes allocated
-==32100==
-==32100== LEAK SUMMARY:
-==32100==    definitely lost: 288 bytes in 3 blocks
-==32100==    indirectly lost: 716 bytes in 10 blocks
-==32100==      possibly lost: 0 bytes in 0 blocks
-==32100==    still reachable: 27,086 bytes in 74 blocks
-==32100==         suppressed: 0 bytes in 0 blocks
+    HEAP SUMMARY:
+        in use at exit: 28,090 bytes in 87 blocks
+      total heap usage: 1,772 allocs, 1,685 frees, 356,296 bytes allocated
+
+    LEAK SUMMARY:
+       definitely lost: 288 bytes in 3 blocks
+       indirectly lost: 716 bytes in 10 blocks
+         possibly lost: 0 bytes in 0 blocks
+       still reachable: 27,086 bytes in 74 blocks
+            suppressed: 0 bytes in 0 blocks

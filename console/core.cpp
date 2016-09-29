@@ -14,9 +14,6 @@ Core::Core
 , UI_( nullptr )
 , welcomed_( true )
 {
-	// initialize map
-	map_reports_ = QMap< CC_Folder *, CC_Report * >() ;
-
 	// get plugins
 	list_plugins_ = list_plugins() ;
 
@@ -78,38 +75,17 @@ Core::~Core
 	// release reports
 	while( !( map_reports_.empty() ) )
 	{
-		delete map_reports_[ 0 ] ;
+		delete ( map_reports_[ 0 ].second ) ;
 		map_reports_.erase( map_reports_.begin() ) ;
 	}
 
 	// release tree view
 	if( root_ != nullptr )
 	{
-		CC_Folder * current = nullptr ;
-		QList< CC_Folder * > list = { root_ } ;
-
-		while( !( list.empty() ) )
-		{
-			current = list.front() ;
-			list += current->list_folders ;
-
-			while( !( current->list_files.empty() ) )
-			{
-				delete current->list_files[ 0 ] ;
-				current->list_files.erase( current->list_files.begin() ) ;
-			}
-
-			list.erase( list.begin() ) ;
-			delete current ;
-		}
-
-		root_ = nullptr ;
+		release_tree() ;
 	}
 
 	delete UI_ ;
-
-	// TEST WITHOUT INSERT IN MAP
-	delete report_ ;
 
 	plugin_ = nullptr ;
 	report_ = nullptr ;
@@ -147,6 +123,30 @@ Core::analyze_file
 
 		file->analyzed = true ;
 	}
+}
+
+CC_Report *
+Core::check_reports
+(
+	CC_Folder * folder
+)
+{
+	CC_Report * result = nullptr ;
+	QList< QPair< CC_Folder *, CC_Report * > >::const_iterator cit = map_reports_.constBegin() ;
+
+	while( cit != map_reports_.constEnd() && result == nullptr )
+	{
+		if( ( *cit ).first == folder )
+		{
+			result = ( *cit ).second ;
+		}
+		else
+		{
+			++cit ;
+		}
+	}
+
+	return result ;
 }
 
 void
@@ -256,7 +256,7 @@ Core::create_branch
 	return folder ;
 }
 
-unsigned int
+CC_Folder *
 Core::create_tree_view
 ()
 {
@@ -264,10 +264,8 @@ Core::create_tree_view
 	if( directory_.isEmpty() ||
 		plugin_ == nullptr )
 	{
-		return 0 ;
+		return nullptr ;
 	}
-
-	unsigned int result = 0 ;
 
 #ifdef Q_OS_UNIX
 	if( directory_.at( directory_.size() - 1) == '/' )
@@ -281,9 +279,7 @@ Core::create_tree_view
 #endif
 
 	root_ = create_branch( directory_ ) ;
-
-	// ATTENTION CHANGEMENT
-	return result ;
+	return root_ ;
 }
 
 IUI *
@@ -374,7 +370,7 @@ Core::make_report
 	}
 
 	// find if the folder was analyzed before
-	CC_Report * tmp = map_reports_.value( folder, nullptr ) ;
+	CC_Report * tmp = check_reports( folder ) ;
 
 	if( tmp == nullptr )
 	{
@@ -425,7 +421,7 @@ Core::make_report
 		compute_report( report_ ) ;
 
 		// add this report in the list
-		//map_reports_.insert( folder, report_ ) ;
+		map_reports_.push_back( qMakePair( folder, report_ ) ) ;
 	}
 	else
 	{
@@ -434,4 +430,29 @@ Core::make_report
 	}
 
 	return report_ ;
+}
+
+void
+Core::release_tree
+()
+{
+	CC_Folder * current = nullptr ;
+	QList< CC_Folder * > list = { root_ } ;
+
+	while( !( list.empty() ) )
+	{
+		current = list.front() ;
+		list += current->list_folders ;
+
+		while( !( current->list_files.empty() ) )
+		{
+			delete current->list_files[ 0 ] ;
+			current->list_files.erase( current->list_files.begin() ) ;
+		}
+
+		list.erase( list.begin() ) ;
+		delete current ;
+	}
+
+	root_ = nullptr ;
 }

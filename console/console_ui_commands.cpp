@@ -77,13 +77,18 @@ ConsoleUI::directory
 
 	if( !( directory.isEmpty() ) )
 	{
+		// release a potential previous tree view
+		core_->release_tree() ;
+
 		// set the directory in the core
 		core_->set_directory( directory ) ;
 	}
 	else
 	{
-		std::cout << "Nothing was done." << std::endl ;
+		bufferize_text( "Nothing was done." ) ;
 	}
+
+	display_buffer() ;
 }
 
 void
@@ -133,16 +138,18 @@ ConsoleUI::info
 	const QString directory = core_->get_directory() ;
 	if( !( directory.isEmpty() ) )
 	{
-		std::cout << color_text( "Project directory: ", CUI_White ).toStdString() ;
-		std::cout << core_->get_directory().toStdString() << std::endl ;
+		bufferize_text( color_text( "Project directory: ", CUI_White ) ) ;
+		bufferize_text( core_->get_directory() ) ;
 	}
 
 	const IPlugin * plugin = core_->get_plugin() ;
 	if( plugin != nullptr )
 	{
-		std::cout << color_text( "Project language: ", CUI_White ).toStdString() ;
-		std::cout << core_->get_plugin()->get_language().toStdString() << std::endl ;
+		bufferize_text( color_text( "Project language: ", CUI_White ) ) ;
+		bufferize_text( core_->get_plugin()->get_language() ) ;
 	}
+
+	display_buffer() ;
 }
 
 void
@@ -222,8 +229,10 @@ ConsoleUI::language
 	}
 	else
 	{
-		std::cout << "Nothing was done." << std::endl ;
+		bufferize_text( "Nothing was done." ) ;
 	}
+
+	display_buffer() ;
 }
 
 void
@@ -233,9 +242,13 @@ ConsoleUI::preparation
 )
 {
 	param_list.erase( param_list.begin() ) ;
-	unsigned int number_files = core_->create_tree_view() ;
 
-	std::cout << "This project contains " << number_files << " files." << std::endl ;
+	if( core_->create_tree_view() == nullptr )
+	{
+		bufferize_text( "This project folder doesn't contain any file which match with language's extensions." ) ;
+	}
+
+	display_buffer() ;
 }
 
 void
@@ -248,9 +261,17 @@ ConsoleUI::tree
 
 	const CC_Folder * folder = core_->get_root() ;
 
+	if( folder != nullptr )
+	{
+		bufferize_text( folder->name ) ;
 
-	bufferize_text( folder->name ) ;
+		display_tree( folder ) ;
+	}
+	else
+	{
+		bufferize_text( "The system can't find the project directory. There is three possibilities: you have not chosen a project folder with the command 'directory', you have not launch the command 'preparation' or you have but there is no file in this project folder for this language." ) ;
 
-	display_tree( folder ) ;
+	}
+
 	display_buffer() ;
 }

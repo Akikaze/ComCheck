@@ -80,9 +80,9 @@ class Core
 
 		///
 		/// \brief Create a tree view from directory_
-		/// \return Number of files in the tree view
+		/// \return Pointer on the project folder
 		///
-		unsigned int create_tree_view() ;
+		CC_Folder * create_tree_view() ;
 
 		///
 		/// \brief Create a user interface graphical or not
@@ -104,6 +104,11 @@ class Core
 		///
 		CC_Report *	make_report( CC_Folder * folder = nullptr ) ;
 
+		///
+		/// \brief Release the tree view
+		///
+		void release_tree() ;
+
 	private :
 
 		// --- MEMBERS ---
@@ -113,6 +118,13 @@ class Core
 		/// \param file File which need to be analyzed
 		///
 		void analyze_file( CC_File * file ) ;
+
+		///
+		/// \brief Check if one folder is already before
+		/// \param folder Folder
+		/// \return A pointer to the report or nullptr
+		///
+		CC_Report * check_reports( CC_Folder * folder ) ;
 
 		///
 		/// \brief Clear all spaces in a line
@@ -143,7 +155,7 @@ class Core
 		QString	directory_ ; ///< Address of project's repository
 		bool interfaced_ ; ///< Signal for graphical interface
 		QList< IPlugin * > list_plugins_ ; ///< List of plugins
-		QMap< CC_Folder *, CC_Report * > map_reports_ ; ///< Map of reports sort by folder
+		QList< QPair< CC_Folder *, CC_Report * > > map_reports_ ; ///< Map of reports sort by folder
 		IPlugin * plugin_ ; ///< Current plugin used
 		CC_Report * report_ ; ///< Current report used
 		CC_Folder *	root_ ; ///< Root of the tree view
