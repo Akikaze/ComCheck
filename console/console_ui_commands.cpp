@@ -19,7 +19,31 @@ ConsoleUI::analyze
 )
 {
 	param_list.erase( param_list.begin() ) ;
-	core_->make_report() ;
+	QString address = "" ;
+
+	if( param_list.empty() )
+	{
+		core_->make_report() ;
+	}
+	else
+	{
+		for( int i = 0 ; i < param_list.size() ; ++i )
+		{
+			// address
+			if( QString( param_list[ i ] ) == "-a" )
+			{
+				// get the answer in the next parameter
+				address = param_list[ ++i ] ;
+			}
+		}
+
+		param_list.clear() ;
+
+		if( current_folder_ != nullptr )
+		{
+			core_->make_report( current_folder_ ) ;
+		}
+	}
 }
 
 void
@@ -79,13 +103,14 @@ ConsoleUI::directory
 	{
 		// release a potential previous tree view
 		core_->release_tree() ;
+		current_folder_ = nullptr ;
 
 		// set the directory in the core
 		core_->set_directory( directory ) ;
 	}
 	else
 	{
-		bufferize_text( "Nothing was done." ) ;
+		bufferize_text( color_text( "Nothing was done.", CUI_Red ) ) ;
 	}
 
 	display_buffer() ;
@@ -138,15 +163,13 @@ ConsoleUI::info
 	const QString directory = core_->get_directory() ;
 	if( !( directory.isEmpty() ) )
 	{
-		bufferize_text( color_text( "Project directory: ", CUI_White ) ) ;
-		bufferize_text( core_->get_directory() ) ;
+		bufferize_text( color_text( "Project directory: ", CUI_White ) + core_->get_directory() ) ;
 	}
 
 	const IPlugin * plugin = core_->get_plugin() ;
 	if( plugin != nullptr )
 	{
-		bufferize_text( color_text( "Project language: ", CUI_White ) ) ;
-		bufferize_text( core_->get_plugin()->get_language() ) ;
+		bufferize_text( color_text( "Project language: ", CUI_White ) + core_->get_plugin()->get_language() ) ;
 	}
 
 	display_buffer() ;
@@ -229,7 +252,165 @@ ConsoleUI::language
 	}
 	else
 	{
-		bufferize_text( "Nothing was done." ) ;
+		bufferize_text( color_text( "Nothing was done.", CUI_Red ) ) ;
+	}
+
+	display_buffer() ;
+}
+
+void
+ConsoleUI::move
+(
+	QStringList param_list
+)
+{
+	param_list.erase( param_list.begin() ) ;
+	QString name = "" ;
+	size_t pos = 0 ;
+
+	if( current_folder_ != nullptr )
+	{
+		QList< CC_Folder * >::const_iterator cit_Folder ;
+
+		if( param_list.empty() )
+		{
+			name = current_folder_->name + "/" ;
+
+			bufferize_text( color_text( "Current folder: ", CUI_White ) + name ) ;
+			bufferize_text() ;
+
+			QList< CC_File * >::const_iterator cit_File ;
+
+			if( !( current_folder_->list_files.empty() ) )
+			{
+				bufferize_text( "In this folder, you can analyze:" ) ;
+
+				for( cit_File = ( current_folder_->list_files ).constBegin() ;
+					 cit_File != ( current_folder_->list_files ).constEnd() ;
+					 ++cit_File )
+				{
+					name = ( *cit_File )->name ;
+
+#ifdef Q_OS_UNIX
+					pos = name.toStdString().find_last_of( '/' ) ;
+
+					if( pos != name.toStdString().npos )
+					{
+						name = name.right( name.size() - pos - 1 ) ;
+					}
+#endif
+
+#ifdef Q_OS_WIN
+					name = ;
+#endif
+
+					bufferize_text( "\t" + color_text( name, CUI_Yellow ) ) ;
+				}
+
+				bufferize_text() ;
+			}
+
+			if( !( current_folder_->list_folders.empty() ) )
+			{
+				bufferize_text( "You can move to: " ) ;
+
+				for( cit_Folder = ( current_folder_->list_folders ).constBegin() ;
+					 cit_Folder != ( current_folder_->list_folders ).constEnd() ;
+					 ++cit_Folder )
+				{
+					name = ( *cit_Folder )->name ;
+
+#ifdef Q_OS_UNIX
+					pos = name.toStdString().find_last_of( '/' ) ;
+
+					if( pos != name.toStdString().npos )
+					{
+						name = name.right( name.size() - pos - 1 ) ;
+					}
+#endif
+
+#ifdef Q_OS_WIN
+					name = ;
+#endif
+
+					bufferize_text( "\t" + color_text( name, CUI_Blue ) ) ;
+				}
+
+				bufferize_text() ;
+			}
+
+			if( current_folder_->parent != nullptr )
+			{
+				name = current_folder_->parent->name ;
+
+#ifdef Q_OS_UNIX
+					pos = name.toStdString().find_last_of( '/' ) ;
+
+					if( pos != name.toStdString().npos )
+					{
+						name = name.right( name.size() - pos - 1 ) ;
+					}
+#endif
+
+#ifdef Q_OS_WIN
+					name = ;
+#endif
+
+				bufferize_text( "Or you can go back to: " + color_text( name, CUI_Blue ) ) ;
+			}
+
+			bufferize_text( "You just need to write 'move <name_folder>' to change the current folder." ) ;
+		}
+		else
+		{
+			QList< CC_Folder * > list_folders = current_folder_->list_folders ;
+			if( current_folder_->parent != nullptr )
+			{
+				list_folders.push_front( current_folder_->parent ) ;
+			}
+
+			QString address = param_list[ 0 ] ;
+			cit_Folder = list_folders.constBegin() ;
+
+			while( name != address && cit_Folder != list_folders.constEnd() )
+			{
+				name = ( *cit_Folder )->name ;
+
+#ifdef Q_OS_UNIX
+					pos = name.toStdString().find_last_of( '/' ) ;
+
+					if( pos != name.toStdString().npos )
+					{
+						name = name.right( name.size() - pos - 1 ) ;
+					}
+#endif
+
+#ifdef Q_OS_WIN
+					name = ;
+#endif
+
+				if( name == address )
+				{
+					current_folder_ = ( *cit_Folder ) ;
+				}
+
+				++cit_Folder ;
+			}
+
+			if( name == address )
+			{
+				bufferize_text( "The current folder has changed." ) ;
+			}
+			else
+			{
+				bufferize_text( color_text( "Impossible to move to this folder. Check if ", CUI_Red ) + address + color_text( " is the following list.", CUI_Red ) ) ;
+				move( { "move" } ) ;
+			}
+		}
+	}
+	else
+	{
+		bufferize_text( color_text( "Your project folder was not prepared by the system.", CUI_Red ) ) ;
 	}
 
 	display_buffer() ;
@@ -242,10 +423,11 @@ ConsoleUI::preparation
 )
 {
 	param_list.erase( param_list.begin() ) ;
+	current_folder_ = core_->create_tree_view() ;
 
-	if( core_->create_tree_view() == nullptr )
+	if( current_folder_ == nullptr )
 	{
-		bufferize_text( "This project folder doesn't contain any file which match with language's extensions." ) ;
+		bufferize_text( color_text( "This project folder doesn't contain any file which match with language's extensions. Maybe you forgot to choose the language.", CUI_Red ) ) ;
 	}
 
 	display_buffer() ;
@@ -259,17 +441,14 @@ ConsoleUI::tree
 {
 	param_list.erase( param_list.begin() ) ;
 
-	const CC_Folder * folder = core_->get_root() ;
-
-	if( folder != nullptr )
+	if( current_folder_ != nullptr )
 	{
-		bufferize_text( folder->name ) ;
-
-		display_tree( folder ) ;
+		bufferize_text( color_text( current_folder_->name, CUI_Blue ) ) ;
+		display_tree( current_folder_ ) ;
 	}
 	else
 	{
-		bufferize_text( "The system can't find the project directory. There is three possibilities: you have not chosen a project folder with the command 'directory', you have not launch the command 'preparation' or you have but there is no file in this project folder for this language." ) ;
+		bufferize_text( color_text( "The system can't find the project directory. There is three possibilities: you have not chosen a project folder with the command 'directory', you have not launch the command 'preparation' or you have but there is no file in this project folder for this language.", CUI_Red ) ) ;
 
 	}
 

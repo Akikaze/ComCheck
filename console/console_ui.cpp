@@ -18,6 +18,7 @@ ConsoleUI::ConsoleUI
 )
 : IUI( core )
 , buffer_( QStringList() )
+, current_folder_( nullptr )
 , welcomed_( welcomed )
 {
 
@@ -222,7 +223,7 @@ ConsoleUI::display_name
 #endif
 
 #ifdef Q_OS_WIN
-
+	pos = ;
 #endif
 
 	name = name.right( name.size() - pos ) ;
@@ -357,6 +358,10 @@ ConsoleUI::process
 			else if( param_list.front() == "language" )
 			{
 				language( param_list ) ;
+			}
+			else if( param_list.front() == "move" )
+			{
+				move( param_list ) ;
 			}
 			else if( param_list.front() == "preparation" )
 			{

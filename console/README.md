@@ -1,3 +1,21 @@
+# Some bugs:
+
+On a line, a tabulation count as three spaces. But in the code, it's only one character.
+That means when you write a tabulation by mistake, you just need to erase only one space
+even if the line still display two extra spaces. This scheme show the problem more simply:
+
+    you write:          move plug<TAB>in
+    it displays:        move plug   in
+    inside the code:    move plug#in    where # represent the ASCII value of <TAB>
+
+    you erase to get:   move plug
+    it displays:        move plug
+    inside the code:    move pl
+
+    you correct:        move plugin
+    it displays:        move plugin
+    inside the code:    move plin       which is going to display an error
+
 # Some weird code explanation:
 
 In the core, map_reports_ is a QList< QPair< CC_Folder *, CC_Report * > > instead of a

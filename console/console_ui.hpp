@@ -60,7 +60,7 @@ class ConsoleUI
 		// --- COMMANDS ---
 
 		///
-		/// \brief Display the result of the command 'commands'
+		/// \brief Display the result of the command 'analyze'
 		/// \param param_list List of parameters for the command
 		///
 		void analyze( QStringList param_list ) ;
@@ -84,16 +84,22 @@ class ConsoleUI
 		void help( QStringList param_list ) ;
 
 		///
-		/// \brief Display the result of the command 'help'
+		/// \brief Display the result of the command 'info'
 		/// \param param_list List of parameters for the command
 		///
 		void info( QStringList param_list ) ;
 
 		///
-		/// \brief Display the result of the command 'plugin'
+		/// \brief Display the result of the command 'language'
 		/// \param param_list List of parameters for the command
 		///
 		void language( QStringList param_list ) ;
+
+		///
+		/// \brief Display the result of the command 'move'
+		/// \param param_list List of parameters for the command
+		///
+		void move( QStringList param_list ) ;
 
 		///
 		/// \brief Display the result of the command 'preparation'
@@ -183,6 +189,7 @@ class ConsoleUI
 		static unsigned int _rows_ ; ///< Number of rows in the console
 
 		QStringList buffer_ ; ///< Buffer of text
+		CC_Folder * current_folder_ ; ///< Current folder
 		bool welcomed_ ; ///< Signal for a nice welcoming message
 
 		// --- OS EXLUSIVE ---

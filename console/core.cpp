@@ -47,7 +47,7 @@ Core::Core
 			if( QString( argv[ i ] ) == "-t" ||
 				QString( argv[ i ] ) == "--test" )
 			{
-				directory_ = "../console/" ;
+				directory_ = "../" ;
 				interfaced_ = false ;
 				plugin_ = find_plugin( "Test" ) ;
 			}
@@ -275,7 +275,7 @@ Core::create_tree_view
 #endif
 
 #ifdef Q_OS_WIN
-
+	directory = ;
 #endif
 
 	root_ = create_branch( directory_ ) ;
@@ -437,7 +437,12 @@ Core::release_tree
 ()
 {
 	CC_Folder * current = nullptr ;
-	QList< CC_Folder * > list = { root_ } ;
+	QList< CC_Folder * > list ;
+
+	if( root_ != nullptr )
+	{
+		list = { root_ } ;
+	}
 
 	while( !( list.empty() ) )
 	{
