@@ -91,6 +91,11 @@ ConsoleUI::directory
 		core_->release_tree() ;
 		current_folder_ = nullptr ;
 
+		if( directory.at( directory.size() - 1 ) == '/' )
+		{
+			directory = directory.left( directory.size() - 1 ) ;
+		}
+
 		// set the directory in the core
 		core_->set_directory( directory ) ;
 	}
