@@ -1,24 +1,24 @@
-#include "cpp.hpp"
+#include "template.hpp"
 
-CPP_Plugin::CPP_Plugin
+TemplatePlugin::TemplatePlugin
 ()
 {
-	QStringList tmp = { "*.cpp", "*.hpp" } ;
+	QStringList tmp = { "*.???" } ;
 
 	extensions_ = tmp ;
-	language_ = "Test" ;
+	language_ = "Template" ;
 
 	rank_ = USHRT_MAX - 1 ; // default value
 }
 
-CPP_Plugin::~CPP_Plugin
+TemplatePlugin::~TemplatePlugin
 ()
 {
 
 }
 
 CC_Flag
-CPP_Plugin::get_type
+TemplatePlugin::get_type
 (
 	const std::string & line
 )
@@ -29,6 +29,6 @@ CPP_Plugin::get_type
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 
-	Q_EXPORT_PLUGIN2( plugin_CPP, CPP_Plugin )
+	Q_EXPORT_PLUGIN2( plugin_Template, TemplatePlugin )
 
 #endif

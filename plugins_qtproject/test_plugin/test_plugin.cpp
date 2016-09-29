@@ -7,7 +7,8 @@ TestPlugin::TestPlugin
 
 	extensions_ = tmp ;
 	language_ = "Test" ;
-	rank_ = USHRT_MAX - 1 ;
+
+	rank_ = USHRT_MAX - 1 ; // default value
 }
 
 TestPlugin::~TestPlugin
