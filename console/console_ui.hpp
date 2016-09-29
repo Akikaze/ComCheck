@@ -108,6 +108,12 @@ class ConsoleUI
 		void preparation( QStringList param_list ) ;
 
 		///
+		/// \brief Display the result of the command 'report'
+		/// \param param_list List of parameters for the command
+		///
+		void report( QStringList param_list ) ;
+
+		///
 		/// \brief Display the result of the command 'tree'
 		/// \param param_list List of parameters for the command
 		///
@@ -190,6 +196,7 @@ class ConsoleUI
 
 		QStringList buffer_ ; ///< Buffer of text
 		CC_Folder * current_folder_ ; ///< Current folder
+		CC_Report * current_report_ ; ///< Current report
 		bool welcomed_ ; ///< Signal for a nice welcoming message
 
 		// --- OS EXLUSIVE ---

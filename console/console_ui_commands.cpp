@@ -19,31 +19,17 @@ ConsoleUI::analyze
 )
 {
 	param_list.erase( param_list.begin() ) ;
-	QString address = "" ;
 
-	if( param_list.empty() )
+	if( current_folder_ != nullptr )
 	{
-		core_->make_report() ;
+		current_report_ = core_->make_report( current_folder_ ) ;
+		report( { "report" } ) ;
 	}
 	else
 	{
-		for( int i = 0 ; i < param_list.size() ; ++i )
-		{
-			// address
-			if( QString( param_list[ i ] ) == "-a" )
-			{
-				// get the answer in the next parameter
-				address = param_list[ ++i ] ;
-			}
-		}
-
-		param_list.clear() ;
-
-		if( current_folder_ != nullptr )
-		{
-			core_->make_report( current_folder_ ) ;
-		}
+		bufferize_text( color_text( "The system can't find the project directory. There are three possibilities: you have not chosen a project folder with the command 'directory', you have not launch the command 'preparation' or you have but there is no file in this project folder for this language.", CUI_Red ) ) ;
 	}
+
 }
 
 void
@@ -434,6 +420,71 @@ ConsoleUI::preparation
 }
 
 void
+ConsoleUI::report
+(
+	QStringList param_list
+)
+{
+	param_list.erase( param_list.begin() ) ;
+
+	if( current_report_ != nullptr )
+	{
+		if( param_list.empty() )
+		{
+			bufferize_text( color_text( "Report folder: ", CUI_White ) + color_text( current_report_->folder->name, CUI_Blue ) ) ;
+			bufferize_text() ;
+
+			unsigned int uint = current_report_->array[ 0 ] ;
+			bufferize_text( color_text( "Total number of lines: ", CUI_White ) + QString::number( uint ) ) ;
+			bufferize_text() ;
+
+			uint = current_report_->array[ 1 ] ;
+			bufferize_text( color_text( "Number of comment line: ", CUI_White ) + QString::number( uint ) ) ;
+			uint = current_report_->array[ 2 ] ;
+			bufferize_text( color_text( "Number of mixed line: ", CUI_White ) + QString::number( uint ) ) ;
+			uint = current_report_->array[ 3 ] ;
+			bufferize_text( color_text( "Number of pure code line: ", CUI_White ) + QString::number( uint ) ) ;
+			bufferize_text() ;
+
+			double dbl = current_report_->average ;
+			bufferize_text( color_text( "Average: ", CUI_White ) + QString::number( dbl ) ) ;
+			dbl = current_report_->variance ;
+			bufferize_text( color_text( "Variance: ", CUI_White ) + QString::number( dbl ) ) ;
+			dbl = current_report_->divergence ;
+			bufferize_text( color_text( "Divergence: ", CUI_White ) + QString::number( dbl ) ) ;
+			bufferize_text() ;
+		}
+		else
+		{
+			for( int i = 0 ; i < param_list.size() ; ++i )
+			{
+				// histogram
+				if( QString( param_list[ i ] ) == "-h" ||
+					QString( param_list[ i ] ) == "--histogram" )
+				{
+
+				}
+
+				// list
+				if( QString( param_list[ i ] ) == "-l" ||
+					QString( param_list[ i ] ) == "--list" )
+				{
+
+				}
+			}
+
+			param_list.clear() ;
+		}
+	}
+	else
+	{
+		bufferize_text( color_text( "The system can't find a report for this position. You need to use 'analyze' to create the report before using 'report'.", CUI_Red ) ) ;
+	}
+
+	display_buffer() ;
+}
+
+void
 ConsoleUI::tree
 (
 	QStringList param_list
@@ -448,7 +499,7 @@ ConsoleUI::tree
 	}
 	else
 	{
-		bufferize_text( color_text( "The system can't find the project directory. There is three possibilities: you have not chosen a project folder with the command 'directory', you have not launch the command 'preparation' or you have but there is no file in this project folder for this language.", CUI_Red ) ) ;
+		bufferize_text( color_text( "The system can't find the project directory. There are three possibilities: you have not chosen a project folder with the command 'directory', you have not launch the command 'preparation' or you have but there is no file in this project folder for this language.", CUI_Red ) ) ;
 
 	}
 

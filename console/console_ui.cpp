@@ -19,6 +19,7 @@ ConsoleUI::ConsoleUI
 : IUI( core )
 , buffer_( QStringList() )
 , current_folder_( nullptr )
+, current_report_( nullptr )
 , welcomed_( welcomed )
 {
 

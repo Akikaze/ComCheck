@@ -9,10 +9,14 @@ class IPlugin
 {
 	public :
 
+		// --- DESTRUCTORS ---
+
 		///
 		/// \brief Destructor
 		///
 		virtual ~IPlugin() {}
+
+		// --- GETTERS ---
 
 		///
 		/// \brief Getter on extensions
@@ -43,6 +47,8 @@ class IPlugin
 		virtual CC_Flag get_type( const std::string & line ) = 0 ;
 
 	protected :
+
+		// --- ATTRIBUTES ---
 
 		QStringList extensions_ ; ///< Extension analysed by the plugin
 		QString	language_ ; ///< Language of the plugin

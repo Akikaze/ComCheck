@@ -21,9 +21,27 @@ class TemplatePlugin
 
     public :
 
+		// --- CONSTRUCTORS ---
+
+		///
+		/// \brief Constructor
+		///
 		TemplatePlugin() ;
+
+		// --- DESTRUCTORS ---
+
+		///
+		/// \brief Destructor
+		///
 		virtual ~TemplatePlugin() ;
 
+		// --- GETTERS ---
+
+		///
+		/// \brief Get the type of a line
+		/// \param Line of the file
+		/// \return CC_Flag which describe the line
+		///
 		virtual CC_Flag get_type( const std::string & line ) ;
 } ;
 

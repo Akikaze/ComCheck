@@ -376,6 +376,7 @@ Core::make_report
 	{
 		// creation of a new report
 		report_ = new CC_Report() ;
+		report_->folder = folder ;
 
 		// loop preparation
 		QList< CC_Folder * > list_folder = folder->list_folders ;
