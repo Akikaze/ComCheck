@@ -16,7 +16,7 @@ On a line, a tabulation count as three spaces. But in the code, it's only one ch
 
 # Some weird code explanation:
 
-In the core, map_reports_ is a QList< QPair< CC_Folder *, CC_Report * > > instead of a QMap< CC_Folder *, CC_Report * >. I have tried to use a QMap or even a std::map but the insertion during the method make_report block the quit function of QCoreApplication. That means, you can't leave the program without creating memory leaks. I was not able to understand how solving this problem. Thus I have chosen to avoid it.
+In the core, map_reports_ is a QList< QPair< CC_Folder *, CC_Report * > > instead of a QMap< CC_Folder *, CC_Report * >. I have tried to use a QMap or even a std::map but the insertion during the method `make_report` block the `quit` function of QCoreApplication. That means, you can't leave the program without creating memory leaks. I was not able to understand how solving this problem. Thus I have chosen to avoid it.
 
 # Memory leaks:
 
