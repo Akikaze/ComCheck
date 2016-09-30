@@ -6,7 +6,7 @@ The algorithm that determine this classification could be directly integrated in
 
 The user can use the default ComCheck which contains the C++ plugin. But he can also download and compile other plugins for other languages, and even create his own plugin for his specific use.
 
-# How it works ?
+## How it works ?
 
 A plugin requires at least two pieces of information and three at most:
 
@@ -16,7 +16,7 @@ A plugin requires at least two pieces of information and three at most:
 
 The interface of plugins could be find in ComCheck sources in iplugin.hpp
 
-# How could you create your own plugin ?
+## How could you create your own plugin ?
 
 In the folder, you can find a folder called "template" which describes a useless plugin. You can just copy it, paste it in another folder and work with the copy by opening the .pro in QtCreator (Qt4 or Qt5).
 
@@ -38,11 +38,11 @@ At the end, you just need to build this project (Ctrl+B or bottom right button) 
 6. open the .cpp and rename the header include in the first line in #include "cpp.hpp"
 7. change the extension and the language in the constructor
 8. open the .hpp, make Ctrl+Shift+F, put 'Scope' on 'CurrentProject'
-                                     write 'TemplatePlugin' in 'Search for'
-                                     check 'Case sensitive'
-                                     click on 'Search & Replace'
-                                     write 'CPP_Plugin' in 'Replace with'
-                                     click on 'Replace'
+81.  write 'TemplatePlugin' in 'Search for'
+82.  check 'Case sensitive'
+83.  click on 'Search & Replace'
+84.  write 'CPP_Plugin' in 'Replace with'
+85.  click on 'Replace'
 9. in the .cpp, in the Q_EXPORT_PLUGIN2 macro, replace 'plugin_Template' by 'plugin_CPP'
 
 Now I just need to implement the CPP algorithm in the `get_type` method, and build the project, to create the perfect plugin for ComCheck.
