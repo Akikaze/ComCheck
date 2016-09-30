@@ -43,13 +43,22 @@ Core::Core
 				interfaced_ = true ;
 			}
 
+			/*
+			// plugin
+			if( QString( argv[ i ] ) == "-p" ||
+				QString( argv[ i ] ) == "--plugin" )
+			{
+				create_plugin( argv[ ++i ] ) ;
+			}
+			*/
+
 			// test
 			if( QString( argv[ i ] ) == "-t" ||
 				QString( argv[ i ] ) == "--test" )
 			{
 				directory_ = "../" ;
 				interfaced_ = false ;
-				plugin_ = find_plugin( "Test" ) ;
+				plugin_ = find_plugin( "C++" ) ;
 			}
 
 			//welcomed
@@ -85,8 +94,10 @@ Core::~Core
 		release_tree() ;
 	}
 
+	// delete the interface
 	delete UI_ ;
 
+	// cancel every pointer
 	plugin_ = nullptr ;
 	report_ = nullptr ;
 	UI_ = nullptr ;
@@ -98,6 +109,7 @@ Core::analyze_file
 	CC_File * file
 )
 {
+	// open the file
 	std::ifstream ifs( file->name.toStdString(), std::ios::in ) ;
 
 	if( ifs )
@@ -121,6 +133,7 @@ Core::analyze_file
 			}
 		}
 
+		// signal that this file is already analyzed
 		file->analyzed = true ;
 	}
 }
@@ -134,10 +147,13 @@ Core::check_reports
 	CC_Report * result = nullptr ;
 	QList< QPair< CC_Folder *, CC_Report * > >::const_iterator cit = map_reports_.constBegin() ;
 
+	// go through every report
 	while( cit != map_reports_.constEnd() && result == nullptr )
 	{
+		// check if this folder was analyzed previously
 		if( ( *cit ).first == folder )
 		{
+			// avoid a second useless analyze
 			result = ( *cit ).second ;
 		}
 		else
@@ -158,6 +174,7 @@ Core::clear_line
 	unsigned int i = 0 ;
 	unsigned int length = line.length() ;
 
+	// erase any thing useless
 	while( i < length )
 	{
 		if( int( line[ i ] ) == 9 || // tab
@@ -180,9 +197,37 @@ Core::compute_report
 	CC_Report * report
 )
 {
-	// compute average, variance and divergence
-	report->average = 0 ;
-	report->variance = 1 ;
+	// loop initializer
+	double average = 0 ;
+	QList< double > percents = report->percents ;
+	QList< double >::const_iterator cit ;
+
+	// compute average
+
+	// add each percent value
+	for( cit = percents.constBegin() ; cit != percents.constEnd() ; ++cit )
+	{
+		average += ( *cit ) ;
+	}
+
+	// divide by the number of elements
+	average /= ( double )( percents.size() ) ;
+	report->average = average ;
+
+	// compute variance
+
+	report->variance = 0 ;
+
+	// add each block of the calcul
+	for( cit = percents.constBegin() ; cit != percents.constEnd() ; ++cit )
+	{
+		report->variance += ( ( *cit ) - average ) * ( ( *cit ) - average ) ;
+	}
+
+	report->variance /= ( double )( percents.size() ) ;
+
+	// compute divergence
+
 	report->divergence = sqrt( report->variance ) ;
 }
 
@@ -225,30 +270,38 @@ Core::create_branch
 	// check each folder in this one
 	for( cit = list_folders_name.constBegin() ; cit != list_folders_name.constEnd() ; ++cit )
 	{
+		// create a branch recursively
 		folder = create_branch( name_folder + "/" + *cit ) ;
 
+		// useless folders must not appears in the tree view
 		if( folder != nullptr )
 		{
 			list_folders.push_back( folder ) ;
 		}
 	}
 
+	// if there is something interesting in this folder
 	if( ! list_files.empty() || ! list_folders.empty() )
 	{
+		// store the folder
 		folder = new CC_Folder() ;
 		folder->name = name_folder ;
 
+		// signal the folder of each file interesting in this folder
 		for( cit_File = list_files.begin() ; cit_File != list_files.end() ; ++cit_File )
 		{
 			( *cit_File )->folder = folder ;
 		}
 
+		// signal the parent of each folder interesting in this one
 		for( cit_Folder = list_folders.begin() ; cit_Folder != list_folders.end() ; ++cit_Folder )
 		{
 			( *cit_Folder )->parent = folder ;
 		}
 
+		// store its files
 		folder->list_files = list_files ;
+		// store its interesting folders
 		folder->list_folders = list_folders ;
 
 	}
@@ -278,7 +331,9 @@ Core::create_tree_view
 	directory = ;
 #endif
 
+	// create the tree view from the root
 	root_ = create_branch( directory_ ) ;
+
 	return root_ ;
 }
 
@@ -286,12 +341,14 @@ IUI *
 Core::create_UI
 ()
 {
+	// check if the graphical interface is installed
 	if( interfaced_ == true )
 	{
 		std::cout << "Currently, there is no graphical interface available." << std::endl ;
 	}
 	else
 	{
+		// use the console interface
 		UI_ = new ConsoleUI( this, welcomed_ ) ;
 	}
 
@@ -329,6 +386,7 @@ Core::list_plugins
 	QList< IPlugin * > list ;
 	IPlugin * plugin = nullptr ;
 
+	// check in the right directory directly
 	QString dir = "../plugins" ;
 	QDir plugin_directory = QDir( dir ) ;
 
@@ -342,6 +400,7 @@ Core::list_plugins
 		// if it's the right plugin format
 		if( loader.load() == true )
 		{
+			// create a plugin thanks to the loader instance
 			plugin = qobject_cast< IPlugin * >( loader.instance() ) ;
 			list.push_back( plugin ) ;
 		}
@@ -410,7 +469,7 @@ Core::make_report
 				report_->list_files.push_back( *cit_File ) ;
 
 				// compute percentage
-				double percent = 0 ;
+				double percent = ( ( *cit_File )->array[ 1 ] + ( *cit_File )->array[ 2 ] ) * 100 / ( *cit_File )->array[ 0 ] ;
 				report_->percents.push_back( percent ) ;
 
 				// store value
@@ -440,6 +499,7 @@ Core::release_tree
 	CC_Folder * current = nullptr ;
 	QList< CC_Folder * > list ;
 
+	// if there is a tree view
 	if( root_ != nullptr )
 	{
 		list = { root_ } ;
@@ -447,9 +507,13 @@ Core::release_tree
 
 	while( !( list.empty() ) )
 	{
+		// for a specific folder
 		current = list.front() ;
+
+		// add its folders in the list
 		list += current->list_folders ;
 
+		// erase every file in this folder
 		while( !( current->list_files.empty() ) )
 		{
 			delete current->list_files[ 0 ] ;
@@ -457,6 +521,8 @@ Core::release_tree
 		}
 
 		list.erase( list.begin() ) ;
+
+		// erase the folder
 		delete current ;
 	}
 

@@ -101,17 +101,64 @@ ConsoleUI::bufferize_text
 	}
 	else
 	{
-		while( ( unsigned int )( text.length() ) > _cols_ )
+		unsigned int pos_string = 0 ;
+
+		if( ( unsigned int )( text.length() ) > _cols_ )
 		{
-			unsigned int pos = _cols_ - 1 ;
-
-			while( text[ pos ] != ' ' )
+			while( ( unsigned int )( text.length() ) > _cols_ )
 			{
-				pos-- ;
-			}
+				unsigned int pos_real = 0 ;
+				unsigned int pos_space = 0 ;
+				pos_string = 0 ;
 
-			buffer_.push_back( text.left( pos ) ) ;
-			text.remove( 0, pos + 1 ) ;
+				while( pos_string < ( unsigned int )( text.length() ) && pos_real < _cols_ )
+				{
+					if( text[ pos_string ] == 27 )
+					{
+						do
+						{
+							++pos_string ;
+						}
+						while( text[ pos_string ] != QChar( '#' ) ) ;
+
+						text.remove( pos_string, 1 ) ;
+					}
+					else
+					{
+						if( text[ pos_string ] == QChar( ' ' ) )
+						{
+							pos_space = pos_string ;
+						}
+					}
+
+					++pos_real ;
+					++pos_string ;
+				}
+
+				// weird case when the text line is bigger than possible but the real line is shorter
+				if( pos_string == ( unsigned int )( text.length() ) && pos_real < _cols_ )
+				{
+					// it can appear if we use ton of colors in the same line
+					break ;
+				}
+
+				buffer_.push_back( text.left( pos_space ) ) ;
+				text.remove( 0, pos_space + 1 ) ;
+			}
+		}
+		else
+		{
+			while( pos_string < ( unsigned int )( text.length() ) )
+			{
+				if( text[ pos_string ] == QChar( '#' ) )
+				{
+					text.remove( pos_string, 1 ) ;
+				}
+				else
+				{
+					++pos_string ;
+				}
+			}
 		}
 
 		buffer_.push_back( text ) ;
@@ -132,9 +179,11 @@ QString
 ConsoleUI::color_text
 (
 	QString text,
-	CUI_TextColor color
+	CUI_TextColor color,
+	bool add_hashtag
 )
 {
+	QString hashtag = "" ;
 	QString tmp = "\x1B[1m" ; // bold
 	// QString tmp = "\x1B[4m" ; // underline
 
@@ -154,9 +203,14 @@ ConsoleUI::color_text
 #endif
 	}
 
-	tmp += text ;
+	if( add_hashtag == true )
+	{
+		hashtag = "#" ;
+	}
+
+	tmp += hashtag + text ;
 	tmp += "\x1B[0m" ; // reset
-	text = tmp ;
+	text = tmp + hashtag ;
 
 	return text ;
 }
@@ -172,6 +226,36 @@ ConsoleUI::console_size
 #ifdef Q_OS_WIN
 	WIN_console_size() ;
 #endif
+}
+
+QString
+ConsoleUI::display_array
+(
+	const std::array< unsigned int, CC_Flag::CC_Flag_Size > & array,
+	bool shortcut
+)
+{
+	QString result = "" ;
+
+	if( shortcut == false )
+	{
+		bufferize_text( color_text( "Total number of lines: ", CUI_White ) + QString::number( array[ 0 ] ) ) ;
+		bufferize_text() ;
+
+		bufferize_text( color_text( "Number of comment line: ", CUI_White ) + QString::number( array[ 1 ] ) ) ;
+		bufferize_text( color_text( "Number of mixed line: ", CUI_White ) + QString::number( array[ 2 ]  ) ) ;
+		bufferize_text( color_text( "Number of pure code line: ", CUI_White ) + QString::number( array[ 3 ]  ) ) ;
+		bufferize_text() ;
+	}
+	else
+	{
+		result += color_text( "TOT: ", CUI_White ) + QString::number( array[ 0 ] ) + " " ;
+		result += color_text( "COM: ", CUI_White ) + QString::number( array[ 1 ] ) + " " ;
+		result += color_text( "MIX: ", CUI_White ) + QString::number( array[ 2 ] ) + " " ;
+		result += color_text( "COD: ", CUI_White ) + QString::number( array[ 3 ] ) + " " ;
+	}
+
+	return result ;
 }
 
 void
@@ -250,6 +334,24 @@ ConsoleUI::display_name
 }
 
 void
+ConsoleUI::display_report
+(
+	CC_Report * report
+)
+{
+	double dbl = report->average ;
+	bufferize_text( color_text( "Average: ", CUI_White ) + QString::number( dbl ) ) ;
+
+	dbl = report->variance ;
+	bufferize_text( color_text( "Variance: ", CUI_White ) + QString::number( dbl ) ) ;
+
+	dbl = report->divergence ;
+	bufferize_text( color_text( "Divergence: ", CUI_White ) + QString::number( dbl ) ) ;
+
+	bufferize_text() ;
+}
+
+void
 ConsoleUI::display_tree
 (
 	const CC_Folder * folder,
@@ -320,7 +422,7 @@ ConsoleUI::process
 		param_list.clear() ;
 
 		// get the command line
-		std::cout << color_text( "CC:> ", CUI_Green ).toStdString() ;
+		std::cout << color_text( "CC:> ", CUI_Green, false ).toStdString() ;
 
 		std::getline( std::cin, tmp ) ;
 		command = QString( tmp.c_str() ).simplified() ;
@@ -367,6 +469,10 @@ ConsoleUI::process
 			else if( param_list.front() == "preparation" )
 			{
 				preparation( param_list ) ;
+			}
+			else if( param_list.front() == "report" )
+			{
+				report( param_list ) ;
 			}
 			else if( param_list.front() == "tree" )
 			{

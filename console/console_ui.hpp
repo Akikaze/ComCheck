@@ -17,12 +17,26 @@
 #include <windows.h>
 #endif
 
+// ===== CUI_TextAlignment =====
+
+/*
+ * To give the opportunity to align the text to left, right or center.
+ * It is used in the align_line method.
+ */
+
 enum CUI_TextAlignment
 {
 	CUI_LEFT = 0,
 	CUI_CENTER,
 	CUI_RIGHT
 } ;
+
+// ===== CUI_TextColor =====
+
+/*
+ * To give the opportunity to color the text regardless the operating system.
+ * It is used in the color_text method.
+ */
 
 enum CUI_TextColor
 {
@@ -34,6 +48,8 @@ enum CUI_TextColor
 	CUI_Cyan,
 	CUI_White
 } ;
+
+// ===== ConsoleUI =====
 
 class ConsoleUI
 : public IUI
@@ -144,14 +160,23 @@ class ConsoleUI
 		/// \brief Color text according to the OS
 		/// \param text Text
 		/// \param color Color for the text
+		/// \param add_hashtag Add a mark at the end of the codage. False if you are not using bufferize_text
 		/// \return string with encrypted character for colorization
 		///
-		QString color_text( QString text, CUI_TextColor color ) ;
+		QString color_text( QString text, CUI_TextColor color, bool add_hashtag = true ) ;
 
 		///
 		/// \brief Get the size of the console
 		///
 		static void console_size() ;
+
+		///
+		/// \brief Display a array correctly
+		/// \param array Array
+		/// \param shortcut Require a beautiful description or the minimal
+		/// \return QString if shortcut is activated
+		///
+		QString display_array( const std::array< unsigned int, CC_Flag::CC_Flag_Size > & array, bool shortcut = false ) ;
 
 		///
 		/// \brief Display the whole buffer which contain strings
@@ -164,6 +189,12 @@ class ConsoleUI
 		/// \param level Size of indentation
 		///
 		void display_name( QString name, bool isFile, unsigned int level ) ;
+
+		///
+		/// \brief Display a report average, variance and divergence
+		/// \param report Report
+		///
+		void display_report( CC_Report * report ) ;
 
 		///
 		/// \brief Display the tree view

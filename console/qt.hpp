@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QList>
+#include <QMap>
 #include <QPair>
 #include <QPluginLoader>
 #include <QString>

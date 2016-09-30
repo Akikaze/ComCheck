@@ -123,8 +123,7 @@ ConsoleUI::help
 		bufferize_text( "ComCheck is a little tool used for analyzing source code files and counting how many comments are written in these files, regardless of programming language.") ;
 		bufferize_text() ;
 
-		bufferize_text( "Obviously, C++ comments are not written like HTML comments which don't either look like PHP comments. But what is common between every langage is the fact that they require files which contain lines.") ;
-		bufferize_text( "This is why ComCheck looks every folder of a project and lists every files before checking, for each file, the type of each line (code, comment or mix)." ) ;
+		bufferize_text( "Obviously, C++ comments are not written like HTML comments which don't either look like PHP comments. But what is common between every langage is the fact that they require files which contain lines. This is why ComCheck looks every folder of a project and lists every files before checking, for each file, the type of each line (code, comment or mix)." ) ;
 		bufferize_text() ;
 
 		bufferize_text( "But, for determining if a line is a comment, ComCheck needs to know how are written comments in every langage. And this is really hard for a static system. To be able to understand even future langage still not invented, ComCheck uses a system of modules that you can plug directly in ComCheck. By default, ComCheck brings a module for C++. But if you know how to use C++ and QtCreator, you can create your own module for a specific language." ) ;
@@ -257,6 +256,7 @@ ConsoleUI::move
 {
 	param_list.erase( param_list.begin() ) ;
 	QString name = "" ;
+	bool possible_move = false ;
 	size_t pos = 0 ;
 
 	if( current_folder_ != nullptr )
@@ -328,6 +328,7 @@ ConsoleUI::move
 				}
 
 				bufferize_text() ;
+				possible_move = true ;
 			}
 
 			if( current_folder_->parent != nullptr )
@@ -347,10 +348,14 @@ ConsoleUI::move
 					name = ;
 #endif
 
-				bufferize_text( "Or you can go back to: " + color_text( name, CUI_Blue ) ) ;
+				bufferize_text( "You can go back to: " + color_text( name, CUI_Blue ) ) ;
+				possible_move = true ;
 			}
 
-			bufferize_text( "You just need to write 'move <name_folder>' to change the current folder." ) ;
+			if( possible_move == true )
+			{
+				bufferize_text( "You just need to write 'move <name_folder>' to change the current folder." ) ;
+			}
 		}
 		else
 		{
@@ -439,30 +444,52 @@ ConsoleUI::report
 			bufferize_text( color_text( "Report folder: ", CUI_White ) + color_text( current_report_->folder->name, CUI_Blue ) ) ;
 			bufferize_text() ;
 
-			unsigned int uint = current_report_->array[ 0 ] ;
-			bufferize_text( color_text( "Total number of lines: ", CUI_White ) + QString::number( uint ) ) ;
-			bufferize_text() ;
+			display_array( current_report_->array );
+			display_report( current_report_ ) ;
 
-			uint = current_report_->array[ 1 ] ;
-			bufferize_text( color_text( "Number of comment line: ", CUI_White ) + QString::number( uint ) ) ;
-			uint = current_report_->array[ 2 ] ;
-			bufferize_text( color_text( "Number of mixed line: ", CUI_White ) + QString::number( uint ) ) ;
-			uint = current_report_->array[ 3 ] ;
-			bufferize_text( color_text( "Number of pure code line: ", CUI_White ) + QString::number( uint ) ) ;
-			bufferize_text() ;
-
-			double dbl = current_report_->average ;
-			bufferize_text( color_text( "Average: ", CUI_White ) + QString::number( dbl ) ) ;
-			dbl = current_report_->variance ;
-			bufferize_text( color_text( "Variance: ", CUI_White ) + QString::number( dbl ) ) ;
-			dbl = current_report_->divergence ;
-			bufferize_text( color_text( "Divergence: ", CUI_White ) + QString::number( dbl ) ) ;
-			bufferize_text() ;
 		}
 		else
 		{
+			QList< CC_File * >::const_iterator cit ;
+
 			for( int i = 0 ; i < param_list.size() ; ++i )
 			{
+				// files
+				if( QString( param_list[ i ] ) == "-f" ||
+					QString( param_list[ i ] ) == "--files" )
+				{
+					unsigned int pos = 0 ;
+					QString line = "" ;
+
+					for( cit = current_report_->list_files.constBegin() ;
+						 cit != current_report_->list_files.constEnd() ;
+						 ++cit )
+					{
+						line = "" ;
+						CC_File * file = ( *cit ) ;
+						CUI_TextColor tc = CUI_Yellow ;
+
+						if( current_report_->percents[ pos ] < 0.8 * current_report_->average )
+						{
+							tc = CUI_Red ;
+						}
+
+						if( current_report_->percents[ pos ] > 1.2 * current_report_->average )
+						{
+							tc = CUI_Green ;
+						}
+
+						line = color_text( file->name, tc ) ;
+						line += " " + color_text( "% ", CUI_White ) + QString::number( current_report_->percents[ pos ] ) ;
+						line += " " + display_array( file->array, true ) ;
+
+						bufferize_text( line ) ;
+						pos++ ;
+					}
+
+					bufferize_text() ;
+				}
+
 				// histogram
 				if( QString( param_list[ i ] ) == "-h" ||
 					QString( param_list[ i ] ) == "--histogram" )
@@ -470,11 +497,68 @@ ConsoleUI::report
 
 				}
 
-				// list
+				// level
 				if( QString( param_list[ i ] ) == "-l" ||
-					QString( param_list[ i ] ) == "--list" )
+					QString( param_list[ i ] ) == "--level" )
 				{
+					unsigned int number = ( param_list[ ++i ] ).toInt() ;
 
+					QList< double > trick = current_report_->percents ;
+					QList< double >::iterator it ;
+
+					unsigned int decimal = 1 ;
+					QString tmp = QString::number( trick.size() ) ;
+					for( int i = 0 ; i < tmp.length() ; ++i )
+					{
+						decimal *= 10 ;
+					}
+
+					for( int i = 0 ; i < trick.size() ; ++i )
+					{
+						trick[ i ] *= decimal ;
+						trick[ i ] += i ;
+					}
+
+					std::sort( trick.begin(), trick.end() ) ;
+
+					QString line ;
+					CC_File * file ;
+					int pos = 0 ;
+
+					/*
+
+					bufferize_text( QString::number( number ) + " worst commented file:" ) ;
+					for( unsigned int i = 0 ; i < number ; ++i )
+					{
+						pos = ( int )( trick[ i ] - ( ( int )( trick[ i ] / decimal ) * decimal ) ) ;
+						file = current_report_->list_files[ pos ] ;
+
+						line = color_text( file->name, CUI_Red ) ;
+						line += " " + color_text( "% ", CUI_White ) + QString::number( current_report_->percents[ pos ] ) ;
+						line += " " + display_array( file->array, true ) ;
+
+						bufferize_text( line ) ;
+					}
+					bufferize_text() ;
+
+					bufferize_text( QString::number( number ) + " best commented file:" ) ;
+					for( unsigned int i = 1 ; i < number + 1 ; ++i )
+					{
+						std::cout << trick[ trick.size() - i ] - ( ( int )( trick[ trick.size() - i ] / decimal ) * decimal ) << std::endl ;
+						pos = ( trick[ trick.size() - i ] - ( int )( trick[ trick.size() - i ] ) ) * decimal ;
+						std::cout << pos << std::endl ;
+						file = current_report_->list_files[ pos ] ;
+
+						line = color_text( file->name, CUI_Green ) ;
+						line += " " + color_text( "% ", CUI_White ) + QString::number( current_report_->percents[ pos ] ) ;
+						line += " " + display_array( file->array, true ) ;
+
+						bufferize_text( line ) ;
+					}
+
+					bufferize_text() ;
+
+					*/
 				}
 			}
 
