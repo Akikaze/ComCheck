@@ -47,5 +47,4 @@ At the end, you just need to build this project (Ctrl+B or bottom right button) 
                       click on 'Replace'
     9: in the .cpp, in the Q_EXPORT_PLUGIN2 macro, replace 'plugin_Template' by 'plugin_CPP'
 
-Now I just need to implement the CPP algorithm in the `get_type` method, and build the project, to create the perfect plugin for ComCheck.
-
+Now I just need to implement the CPP algorithm in the `get_type` method, and build the project.
