@@ -33,7 +33,7 @@ At the end, you just need to build this project (Ctrl+B or bottom right button) 
 
     1: copy 'template' folder and paste it by changing the name into 'CPP'
     2: enter in 'CPP' and rename every file in 'cpp.*' instead of 'template.*'
-    3: open QtCreator and open the cpp.pro in it, click on 'Configure' if it asks
+    3: open QtCreator and open the cpp.pro as a project, click on 'Configure Project'
     4: rename every 'template.*' in 'cpp.*' and 'plugin_Template' into 'plugin_CPP' and save
     5: double click on 'cpp.pro' in the file list at the left to include cpp.cpp and cpp.hpp
     6: open the .cpp and rename the header include in the first line in #include "cpp.hpp"
