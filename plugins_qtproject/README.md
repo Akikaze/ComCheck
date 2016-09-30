@@ -12,6 +12,7 @@ A plugin requires at least two pieces of information and three at most:
 
 1. a list of extension to be able to filter every file (mandatory)
 2. a language which play the role of title for the plugin (mandatory)
+
 * a rank in order to display the list of plugins in a specific order
 
 The interface of plugins could be find in ComCheck sources in iplugin.hpp
