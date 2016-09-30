@@ -1,15 +1,10 @@
 # Plugins
 
-For ComCheck, a plugin is a dynamic library which can analyze lines of specific files
-and says that this line is rather a comment or a code line.
+For ComCheck, a plugin is a dynamic library which can analyze lines of specific files and says that this line is rather a comment or a code line.
 
-The algorithm that determine this classification could be directly integrated in
-ComCheck. But if we do like this, you won't be able to analyzed two differents languages
-with the same program. That's why, in ComCheck, one plugin describe on language.
+The algorithm that determine this classification could be directly integrated in ComCheck. But if we do like this, you won't be able to analyzed two differents languages with the same program. That's why, in ComCheck, one plugin describe on language.
 
-The user can use the default ComCheck which contains the C++ plugin. But he can also
-download and compile other plugins for other languages, and even create his own plugin
-for his specific use.
+The user can use the default ComCheck which contains the C++ plugin. But he can also download and compile other plugins for other languages, and even create his own plugin for his specific use.
 
 # How it works ?
 
@@ -23,27 +18,17 @@ The interface of plugins could be find in ComCheck sources in iplugin.hpp
 
 # How could you create your own plugin ?
 
-In the folder, you can find a folder called "template" which describes a useless plugin.
-You can just copy it, paste it in another folder and work with the copy by opening the
-.pro in QtCreator (Qt4 or Qt5).
+In the folder, you can find a folder called "template" which describes a useless plugin. You can just copy it, paste it in another folder and work with the copy by opening the .pro in QtCreator (Qt4 or Qt5).
 
 To create your own plugin, you need to modify some data from this template project :
 
-    In the .pro, the TARGET represents the name of your plugin so be sure that there is
-    no other plugin called libTARGET.a, libTARGET.o or TARGET.dll
+    In the .pro, the TARGET represents the name of your plugin so be sure that there is no other plugin called libTARGET.a, libTARGET.o or TARGET.dll
 
-    I recommend you to change the class name. I don't think that it will create a problem
-    but "to be prepared is half the victory".
+    I recommend you to change the class name. I don't think that it will create a problem but "to be prepared is half the victory".
 
-    You can change every important values in the constructor of your class. And you can
-    add any method you need. The only you need to know is that ComCheck will call your
-    plugin by the 'get_type' method for each line of each file with the right extension.
-    You can implement as you wish but be sure that you return a CC_Flag.
-    If you use Qt4, you need to check if the first parameter in the Q_EXPORT_PLUGIN2 macro
-    is exactly the same string as TARGET.
+    You can change every important values in the constructor of your class. And you can add any method you need. The only you need to know is that ComCheck will call your plugin by the 'get_type' method for each line of each file with the right extension. You can implement as you wish but be sure that you return a CC_Flag. If you use Qt4, you need to check if the first parameter in the Q_EXPORT_PLUGIN2 macro is exactly the same string as TARGET.
 
-    At the end, you just need to build this project (Ctrl+B or bottom right button) to
-    create the dynamic library in the plugins folder.
+    At the end, you just need to build this project (Ctrl+B or bottom right button) to create the dynamic library in the plugins folder.
 
 This is how I have create the C++ plugin:
 
@@ -62,6 +47,5 @@ This is how I have create the C++ plugin:
                                          click on 'Replace'
     9: in the .cpp, in the Q_EXPORT_PLUGIN2 macro, replace 'plugin_Template' by 'plugin_CPP'
 
-Now I just need to implement the CPP algorithm in the 'get_type' method, and build the
-project, to create the perfect plugin for ComCheck.
+Now I just need to implement the CPP algorithm in the 'get_type' method, and build the project, to create the perfect plugin for ComCheck.
 

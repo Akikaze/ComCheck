@@ -1,8 +1,6 @@
 # Some bugs:
 
-On a line, a tabulation count as three spaces. But in the code, it's only one character.
-That means when you write a tabulation by mistake, you just need to erase only one space
-even if the line still display two extra spaces. This scheme show the problem more simply:
+On a line, a tabulation count as three spaces. But in the code, it's only one character. That means when you write a tabulation by mistake, you just need to erase only one space even if the line still display two extra spaces. This scheme show the problem more simply:
 
     you write:          move plug<TAB>in
     it displays:        move plug   in
@@ -18,16 +16,11 @@ even if the line still display two extra spaces. This scheme show the problem mo
 
 # Some weird code explanation:
 
-In the core, map_reports_ is a QList< QPair< CC_Folder *, CC_Report * > > instead of a
-QMap< CC_Folder *, CC_Report * >. I have tried to use a QMap or even a std::map but the
-insertion during the method make_report block the quit function of QCoreApplication.
-That means, you can't leave the program without creating memory leaks. I was not able to
-understand how solving this problem. Thus I have chosen to avoid it.
+In the core, map_reports_ is a QList< QPair< CC_Folder *, CC_Report * > > instead of a QMap< CC_Folder *, CC_Report * >. I have tried to use a QMap or even a std::map but the insertion during the method make_report block the quit function of QCoreApplication. That means, you can't leave the program without creating memory leaks. I was not able to understand how solving this problem. Thus I have chosen to avoid it.
 
 # Memory leaks:
 
-If you valgrind the execution of ComCheck, it is going to show some memory issues. Those
-issues come from different places and are caused by Qt :
+If you valgrind the execution of ComCheck, it is going to show some memory issues. Those issues come from different places and are caused by Qt :
 
 The usage of QCoreApplication makes valgrind display:
 
