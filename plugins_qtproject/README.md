@@ -37,12 +37,7 @@ At the end, you just need to build this project (Ctrl+B or bottom right button) 
 5. double click on 'cpp.pro' in the file list at the left to include cpp.cpp and cpp.hpp
 6. open the .cpp and rename the header include in the first line in #include "cpp.hpp"
 7. change the extension and the language in the constructor
-8. open the .hpp, make Ctrl+Shift+F, put 'Scope' on 'CurrentProject'
-                                     write 'TemplatePlugin' in 'Search for'
-                                     check 'Case sensitive'
-                                     click on 'Search & Replace'
-                                     write 'CPP_Plugin' in 'Replace with'
-                                     click on 'Replace'
+8. open the .hpp, make Ctrl+Shift+F, put 'Scope' on 'CurrentProject', write 'TemplatePlugin' in 'Search for', check 'Case sensitive', click on 'Search & Replace', write 'CPP_Plugin' in 'Replace with', click on 'Replace'
 9. in the .cpp, in the Q_EXPORT_PLUGIN2 macro, replace 'plugin_Template' by 'plugin_CPP'
 
 Now I just need to implement the CPP algorithm in the `get_type` method, and build the project, to create the perfect plugin for ComCheck.
