@@ -187,7 +187,7 @@ ConsoleUI::language
 			std::cout << "The system handles:" << std::endl ;
 			for( int i = 0 ; i < list.size() ; ++i )
 			{
-				tmp = color_text( list[ i ]->get_language(), CUI_White ).toStdString() ;
+                tmp = color_text( list[ i ]->get_language(), CUI_White, false ).toStdString() ;
 				std::cout << "\t" << tmp << std::endl ;
 				tmp = "" ;
 			}
