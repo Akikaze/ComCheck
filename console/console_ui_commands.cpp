@@ -281,19 +281,12 @@ ConsoleUI::move
 					 ++cit_File )
 				{
 					name = ( *cit_File )->name ;
-
-#ifdef Q_OS_UNIX
 					pos = name.toStdString().find_last_of( '/' ) ;
 
 					if( pos != name.toStdString().npos )
 					{
 						name = name.right( name.size() - pos - 1 ) ;
 					}
-#endif
-
-#ifdef Q_OS_WIN
-					name = ;
-#endif
 
 					bufferize_text( "\t" + color_text( name, CUI_Yellow ) ) ;
 				}
@@ -310,19 +303,12 @@ ConsoleUI::move
 					 ++cit_Folder )
 				{
 					name = ( *cit_Folder )->name ;
-
-#ifdef Q_OS_UNIX
 					pos = name.toStdString().find_last_of( '/' ) ;
 
 					if( pos != name.toStdString().npos )
 					{
 						name = name.right( name.size() - pos - 1 ) ;
 					}
-#endif
-
-#ifdef Q_OS_WIN
-					name = ;
-#endif
 
 					bufferize_text( "\t" + color_text( name, CUI_Blue ) ) ;
 				}
@@ -334,19 +320,12 @@ ConsoleUI::move
 			if( current_folder_->parent != nullptr )
 			{
 				name = current_folder_->parent->name ;
+				pos = name.toStdString().find_last_of( '/' ) ;
 
-#ifdef Q_OS_UNIX
-					pos = name.toStdString().find_last_of( '/' ) ;
-
-					if( pos != name.toStdString().npos )
-					{
-						name = name.right( name.size() - pos - 1 ) ;
-					}
-#endif
-
-#ifdef Q_OS_WIN
-					name = ;
-#endif
+				if( pos != name.toStdString().npos )
+				{
+					name = name.right( name.size() - pos - 1 ) ;
+				}
 
 				bufferize_text( "You can go back to: " + color_text( name, CUI_Blue ) ) ;
 				possible_move = true ;
@@ -371,19 +350,12 @@ ConsoleUI::move
 			while( name != address && cit_Folder != list_folders.constEnd() )
 			{
 				name = ( *cit_Folder )->name ;
+				pos = name.toStdString().find_last_of( '/' ) ;
 
-#ifdef Q_OS_UNIX
-					pos = name.toStdString().find_last_of( '/' ) ;
-
-					if( pos != name.toStdString().npos )
-					{
-						name = name.right( name.size() - pos - 1 ) ;
-					}
-#endif
-
-#ifdef Q_OS_WIN
-					name = ;
-#endif
+				if( pos != name.toStdString().npos )
+				{
+					name = name.right( name.size() - pos - 1 ) ;
+				}
 
 				if( name == address )
 				{

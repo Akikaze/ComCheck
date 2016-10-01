@@ -27,6 +27,11 @@ Core::Core
 				QString( argv[ i ] ) == "--directory" )
 			{
 				directory_ = argv[ ++i ] ;
+
+				if( directory_[ directory_.length() - 1] == '/' )
+				{
+					directory_ = directory_.left( directory_.length() - 1 ) ;
+				}
 			}
 
 			// language
@@ -56,7 +61,7 @@ Core::Core
 			if( QString( argv[ i ] ) == "-t" ||
 				QString( argv[ i ] ) == "--test" )
 			{
-				directory_ = "../" ;
+				directory_ = ".." ;
 				interfaced_ = false ;
 				plugin_ = find_plugin( "C++" ) ;
 			}
@@ -328,7 +333,7 @@ Core::create_tree_view
 #endif
 
 #ifdef Q_OS_WIN
-	directory = ;
+	// directory = ;
 #endif
 
 	// create the tree view from the root

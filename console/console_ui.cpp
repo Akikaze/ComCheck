@@ -25,7 +25,7 @@ ConsoleUI::ConsoleUI
 
 #ifdef Q_OS_UNIX
 	// clean the console
-	// system( "clear" ) ;
+	system( "clear" ) ;
 
 	// handle the signal of WINdow CHange
 	signal( SIGWINCH, UNIX_console_size ) ;
@@ -33,7 +33,7 @@ ConsoleUI::ConsoleUI
 
 #ifdef Q_OS_WIN
 	// clean the console
-	// system( "cls" ) ;
+	system( "cls" ) ;
 #endif
 
 	console_size() ;
@@ -171,7 +171,7 @@ ConsoleUI::bufferize_title
 	QString title
 )
 {
-	buffer_.push_back( color_text( title, CUI_White ) ) ;
+	buffer_.push_back( color_text( title, CUI_White, false ) ) ;
 	buffer_.push_back( "" ) ;
 }
 
@@ -186,6 +186,13 @@ ConsoleUI::color_text
 	QString hashtag = "" ;
 	QString tmp = "\x1B[1m" ; // bold
 	// QString tmp = "\x1B[4m" ; // underline
+
+#ifdef Q_OS_WIN
+	if( color == CUI_Blue )
+	{
+		color = CUI_Cyan ;
+	}
+#endif
 
 	switch( color )
 	{
@@ -301,16 +308,7 @@ ConsoleUI::display_name
 	unsigned int level
 )
 {
-	unsigned int pos = 0 ;
-
-#ifdef Q_OS_UNIX
-	pos = name.toStdString().find_last_of( '/' ) + 1 ;
-#endif
-
-#ifdef Q_OS_WIN
-	pos = ;
-#endif
-
+	unsigned int pos = name.toStdString().find_last_of( '/' ) + 1 ;
 	name = name.right( name.size() - pos ) ;
 
 	if( !isFile )
