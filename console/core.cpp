@@ -26,11 +26,21 @@ Core::Core
 			if( QString( argv[ i ] ) == "-d" ||
 				QString( argv[ i ] ) == "--directory" )
 			{
-				directory_ = argv[ ++i ] ;
-
-				if( directory_[ directory_.length() - 1] == '/' )
+				if( argc > i + 1 )
 				{
-					directory_ = directory_.left( directory_.length() - 1 ) ;
+					directory_ = argv[ ++i ] ;
+
+					if( directory_[ directory_.length() - 1] == '/' )
+					{
+						directory_ = directory_.left( directory_.length() - 1 ) ;
+					}
+
+					// check if the directory exists
+					QDir test( directory_ ) ;
+					if( !( test.exists() ) )
+					{
+						std::cout << "This directory is not found by the system." << std::endl ;
+					}
 				}
 			}
 
@@ -38,7 +48,10 @@ Core::Core
 			if( QString( argv[ i ] ) == "-l" ||
 				QString( argv[ i ] ) == "--language" )
 			{
-				plugin_ = find_plugin( argv[ ++i ] ) ;
+				if( argc > i + 1 )
+				{
+					plugin_ = find_plugin( argv[ ++i ] ) ;
+				}
 			}
 
 			// interface

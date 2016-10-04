@@ -65,8 +65,11 @@ ConsoleUI::directory
 				// directory
 				if( QString( param_list[ i ] ) == "-d" )
 				{
-					// get the answer in the next parameter
-					directory = param_list[ ++i ] ;
+					if( parm_list.size() > i + 1 )
+					{
+						// get the answer in the next parameter
+						directory = param_list[ ++i ] ;
+					}
 				}
 			}
 
