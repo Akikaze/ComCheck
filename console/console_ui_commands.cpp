@@ -104,6 +104,7 @@ ConsoleUI::directory
 		QDir test( directory ) ;
 		if( directory.isEmpty() || test.exists() )
 		{
+			// just quit
 			try_again = false ;
 		}
 		else
@@ -118,6 +119,7 @@ ConsoleUI::directory
 		core_->release_tree() ;
 		current_folder_ = nullptr ;
 
+		// withdraw a potential slash at the end of the file
 		if( directory.at( directory.size() - 1 ) == '/' )
 		{
 			directory = directory.left( directory.size() - 1 ) ;
@@ -145,12 +147,12 @@ ConsoleUI::help
 )
 {
 	param_list.erase( param_list.begin() ) ;
-	std::cout << std::endl ;
 
 	if( param_list.isEmpty() )
 	{
 		// display common help
 		bufferize_title( "What is ComCheck?" ) ;
+		bufferize_text() ;
 
 		bufferize_text( "ComCheck is a little tool used for analyzing source code files and counting how many comments are written in these files, regardless of programming language.") ;
 		bufferize_text() ;
@@ -165,13 +167,96 @@ ConsoleUI::help
 		bufferize_text() ;
 
 		bufferize_title( "How to use ComCheck?" ) ;
+		bufferize_text() ;
 
 		// speak about the command 'commands'
 	}
 	else
 	{
 		// display help for a specific command
+
+		if( param_list.front() == "commands" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " commands" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Display every command associated with a short description." ) ;
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "clear" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " clear" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Nothing as much as calling 'system( \"clear\" ) ;' on UNIX architecture and 'system( \"cls\" ) ;' on Windows." ) ;
+			bufferize_text() ;
+		}
+		// COMMANDS
+		else if( param_list.front() == "analyze" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " analyze" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "directory" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " directory" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "help" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " help" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "info" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " info" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "At the beginning of a normal execution, the command 'info' displays nothing. But it changes when you choose the project directory, when you choose the language, when the tree view is created, when you have done some reports, ..." ) ;
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "language" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " language" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "move" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " move" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "preparation" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " preparation" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "The tree view is made from the project folder. It is defined as the root of the tree. It is created thanks to the plugin to be sure that every file in it is interesting. That means no useless files, no useless folders." ) ;
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "report" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " report" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "tree" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " tree" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Use a recursive function to display every folder and every file that are contained in the current folder." ) ;
+			bufferize_text() ;
+		}
+		// QUIT
+		else if( param_list.front() == "quit" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " quit" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Close the execution and release every piece of memory that was allocate during the execution." ) ;
+			bufferize_text() ;
+		}
+		else
+		{
+			// display an error
+			bufferize_text( color_text( "There is no command called " + param_list.front() + ".", CUI_Red ) ) ;
+			commands( { "commands" } ) ;
+		}
 	}
+	param_list.clear() ;
 
 	display_buffer() ;
 }
@@ -286,6 +371,7 @@ ConsoleUI::language
 
 		if( language.isEmpty() )
 		{
+			// just quit
 			try_again = false ;
 		}
 		else

@@ -213,9 +213,7 @@ ConsoleUI::bufferize_title
 )
 {
 	// just color the text before bufferize it
-	buffer_.push_back( color_text( title, CUI_White, false ) ) ;
-	// and jump a line
-	buffer_.push_back( "" ) ;
+	buffer_.push_back( color_text( "\t" + title, CUI_White, false ) ) ;
 }
 
 ///
@@ -565,7 +563,7 @@ ConsoleUI::process
 				// display each command and its description
 				commands( param_list ) ;
 			}
-			if( param_list.front() == "clear" )
+			else if( param_list.front() == "clear" )
 			{
 #ifdef Q_OS_UNIX
 				// clear the screen
