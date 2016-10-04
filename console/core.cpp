@@ -39,7 +39,7 @@ Core::Core
 					QDir test( directory_ ) ;
 					if( !( test.exists() ) )
 					{
-						std::cout << "This directory is not found by the system." << std::endl ;
+						std::cout << directory_.toStdString() << " is not found by the system." << std::endl ;
 					}
 				}
 			}
@@ -51,6 +51,11 @@ Core::Core
 				if( argc > i + 1 )
 				{
 					plugin_ = find_plugin( argv[ ++i ] ) ;
+				}
+
+				if( plugin_ == nullptr )
+				{
+					std::cout << argv[ i ] << " is not found in the list of plugins." << std::endl ;
 				}
 			}
 
@@ -487,7 +492,7 @@ Core::make_report
 				report_->list_files.push_back( *cit_File ) ;
 
 				// compute percentage
-				double percent = ( ( *cit_File )->array[ 1 ] + ( *cit_File )->array[ 2 ] ) * 100 / ( *cit_File )->array[ 0 ] ;
+				double percent = ( double )( ( ( *cit_File )->array[ 1 ] + ( *cit_File )->array[ 2 ] ) * 100 ) / ( double )( ( *cit_File )->array[ 0 ] ) ;
 				report_->percents.push_back( percent ) ;
 
 				// store value

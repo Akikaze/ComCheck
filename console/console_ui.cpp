@@ -483,15 +483,28 @@ ConsoleUI::process
 			}
 			else
 			{
-				std::cout << "This command is not defined. Use 'commands' to list them." << std::endl ;
+				bufferize_text( color_text( "This command is not defined. Use 'commands' to list them.", CUI_Red ) ) ;
+				display_buffer() ;
 			}
 		}
 	}
 
 	// display ending message
-	std::cout << std::endl ;
-	std::cout << "\t" << "Goodbye, see you later !" << std::endl ;
-	std::cout << std::endl ;
+	command = "\t" ;
+	for( int i = 0 ; i < 4 ; ++i )
+	{
+		for( int j = 0 ; j < 6 ; ++j )
+		{
+			command += color_text( "_", ( CUI_TextColor )( j ), false ) ;
+		}
+	}
+
+	bufferize_text() ;
+	bufferize_text( color_text( "\tGoodbye, see you later !", CUI_White ) ) ;
+	buffer_.push_back( command ) ;
+	bufferize_text() ;
+
+	display_buffer() ;
 }
 
 void
@@ -499,9 +512,9 @@ ConsoleUI::welcome
 ()
 {
 	bufferize_text() ;
-	buffer_.push_back( align_line( "/================\\", CUI_CENTER ) ) ;
-	buffer_.push_back( align_line( "|    COMCHECK    |", CUI_CENTER ) ) ;
-	buffer_.push_back( align_line( "\\================/", CUI_CENTER ) ) ;
+	buffer_.push_back( color_text( align_line( "/================\\", CUI_CENTER ), CUI_White, false ) ) ;
+	buffer_.push_back( color_text( align_line( "|    COMCHECK    |", CUI_CENTER ), CUI_White, false ) ) ;
+	buffer_.push_back( color_text( align_line( "\\================/", CUI_CENTER ), CUI_White, false ) ) ;
 	bufferize_text() ;
 
 	bufferize_text( "ComCheck is a little tool used for analysing source code files and counting how many comments are written in these files, regardless of programming language." ) ;

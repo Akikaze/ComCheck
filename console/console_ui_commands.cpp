@@ -9,7 +9,25 @@ ConsoleUI::commands
 {
 	param_list.erase( param_list.begin() ) ;
 
-	// display like man
+	bufferize_text() ;
+	bufferize_text( color_text( "\tFunction\tDescription", CUI_White ) ) ;
+	bufferize_text( color_text( "\t__________________________________________________________________", CUI_White ) ) ;
+	bufferize_text() ;
+
+	bufferize_text( color_text( "\tanalyze\t\t", CUI_White ) + "analyze and create a report of the current folder" ) ;
+	bufferize_text( color_text( "\tcommands\t", CUI_White ) + "display each command and its description" ) ;
+	bufferize_text( color_text( "\tdirectory\t", CUI_White ) + "choose the project directory" ) ;
+	bufferize_text( color_text( "\thelp\t\t", CUI_White ) + "display more information about ComCheck or each command" ) ;
+	bufferize_text( color_text( "\tinfo\t\t", CUI_White ) + "display information about the project" ) ;
+	bufferize_text( color_text( "\tlanguage\t", CUI_White ) + "choose the project language" ) ;
+	bufferize_text( color_text( "\tmove\t\t", CUI_White ) + "change the current folder" ) ;
+	bufferize_text( color_text( "\tpreparation\t", CUI_White ) + "create a tree view of the project directory" ) ;
+	bufferize_text( color_text( "\tquit\t\t", CUI_White ) + "quit Comcheck" ) ;
+	bufferize_text( color_text( "\treport\t\t", CUI_White ) + "display the report of the current folder" ) ;
+	bufferize_text( color_text( "\ttree\t\t", CUI_White ) + "display a tree view of the project folder" ) ;
+	bufferize_text() ;
+
+	display_buffer() ;
 }
 
 void
@@ -60,19 +78,8 @@ ConsoleUI::directory
 		}
 		else
 		{
-			for( int i = 0 ; i < param_list.size() ; ++i )
-			{
-				// directory
-				if( QString( param_list[ i ] ) == "-d" )
-				{
-					if( parm_list.size() > i + 1 )
-					{
-						// get the answer in the next parameter
-						directory = param_list[ ++i ] ;
-					}
-				}
-			}
-
+			// get the answer in the next parameter
+			directory = param_list.front() ;
 			param_list.clear() ;
 		}
 
@@ -206,16 +213,8 @@ ConsoleUI::language
 		}
 		else
 		{
-			for( int i = 0 ; i < param_list.size() ; ++i )
-			{
-				// language
-				if( QString( param_list[ i ] ) == "-l" )
-				{
-					// get the answer in the next parameter
-					language = param_list[ ++i ] ;
-				}
-			}
-
+			// get the answer in the next parameter
+			language = param_list.front() ;
 			param_list.clear() ;
 		}
 
@@ -347,7 +346,7 @@ ConsoleUI::move
 				list_folders.push_front( current_folder_->parent ) ;
 			}
 
-			QString address = param_list[ 0 ] ;
+			QString address = param_list.front() ;
 			cit_Folder = list_folders.constBegin() ;
 
 			while( name != address && cit_Folder != list_folders.constEnd() )
@@ -473,39 +472,35 @@ ConsoleUI::report
 				}
 
 				// level
-				if( QString( param_list[ i ] ) == "-l" ||
-					QString( param_list[ i ] ) == "--level" )
+				if( QString( param_list[ i ] ) == "-t" ||
+					QString( param_list[ i ] ) == "--top" )
 				{
-					unsigned int number = ( param_list[ ++i ] ).toInt() ;
+					CC_File * file = nullptr ;
+					QString line = "" ;
+					unsigned int number = 5 ;
+					unsigned int pos = 0 ;
 
-					QList< double > trick = current_report_->percents ;
-					QList< double >::iterator it ;
-
-					unsigned int decimal = 1 ;
-					QString tmp = QString::number( trick.size() ) ;
-					for( int i = 0 ; i < tmp.length() ; ++i )
+					if( param_list.size() > i + 1 )
 					{
-						decimal *= 10 ;
+						number = ( param_list[ ++i ] ).toInt() ;
+					}
+					else
+					{
+						bufferize_text( "By default, it display the top 5 of best and worst file" ) ;
 					}
 
-					for( int i = 0 ; i < trick.size() ; ++i )
+					QList< QPair< double, int > > sort_list ;
+					for( int i = 0 ; i < current_report_->percents.size() ; ++i )
 					{
-						trick[ i ] *= decimal ;
-						trick[ i ] += i ;
+						sort_list.push_back( qMakePair( current_report_->percents[ i ], i ) ) ;
 					}
 
-					std::sort( trick.begin(), trick.end() ) ;
-
-					QString line ;
-					CC_File * file ;
-					int pos = 0 ;
-
-					/*
+					std::sort( sort_list.begin(), sort_list.end() ) ;
 
 					bufferize_text( QString::number( number ) + " worst commented file:" ) ;
 					for( unsigned int i = 0 ; i < number ; ++i )
 					{
-						pos = ( int )( trick[ i ] - ( ( int )( trick[ i ] / decimal ) * decimal ) ) ;
+						pos = sort_list[ i ].second ;
 						file = current_report_->list_files[ pos ] ;
 
 						line = color_text( file->name, CUI_Red ) ;
@@ -519,9 +514,7 @@ ConsoleUI::report
 					bufferize_text( QString::number( number ) + " best commented file:" ) ;
 					for( unsigned int i = 1 ; i < number + 1 ; ++i )
 					{
-						std::cout << trick[ trick.size() - i ] - ( ( int )( trick[ trick.size() - i ] / decimal ) * decimal ) << std::endl ;
-						pos = ( trick[ trick.size() - i ] - ( int )( trick[ trick.size() - i ] ) ) * decimal ;
-						std::cout << pos << std::endl ;
+						pos = sort_list[ sort_list.size() - i ].second ;
 						file = current_report_->list_files[ pos ] ;
 
 						line = color_text( file->name, CUI_Green ) ;
@@ -532,8 +525,6 @@ ConsoleUI::report
 					}
 
 					bufferize_text() ;
-
-					*/
 				}
 			}
 
