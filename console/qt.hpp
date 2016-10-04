@@ -1,6 +1,10 @@
 #ifndef QT_HPP
 #define QT_HPP
 
+/*
+ * Include every Qt object that is required by ComCheck
+ */
+
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDir>

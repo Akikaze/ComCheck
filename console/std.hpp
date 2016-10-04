@@ -1,6 +1,10 @@
 #ifndef STD_HPP
 #define STD_HPP
 
+/*
+ * Include every standard object that is required by ComCheck
+ */
+
 #include <array>
 #include <fstream>
 #include <iostream>

@@ -31,18 +31,27 @@ class IUI
 
 		// --- SLOTS ---
 
+		///
+		/// \brief Slot to run an interface
+		///
 		void run() ;
 
 	signals :
 
 		// --- SIGNALS ---
 
+		///
+		/// \brief Signal to end an execution
+		///
 		void finished() ;
 
 	protected :
 
 		// --- MEMBERS ---
 
+		///
+		/// \brief Pure virtual method which display the interface
+		///
 		virtual void process() = 0 ;
 
 		// --- ATTRIBUTES ---

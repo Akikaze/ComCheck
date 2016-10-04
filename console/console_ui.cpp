@@ -11,11 +11,16 @@ struct winsize ConsoleUI::_w_ ;
 CONSOLE_SCREEN_BUFFER_INFO ConsoleUI::_csbi_ = CONSOLE_SCREEN_BUFFER_INFO() ;
 #endif
 
+///
+/// \brief Constructor
+/// \param parent Parent for this QObject
+///
 ConsoleUI::ConsoleUI
 (
 	QObject * core,
 	bool welcomed
 )
+// use the interface constructor
 : IUI( core )
 , buffer_( QStringList() )
 , current_folder_( nullptr )
@@ -36,6 +41,7 @@ ConsoleUI::ConsoleUI
 	system( "cls" ) ;
 #endif
 
+	// get size of the console
 	console_size() ;
 
 	if( _cols_ == 0 || _rows_ == 0 )
@@ -43,17 +49,26 @@ ConsoleUI::ConsoleUI
 		std::cout << "Impossible to get console size." << std::endl ;
 		std::cout << "By default, the size will be 80x60." << std::endl ;
 
+		// default values
 		_cols_ = 80 ;
 		_rows_ = 60 ;
 	}
 }
 
+///
+/// \brief Destructor
+///
 ConsoleUI::~ConsoleUI
 ()
 {
 
 }
 
+///
+/// \brief Add space to align text correctly
+/// \param line Text line
+/// \param alignment Left, center or right
+///
 QString
 ConsoleUI::align_line
 (
@@ -61,21 +76,26 @@ ConsoleUI::align_line
 	CUI_TextAlignment alignment
 )
 {
+	// nothing is done if the alignment is CUI_LEFT
 	if( alignment != CUI_LEFT )
 	{
+		// blank is going to be add in the line to push text to the right or in the center
 		QString blank = "" ;
 		unsigned int spaces = _cols_ - line.length() ;
 
+		// if it is a centering, you need to push same space on each side
 		if( alignment == CUI_CENTER )
 		{
 			spaces /= 2 ;
 		}
 
+		// fullfil blank
 		for( unsigned int i = 0 ; i < spaces ; ++i )
 		{
 			blank += ' ' ;
 		}
 
+		// push text thanks to blank
 		if( alignment == CUI_CENTER )
 		{
 			line = blank + line + blank ;
@@ -89,12 +109,17 @@ ConsoleUI::align_line
 	return line ;
 }
 
+///
+/// \brief Bufferize common text
+/// \param text Text
+///
 void
 ConsoleUI::bufferize_text
 (
 	QString text
 )
 {
+	// by default, go to the next line
 	if( text.isEmpty() )
 	{
 		buffer_.push_back( "" ) ;
@@ -103,28 +128,35 @@ ConsoleUI::bufferize_text
 	{
 		unsigned int pos_string = 0 ;
 
+		// if the text is too long
 		if( ( unsigned int )( text.length() ) > _cols_ )
 		{
+			// find the closest space to create a subline
 			while( ( unsigned int )( text.length() ) > _cols_ )
 			{
 				unsigned int pos_real = 0 ;
 				unsigned int pos_space = 0 ;
 				pos_string = 0 ;
 
+				// while the text is not ended
 				while( pos_string < ( unsigned int )( text.length() ) && pos_real < _cols_ )
 				{
+					// if it is a backslash (like with color_text)
 					if( text[ pos_string ] == 27 )
 					{
+						// jump after the #
 						do
 						{
 							++pos_string ;
 						}
 						while( text[ pos_string ] != QChar( '#' ) ) ;
 
+						// remove the #
 						text.remove( pos_string, 1 ) ;
 					}
 					else
 					{
+						// if it is a space, save the position
 						if( text[ pos_string ] == QChar( ' ' ) )
 						{
 							pos_space = pos_string ;
@@ -142,39 +174,57 @@ ConsoleUI::bufferize_text
 					break ;
 				}
 
+				// subdivide the text to get one line
 				buffer_.push_back( text.left( pos_space ) ) ;
+
+				// loop on the rest of the text
 				text.remove( 0, pos_space + 1 ) ;
 			}
 		}
-		else
+
+		pos_string = 0 ;
+
+		// just withdraw remain of #
+		while( pos_string < ( unsigned int )( text.length() ) )
 		{
-			while( pos_string < ( unsigned int )( text.length() ) )
+			if( text[ pos_string ] == QChar( '#' ) )
 			{
-				if( text[ pos_string ] == QChar( '#' ) )
-				{
-					text.remove( pos_string, 1 ) ;
-				}
-				else
-				{
-					++pos_string ;
-				}
+				text.remove( pos_string, 1 ) ;
+			}
+			else
+			{
+				++pos_string ;
 			}
 		}
 
+		// add the line in the buffer
 		buffer_.push_back( text ) ;
 	}
 }
 
+///
+/// \brief Bufferize title in color
+/// \param title Title
+///
 void
 ConsoleUI::bufferize_title
 (
 	QString title
 )
 {
+	// just color the text before bufferize it
 	buffer_.push_back( color_text( title, CUI_White, false ) ) ;
+	// and jump a line
 	buffer_.push_back( "" ) ;
 }
 
+///
+/// \brief Color text according to the OS
+/// \param text Text
+/// \param color Color for the text
+/// \param add_hashtag Add a mark at the end of the codage. False if you are not using bufferize_text
+/// \return string with encrypted character for colorization
+///
 QString
 ConsoleUI::color_text
 (
@@ -183,17 +233,23 @@ ConsoleUI::color_text
 	bool add_hashtag
 )
 {
+	// if you need to sgnal the end of a colorization mark
 	QString hashtag = "" ;
+
+	// by default, it is bold (to be clearer)
 	QString tmp = "\x1B[1m" ; // bold
+
 	// QString tmp = "\x1B[4m" ; // underline
 
 #ifdef Q_OS_WIN
+	// change the color because Blue is invisible
 	if( color == CUI_Blue )
 	{
 		color = CUI_Cyan ;
 	}
 #endif
 
+	// define codage for each color
 	switch( color )
 	{
 		case CUI_Red : tmp += "\x1B[31m" ; break ;
@@ -210,22 +266,30 @@ ConsoleUI::color_text
 #endif
 	}
 
+	// add # if it is required
 	if( add_hashtag == true )
 	{
 		hashtag = "#" ;
 	}
 
+	// recreate the line frame by color
 	tmp += hashtag + text ;
 	tmp += "\x1B[0m" ; // reset
 	text = tmp + hashtag ;
 
+	// return the text
 	return text ;
 }
 
+///
+/// \brief Get the size of the console
+///
 void
 ConsoleUI::console_size
 ()
 {
+	// call the onsole_size method for each operator
+
 #ifdef Q_OS_UNIX
 	UNIX_console_size() ;
 #endif
@@ -235,6 +299,12 @@ ConsoleUI::console_size
 #endif
 }
 
+///
+/// \brief Display a array correctly
+/// \param array Array
+/// \param shortcut Require a beautiful description or the minimal
+/// \return QString if shortcut is activated
+///
 QString
 ConsoleUI::display_array
 (
@@ -244,8 +314,10 @@ ConsoleUI::display_array
 {
 	QString result = "" ;
 
+	// if you want a long description like a report array
 	if( shortcut == false )
 	{
+		// bufferize text
 		bufferize_text( color_text( "Total number of lines: ", CUI_White ) + QString::number( array[ 0 ] ) ) ;
 		bufferize_text() ;
 
@@ -254,17 +326,23 @@ ConsoleUI::display_array
 		bufferize_text( color_text( "Number of pure code line: ", CUI_White ) + QString::number( array[ 3 ]  ) ) ;
 		bufferize_text() ;
 	}
+	// or a short description like a file array
 	else
 	{
+		// or write directly on a line
 		result += color_text( "TOT: ", CUI_White ) + QString::number( array[ 0 ] ) + " " ;
 		result += color_text( "COM: ", CUI_White ) + QString::number( array[ 1 ] ) + " " ;
 		result += color_text( "MIX: ", CUI_White ) + QString::number( array[ 2 ] ) + " " ;
 		result += color_text( "COD: ", CUI_White ) + QString::number( array[ 3 ] ) + " " ;
 	}
 
+	// the return is used when you require a short description
 	return result ;
 }
 
+///
+/// \brief Display the whole buffer which contain strings
+///
 void
 ConsoleUI::display_buffer
 ()
@@ -272,13 +350,16 @@ ConsoleUI::display_buffer
 	unsigned int count = 0 ;
 	bool endByEnter = true ;
 
+	// while the buffer is not empty
 	while( ! buffer_.empty() )
 	{
+		// write the next line
 		std::cout << buffer_.first().toStdString() ;
 		count++ ;
 
 		if( count < _rows_ )
 		{
+			// jump
 			std::cout << std::endl ;
 		}
 		else
@@ -286,13 +367,17 @@ ConsoleUI::display_buffer
 			endByEnter = false ;
 		}
 
+		// withdraw this line
 		buffer_.erase( buffer_.begin() ) ;
 
+		// complicated condition but simple result :
+		// if the buffer is bigger than the console size, wait for a Enter before displaying another line
 		while( ( ! buffer_.empty() ) &&
 			   ( count > _rows_ - 1 ) &&
 			   ( getchar() != 10 ) ) ;
 	}
 
+	// just to have a better display
 	if( endByEnter == false )
 	{
 		std::cout << std::endl ;
@@ -300,6 +385,11 @@ ConsoleUI::display_buffer
 	}
 }
 
+///
+/// \brief Display a name in tree view
+/// \param name Name of the file or the folder
+/// \param level Size of indentation
+///
 void
 ConsoleUI::display_name
 (
@@ -311,44 +401,66 @@ ConsoleUI::display_name
 	unsigned int pos = name.toStdString().find_last_of( '/' ) + 1 ;
 	name = name.right( name.size() - pos ) ;
 
+	// if its a folder
 	if( !isFile )
 	{
+		// write it in blue
 		name = color_text( name, CUI_Blue ) ;
 	}
 
+	// default prefix
 	QString prefix = " " ;
+
 	if( level != 0 )
 	{
+		// this case is for align the first line
 		prefix += "|   " ;
 	}
 
 	for( unsigned int i = 1 ; i < level ; ++i )
 	{
+		// add as much prefix as the level
 		prefix += "|   " ;
 	}
 
+	// add the last prefix
 	prefix += "|---" ;
+
+	// bufferize th ename with the prefix
 	bufferize_text( prefix + name ) ;
 }
 
+///
+/// \brief Display a report average, variance and divergence
+/// \param report Report
+///
 void
 ConsoleUI::display_report
 (
 	CC_Report * report
 )
 {
+	// display the average
 	double dbl = report->average ;
 	bufferize_text( color_text( "Average: ", CUI_White ) + QString::number( dbl ) ) ;
 
+	// display the variance
 	dbl = report->variance ;
 	bufferize_text( color_text( "Variance: ", CUI_White ) + QString::number( dbl ) ) ;
 
+	// display the divergence
 	dbl = report->divergence ;
 	bufferize_text( color_text( "Divergence: ", CUI_White ) + QString::number( dbl ) ) ;
 
+	// jump
 	bufferize_text() ;
 }
 
+///
+/// \brief Display the tree view
+/// \param folder Root of the tree view
+/// \param level Size of indentation
+///
 void
 ConsoleUI::display_tree
 (
@@ -356,20 +468,30 @@ ConsoleUI::display_tree
 	unsigned int level
 )
 {
+	// display files in first
 	QList< CC_File * > list_files = folder->list_files ;
 	for( int i = 0 ; i < list_files.size() ; ++i )
 	{
 		display_name( list_files[ i ]->name, true, level ) ;
 	}
 
+	// and folders after
 	QList< CC_Folder * > list_folders = folder->list_folders ;
 	for( int i = 0 ; i < list_folders.size() ; ++i )
 	{
+		// display the name
 		display_name( list_folders[ i ]->name, false, level ) ;
+
+		// and be recursive
 		display_tree( list_folders[ i ], level + 1 ) ;
 	}
 }
 
+///
+/// \brief Filter a command thanks to ' '
+/// \param command String of the command line
+/// \return List of strings for each part of the command
+///
 QStringList
 ConsoleUI::filter_command
 (
@@ -398,6 +520,9 @@ ConsoleUI::filter_command
 	return list ;
 }
 
+///
+/// \brief Launch the loop
+///
 void
 ConsoleUI::process
 ()
@@ -437,59 +562,83 @@ ConsoleUI::process
 			// check which function need to be called
 			if( param_list.front() == "commands" )
 			{
+				// display each command and its description
 				commands( param_list ) ;
+			}
+			if( param_list.front() == "clear" )
+			{
+#ifdef Q_OS_UNIX
+				// clear the screen
+				system( "clear" ) ;
+#endif
+
+#ifdef Q_OS_WIN
+				// clear the screen
+				system( "cls" ) ;
+#endif
 			}
 			// COMMANDS
 			else if( param_list.front() == "analyze" )
 			{
+				// analyze and create a report of the current folder
 				analyze( param_list ) ;
 			}
 			else if( param_list.front() == "directory" )
 			{
+				// choose the project directory
 				directory( param_list ) ;
 			}
 			else if( param_list.front() == "help" )
 			{
+				// display more information about ComCheck or each command
 				help( param_list ) ;
 			}
 			else if( param_list.front() == "info" )
 			{
+				// display information about the project
 				info( param_list ) ;
 			}
 			else if( param_list.front() == "language" )
 			{
+				// choose the project language
 				language( param_list ) ;
 			}
 			else if( param_list.front() == "move" )
 			{
+				// change the current folder
 				move( param_list ) ;
 			}
 			else if( param_list.front() == "preparation" )
 			{
+				// create a tree view of the project directory
 				preparation( param_list ) ;
 			}
 			else if( param_list.front() == "report" )
 			{
+				// display the report of the current folder
 				report( param_list ) ;
 			}
 			else if( param_list.front() == "tree" )
 			{
+				// display a tree view of the project folder
 				tree( param_list ) ;
 			}
 			// QUIT
 			else if( param_list.front() == "quit" )
 			{
+				// quit Comcheck
 				close = true ;
 			}
 			else
 			{
+				// unrecognized command
 				bufferize_text( color_text( "This command is not defined. Use 'commands' to list them.", CUI_Red ) ) ;
 				display_buffer() ;
 			}
 		}
 	}
 
-	// display ending message
+	// color line
 	command = "\t" ;
 	for( int i = 0 ; i < 4 ; ++i )
 	{
@@ -499,6 +648,7 @@ ConsoleUI::process
 		}
 	}
 
+	// display ending message
 	bufferize_text() ;
 	bufferize_text( color_text( "\tGoodbye, see you later !", CUI_White ) ) ;
 	buffer_.push_back( command ) ;
@@ -507,16 +657,21 @@ ConsoleUI::process
 	display_buffer() ;
 }
 
+///
+/// \brief Display the welcome message
+///
 void
 ConsoleUI::welcome
 ()
 {
+	// display the title
 	bufferize_text() ;
 	buffer_.push_back( color_text( align_line( "/================\\", CUI_CENTER ), CUI_White, false ) ) ;
 	buffer_.push_back( color_text( align_line( "|    COMCHECK    |", CUI_CENTER ), CUI_White, false ) ) ;
 	buffer_.push_back( color_text( align_line( "\\================/", CUI_CENTER ), CUI_White, false ) ) ;
 	bufferize_text() ;
 
+	// display a little message
 	bufferize_text( "ComCheck is a little tool used for analysing source code files and counting how many comments are written in these files, regardless of programming language." ) ;
 	bufferize_text() ;
 
@@ -527,12 +682,16 @@ ConsoleUI::welcome
 }
 
 #ifdef Q_OS_UNIX
+///
+/// \brief Get the size of the console
+///
 void
 ConsoleUI::UNIX_console_size
 (
 	int signum
 )
 {
+	// get console size UNIX way
 	Q_UNUSED( signum ) ;
 
 	ioctl( STDOUT_FILENO, TIOCGWINSZ, &_w_ ) ;
@@ -542,10 +701,14 @@ ConsoleUI::UNIX_console_size
 #endif
 
 #ifdef Q_OS_WIN
+///
+/// \brief Get the size of the console
+///
 void
 ConsoleUI::WIN_console_size
 ()
 {
+	// get console size Windows way
 	GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &_csbi_ ) ;
 	ConsoleUI::_cols_ = _csbi_.srWindow.Right - _csbi_.srWindow.Left ;
 	ConsoleUI::_rows_ = _csbi_.srWindow.Bottom - _csbi_.srWindow.Top ;

@@ -1,6 +1,10 @@
 #include "console_ui.hpp"
 #include "core.hpp"
 
+///
+/// \brief Display the result of the command 'commands'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::commands
 (
@@ -9,6 +13,7 @@ ConsoleUI::commands
 {
 	param_list.erase( param_list.begin() ) ;
 
+	// display the list of commands like function in the shell (cf 'man stdio')
 	bufferize_text() ;
 	bufferize_text( color_text( "\tFunction\tDescription", CUI_White ) ) ;
 	bufferize_text( color_text( "\t__________________________________________________________________", CUI_White ) ) ;
@@ -16,6 +21,7 @@ ConsoleUI::commands
 
 	bufferize_text( color_text( "\tanalyze\t\t", CUI_White ) + "analyze and create a report of the current folder" ) ;
 	bufferize_text( color_text( "\tcommands\t", CUI_White ) + "display each command and its description" ) ;
+	bufferize_text( color_text( "\tclear\t\t", CUI_White ) + "clear the screen" ) ;
 	bufferize_text( color_text( "\tdirectory\t", CUI_White ) + "choose the project directory" ) ;
 	bufferize_text( color_text( "\thelp\t\t", CUI_White ) + "display more information about ComCheck or each command" ) ;
 	bufferize_text( color_text( "\tinfo\t\t", CUI_White ) + "display information about the project" ) ;
@@ -30,6 +36,10 @@ ConsoleUI::commands
 	display_buffer() ;
 }
 
+///
+/// \brief Display the result of the command 'analyze'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::analyze
 (
@@ -40,7 +50,10 @@ ConsoleUI::analyze
 
 	if( current_folder_ != nullptr )
 	{
+		// create the report of the current folder
 		current_report_ = core_->make_report( current_folder_ ) ;
+
+		// display the report just after
 		report( { "report" } ) ;
 	}
 	else
@@ -50,6 +63,10 @@ ConsoleUI::analyze
 
 }
 
+///
+/// \brief Display the result of the command 'directory'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::directory
 (
@@ -117,6 +134,10 @@ ConsoleUI::directory
 	display_buffer() ;
 }
 
+///
+/// \brief Display the result of the command 'help'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::help
 (
@@ -128,6 +149,7 @@ ConsoleUI::help
 
 	if( param_list.isEmpty() )
 	{
+		// display common help
 		bufferize_title( "What is ComCheck?" ) ;
 
 		bufferize_text( "ComCheck is a little tool used for analyzing source code files and counting how many comments are written in these files, regardless of programming language.") ;
@@ -144,14 +166,20 @@ ConsoleUI::help
 
 		bufferize_title( "How to use ComCheck?" ) ;
 
-		display_buffer() ;
+		// speak about the command 'commands'
 	}
 	else
 	{
 		// display help for a specific command
 	}
+
+	display_buffer() ;
 }
 
+///
+/// \brief Display the result of the command 'info'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::info
 (
@@ -160,21 +188,59 @@ ConsoleUI::info
 {
 	param_list.erase( param_list.begin() ) ;
 
+	// display the project directory
 	const QString directory = core_->get_directory() ;
 	if( !( directory.isEmpty() ) )
 	{
 		bufferize_text( color_text( "Project directory: ", CUI_White ) + core_->get_directory() ) ;
 	}
 
+	// display the project language
 	const IPlugin * plugin = core_->get_plugin() ;
 	if( plugin != nullptr )
 	{
 		bufferize_text( color_text( "Project language: ", CUI_White ) + core_->get_plugin()->get_language() ) ;
 	}
 
+	// jump a line
+	if( !( buffer_.empty() ) )
+	{
+		bufferize_text() ;
+	}
+
+	// display the current folder
+	if( current_folder_ != nullptr )
+	{
+		bufferize_text( color_text( "Current folder: ", CUI_White ) + current_folder_->name ) ;
+	}
+
+	// display the current report folder
+	if( current_report_ != nullptr )
+	{
+		bufferize_text( color_text( "Current report folder: ", CUI_White ) + current_report_->folder->name ) ;
+	}
+
+	// display list of reports folder
+	QList< QPair< CC_Folder *, CC_Report * > > map = core_->get_map_reports() ;
+	if( map.size() > 1 )
+	{
+		bufferize_text() ;
+		bufferize_text( color_text( "List of folder already analyzed: ", CUI_White )  ) ;
+
+		// display each report folder
+		for( int i = 0 ; i < map.size() ; ++i )
+		{
+			bufferize_text( map[ i ].first->name ) ;
+		}
+	}
+
 	display_buffer() ;
 }
 
+///
+/// \brief Display the result of the command 'language'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::language
 (
@@ -226,6 +292,7 @@ ConsoleUI::language
 		{
 			plugin = core_->find_plugin( language ) ;
 
+			// check if the plugin exists
 			if( plugin != nullptr )
 			{
 				try_again = false ;
@@ -250,6 +317,10 @@ ConsoleUI::language
 	display_buffer() ;
 }
 
+///
+/// \brief Display the result of the command 'move'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::move
 (
@@ -261,10 +332,12 @@ ConsoleUI::move
 	bool possible_move = false ;
 	size_t pos = 0 ;
 
+	// check if you have a tree view
 	if( current_folder_ != nullptr )
 	{
 		QList< CC_Folder * >::const_iterator cit_Folder ;
 
+		// by default, display every possibilities
 		if( param_list.empty() )
 		{
 			name = current_folder_->name + "/" ;
@@ -274,9 +347,10 @@ ConsoleUI::move
 
 			QList< CC_File * >::const_iterator cit_File ;
 
+			// display list of files that can be analyzed in this folder
 			if( !( current_folder_->list_files.empty() ) )
 			{
-				bufferize_text( "In this folder, you can analyze:" ) ;
+				bufferize_text( "In this folder, you can find:" ) ;
 
 				for( cit_File = ( current_folder_->list_files ).constBegin() ;
 					 cit_File != ( current_folder_->list_files ).constEnd() ;
@@ -296,6 +370,7 @@ ConsoleUI::move
 				bufferize_text() ;
 			}
 
+			// display possible movement
 			if( !( current_folder_->list_folders.empty() ) )
 			{
 				bufferize_text( "You can move to: " ) ;
@@ -304,6 +379,7 @@ ConsoleUI::move
 					 cit_Folder != ( current_folder_->list_folders ).constEnd() ;
 					 ++cit_Folder )
 				{
+					// display the name correctly to be sure that the user can fo there
 					name = ( *cit_Folder )->name ;
 					pos = name.toStdString().find_last_of( '/' ) ;
 
@@ -319,6 +395,7 @@ ConsoleUI::move
 				possible_move = true ;
 			}
 
+			// display the parent folder to allow back step
 			if( current_folder_->parent != nullptr )
 			{
 				name = current_folder_->parent->name ;
@@ -335,11 +412,13 @@ ConsoleUI::move
 
 			if( possible_move == true )
 			{
+				// display the command
 				bufferize_text( "You just need to write 'move <name_folder>' to change the current folder." ) ;
 			}
 		}
 		else
 		{
+			// create a list of possibilities
 			QList< CC_Folder * > list_folders = current_folder_->list_folders ;
 			if( current_folder_->parent != nullptr )
 			{
@@ -349,6 +428,7 @@ ConsoleUI::move
 			QString address = param_list.front() ;
 			cit_Folder = list_folders.constBegin() ;
 
+			// check if this address is reachable from here
 			while( name != address && cit_Folder != list_folders.constEnd() )
 			{
 				name = ( *cit_Folder )->name ;
@@ -367,6 +447,7 @@ ConsoleUI::move
 				++cit_Folder ;
 			}
 
+			// display the result
 			if( name == address )
 			{
 				bufferize_text( "The current folder has changed." ) ;
@@ -374,6 +455,8 @@ ConsoleUI::move
 			else
 			{
 				bufferize_text( color_text( "Impossible to move to this folder. Check if ", CUI_Red ) + address + color_text( " is the following list.", CUI_Red ) ) ;
+
+				// display possibilities if there is an error
 				move( { "move" } ) ;
 			}
 		}
@@ -386,6 +469,10 @@ ConsoleUI::move
 	display_buffer() ;
 }
 
+///
+/// \brief Display the result of the command 'preparation'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::preparation
 (
@@ -393,16 +480,22 @@ ConsoleUI::preparation
 )
 {
 	param_list.erase( param_list.begin() ) ;
+	// create the tree view
 	current_folder_ = core_->create_tree_view() ;
 
 	if( current_folder_ == nullptr )
 	{
+		// display error if the folder is useless
 		bufferize_text( color_text( "This project folder doesn't contain any file which match with language's extensions. Maybe you forgot to choose the language.", CUI_Red ) ) ;
 	}
 
 	display_buffer() ;
 }
 
+///
+/// \brief Display the result of the command 'report'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::report
 (
@@ -413,8 +506,17 @@ ConsoleUI::report
 
 	if( current_report_ != nullptr )
 	{
+		// display a warning if the user is not at the right place
+		if( current_report_->folder != current_folder_ )
+		{
+			bufferize_text( color_text( "Be careful, you are not displaying the report of the current folder.", CUI_Yellow ) ) ;
+			bufferize_text( "If you want a report about the current folder, you need to use 'analyze' before." ) ;
+			bufferize_text() ;
+		}
+
 		if( param_list.empty() )
 		{
+			// display a little report with average, ...
 			bufferize_text( color_text( "Report folder: ", CUI_White ) + color_text( current_report_->folder->name, CUI_Blue ) ) ;
 			bufferize_text() ;
 
@@ -424,6 +526,7 @@ ConsoleUI::report
 		}
 		else
 		{
+			// display a precise report
 			QList< CC_File * >::const_iterator cit ;
 
 			for( int i = 0 ; i < param_list.size() ; ++i )
@@ -432,6 +535,7 @@ ConsoleUI::report
 				if( QString( param_list[ i ] ) == "-f" ||
 					QString( param_list[ i ] ) == "--files" )
 				{
+					// list every file colored in accordance with the average
 					unsigned int pos = 0 ;
 					QString line = "" ;
 
@@ -468,13 +572,14 @@ ConsoleUI::report
 				if( QString( param_list[ i ] ) == "-h" ||
 					QString( param_list[ i ] ) == "--histogram" )
 				{
-
+					// display a histogram
 				}
 
 				// level
 				if( QString( param_list[ i ] ) == "-t" ||
 					QString( param_list[ i ] ) == "--top" )
 				{
+					// display best and worst files
 					CC_File * file = nullptr ;
 					QString line = "" ;
 					unsigned int number = 5 ;
@@ -482,6 +587,7 @@ ConsoleUI::report
 
 					if( param_list.size() > i + 1 )
 					{
+						// get the number of files
 						number = ( param_list[ ++i ] ).toInt() ;
 					}
 					else
@@ -489,6 +595,7 @@ ConsoleUI::report
 						bufferize_text( "By default, it display the top 5 of best and worst file" ) ;
 					}
 
+					// create a list for sorting
 					QList< QPair< double, int > > sort_list ;
 					for( int i = 0 ; i < current_report_->percents.size() ; ++i )
 					{
@@ -500,9 +607,11 @@ ConsoleUI::report
 					bufferize_text( QString::number( number ) + " worst commented file:" ) ;
 					for( unsigned int i = 0 ; i < number ; ++i )
 					{
+						// get the worst file
 						pos = sort_list[ i ].second ;
 						file = current_report_->list_files[ pos ] ;
 
+						// display its information
 						line = color_text( file->name, CUI_Red ) ;
 						line += " " + color_text( "% ", CUI_White ) + QString::number( current_report_->percents[ pos ] ) ;
 						line += " " + display_array( file->array, true ) ;
@@ -514,9 +623,11 @@ ConsoleUI::report
 					bufferize_text( QString::number( number ) + " best commented file:" ) ;
 					for( unsigned int i = 1 ; i < number + 1 ; ++i )
 					{
+						// get the best file
 						pos = sort_list[ sort_list.size() - i ].second ;
 						file = current_report_->list_files[ pos ] ;
 
+						// display its information
 						line = color_text( file->name, CUI_Green ) ;
 						line += " " + color_text( "% ", CUI_White ) + QString::number( current_report_->percents[ pos ] ) ;
 						line += " " + display_array( file->array, true ) ;
@@ -539,6 +650,10 @@ ConsoleUI::report
 	display_buffer() ;
 }
 
+///
+/// \brief Display the result of the command 'tree'
+/// \param param_list List of parameters for the command
+///
 void
 ConsoleUI::tree
 (
@@ -549,7 +664,10 @@ ConsoleUI::tree
 
 	if( current_folder_ != nullptr )
 	{
+		// display the name of the current folder
 		bufferize_text( color_text( current_folder_->name, CUI_Blue ) ) ;
+
+		// display the tree view from this current folder
 		display_tree( current_folder_ ) ;
 	}
 	else

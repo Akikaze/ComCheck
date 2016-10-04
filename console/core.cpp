@@ -1,5 +1,10 @@
 #include "core.hpp"
 
+///
+/// \brief Constructor
+/// \param argc Counter for parameter
+/// \param argv Array of string which are containing parameters
+///
 Core::Core
 (
 	int & argc,
@@ -94,6 +99,9 @@ Core::Core
 	}
 }
 
+///
+/// \brief Destructor
+///
 Core::~Core
 ()
 {
@@ -126,6 +134,10 @@ Core::~Core
 	UI_ = nullptr ;
 }
 
+///
+/// \brief analyze a file to fulfill its array
+/// \param file File which need to be analyzed
+///
 void
 Core::analyze_file
 (
@@ -161,6 +173,11 @@ Core::analyze_file
 	}
 }
 
+///
+/// \brief Check if one folder is already before
+/// \param folder Folder
+/// \return A pointer to the report or nullptr
+///
 CC_Report *
 Core::check_reports
 (
@@ -188,6 +205,10 @@ Core::check_reports
 	return result ;
 }
 
+///
+/// \brief Clear all spaces in a line
+/// \param line Reference on the line
+///
 void
 Core::clear_line
 (
@@ -214,6 +235,10 @@ Core::clear_line
 	}
 }
 
+///
+/// \brief Compute statistical value of a report
+/// \param report Report without statistical value
+///
 void
 Core::compute_report
 (
@@ -254,6 +279,10 @@ Core::compute_report
 	report->divergence = sqrt( report->variance ) ;
 }
 
+///
+/// \brief Create a branch of the view
+/// \return A CC_Folder that represent the branch of the tree view
+///
 CC_Folder *
 Core::create_branch
 (
@@ -332,6 +361,10 @@ Core::create_branch
 	return folder ;
 }
 
+///
+/// \brief Create a tree view from directory_
+/// \return Pointer on the project folder
+///
 CC_Folder *
 Core::create_tree_view
 ()
@@ -360,6 +393,10 @@ Core::create_tree_view
 	return root_ ;
 }
 
+///
+/// \brief Create a user interface graphical or not
+///	\return A pointer to an class which inherit from IUI
+///
 IUI *
 Core::create_UI
 ()
@@ -378,6 +415,11 @@ Core::create_UI
 	return UI_ ;
 }
 
+///
+/// \brief Find a plugin associated to a language
+/// \param language String searched in the plugins' list
+/// \return Plugin which treats this language
+///
 IPlugin *
 Core::find_plugin
 (
@@ -402,6 +444,10 @@ Core::find_plugin
 	return plugin ;
 }
 
+///
+/// \brief List all plugins
+/// \return List of plugins found in the folder /plugins
+///
 QList< IPlugin * >
 Core::list_plugins
 ()
@@ -432,6 +478,11 @@ Core::list_plugins
 	return list ;
 }
 
+///
+/// \brief Make report from a specific folder
+/// \param folder Report's folder (root_ by default)
+/// \return A CC_Report of this folder
+///
 CC_Report *
 Core::make_report
 (
@@ -515,6 +566,9 @@ Core::make_report
 	return report_ ;
 }
 
+///
+/// \brief Release the tree view
+///
 void
 Core::release_tree
 ()

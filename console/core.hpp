@@ -43,10 +43,17 @@ class Core
 
 		///
 		/// \brief Getter of the variable plugin_
-		/// \return IPlugin
+		/// \return List of IPlugin
 		///
 		inline const QList< IPlugin * > get_list_plugins() const
 			{ return list_plugins_ ; }
+
+		///
+		/// \brief Getter of the variable plugin_
+		/// \return Map of reports
+		///
+		inline const QList< QPair< CC_Folder *, CC_Report * > > get_map_reports() const
+			{ return map_reports_ ; }
 
 		///
 		/// \brief Getter of the variable plugin_
