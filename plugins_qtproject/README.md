@@ -22,7 +22,7 @@ In the folder, you can find a folder called `template` which describes a useless
 
 To create your own plugin, you need to modify some data from this template project :
 
-In the .pro, the 'TARGET' represents the name of your plugin so be sure that there is no other plugin called `libTARGET.a`,  `libTARGET.so` or `TARGET.dll`. I recommend you to change the class name. I don't think that it will create a problem but :
+In the .pro, the `TARGET` represents the name of your plugin so be sure that there is no other plugin called `libTARGET.a`,  `libTARGET.so` or `TARGET.dll`. I recommend you to change the class name. I don't think that it will create a problem but :
 > To be prepared is half the victory.
 
 You can change every important values in the constructor of your class. And you can add any method you need. The only you need to know is that ComCheck will call your plugin by the `get_type` method for each line of each file with the right extension. You can implement as you wish but be sure that you return a `CC_Flag`. If you use Qt4, you need to check if the first parameter in the `Q_EXPORT_PLUGIN2` macro is exactly the same string as `TARGET`.
