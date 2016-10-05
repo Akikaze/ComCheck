@@ -204,6 +204,11 @@ class ConsoleUI
 		void display_tree( const CC_Folder * folder, unsigned int level = 0 ) ;
 
 		///
+		/// \brief Draw report's histogram
+		///
+		void draw_histogram() ;
+
+		///
 		/// \brief Filter a command thanks to ' '
 		/// \param command String of the command line
 		/// \return List of strings for each part of the command

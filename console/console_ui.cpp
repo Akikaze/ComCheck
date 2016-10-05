@@ -76,34 +76,34 @@ ConsoleUI::align_line
 	CUI_TextAlignment alignment
 )
 {
-	// nothing is done if the alignment is CUI_LEFT
-	if( alignment != CUI_LEFT )
+	// blank is going to be add in the line to push text to the right or in the center
+	QString blank = "" ;
+	unsigned int spaces = _cols_ - line.length() ;
+
+	// if it is a centering, you need to push same space on each side
+	if( alignment == CUI_CENTER )
 	{
-		// blank is going to be add in the line to push text to the right or in the center
-		QString blank = "" ;
-		unsigned int spaces = _cols_ - line.length() ;
+		spaces /= 2 ;
+	}
 
-		// if it is a centering, you need to push same space on each side
-		if( alignment == CUI_CENTER )
-		{
-			spaces /= 2 ;
-		}
+	// fullfil blank
+	for( unsigned int i = 0 ; i < spaces ; ++i )
+	{
+		blank += ' ' ;
+	}
 
-		// fullfil blank
-		for( unsigned int i = 0 ; i < spaces ; ++i )
-		{
-			blank += ' ' ;
-		}
-
-		// push text thanks to blank
-		if( alignment == CUI_CENTER )
-		{
-			line = blank + line + blank ;
-		}
-		else
-		{
-			line = blank + line ;
-		}
+	// push text thanks to blank
+	if( alignment == CUI_CENTER )
+	{
+		line = blank + line + blank ;
+	}
+	else if( alignment == CUI_LEFT )
+	{
+		line = line + blank ;
+	}
+	else
+	{
+		line = blank + line ;
 	}
 
 	return line ;
@@ -483,6 +483,130 @@ ConsoleUI::display_tree
 		// and be recursive
 		display_tree( list_folders[ i ], level + 1 ) ;
 	}
+}
+
+///
+/// \brief Draw report's histogram
+///
+void
+ConsoleUI::draw_histogram
+()
+{
+	double average = current_report_->average ;
+	QList< double > list = current_report_->percents ;
+	QList< double >::const_iterator cit ;
+
+	// console size
+	unsigned int c_height = _rows_ ;
+	unsigned int c_width = _cols_ - 3 - 2 - 2 ; // number_cols - number_character_for_percent - character_for_column(space + |) - borders
+
+	// histogram size
+	unsigned int h_height = 0 ;
+	unsigned int h_width = 0 ;
+
+	// get min and max value
+	unsigned int max_value = 0 ;
+	unsigned int min_value = 100 ;
+
+	for( cit = list.constBegin() ; cit != list.constEnd() ; ++cit )
+	{
+		if( ( *cit ) < min_value )
+		{
+			min_value = ( *cit ) ;
+		}
+
+		if( ( *cit ) > max_value )
+		{
+			max_value = ( *cit ) ;
+		}
+	}
+
+	// get histogram size
+	h_height = 100 ; // max_value - min_value
+	h_width = list.size() ;
+
+
+	while( h_width > c_width )
+	{
+		double min_gap = 100 ;
+		unsigned int lower_pos = list.size() ;
+
+		for( int i = 1 ; i < list.size() ; ++i )
+		{
+			if( abs( list[ i ] - list[ i - 1 ] ) < min_gap )
+			{
+				lower_pos = i - 1 ;
+				min_gap = abs( list[ i ] - list[ i - 1 ] ) ;
+			}
+		}
+
+		double local_average = ( double )( list[ lower_pos ] + list[ lower_pos + 1 ] ) / ( double )( 2 ) ;
+		list[ lower_pos ] = local_average ;
+		list.erase( list.begin() + lower_pos + 1 ) ;
+
+		h_width = list.size() ;
+	}
+
+	// definition of a line
+	QString line = "" ;
+	unsigned int gap = 1 ;
+
+	if( h_height > c_height )
+	{
+		gap = h_height / c_height + 1;
+	}
+
+	int index = 100 ;
+	bool average_drawn = false ;
+
+	while( index >= 0 )
+	{
+		line = align_line( "     |" ) ;
+
+		QString index_string = QString::number( index ) ;
+		for( int i = 10 ; i < 1000 ; i *= 10 )
+		{
+			if( index < i )
+			{
+				index_string = " " + index_string ;
+			}
+		}
+
+		for( int i = 0 ; i < 3 ; ++i )
+		{
+			line[ i + 1 ] = index_string[ i ] ;
+		}
+
+		if( average_drawn == false &&
+			index < average )
+		{
+			for( unsigned int i = 6 ; i < c_height ; i++ )
+			{
+				line[ i ] = '=' ;
+			}
+
+			average_drawn = true ;
+		}
+
+		for( int i = 0 ; i < list.size() ; ++i )
+		{
+			if( list[ i ] > index )
+			{
+				line[ i + 6 ] = '*' ;
+			}
+		}
+
+		bufferize_text( line ) ;
+		index-= gap ;
+	}
+
+	line = " " ;
+	for( unsigned int i = 1 ; i < c_height ; ++i )
+	{
+		line += '_' ;
+	}
+
+	bufferize_text( line ) ;
 }
 
 ///

@@ -59,6 +59,7 @@ ConsoleUI::analyze
 	else
 	{
 		bufferize_text( color_text( "The system can't find the project directory. There are three possibilities: you have not chosen a project folder with the command 'directory', you have not launch the command 'preparation' or you have but there is no file in this project folder for this language.", CUI_Red ) ) ;
+		display_buffer() ;
 	}
 
 }
@@ -773,6 +774,15 @@ ConsoleUI::report
 						pos++ ;
 					}
 
+					bufferize_text() ;
+				}
+
+				// histogram
+				if( QString( param_list[ i ] ) == "-h" ||
+					QString( param_list[ i ] ) == "--histogram" )
+				{
+					// display a histogram
+					draw_histogram() ;
 					bufferize_text() ;
 				}
 
