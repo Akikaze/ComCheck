@@ -580,7 +580,7 @@ ConsoleUI::draw_histogram
 		if( average_drawn == false &&
 			index < average )
 		{
-			for( unsigned int i = 6 ; i < c_height ; i++ )
+			for( unsigned int i = 6 ; i < c_width ; i++ )
 			{
 				line[ i ] = '=' ;
 			}
@@ -601,7 +601,7 @@ ConsoleUI::draw_histogram
 	}
 
 	line = " " ;
-	for( unsigned int i = 1 ; i < c_height ; ++i )
+	for( unsigned int i = 1 ; i < c_width ; ++i )
 	{
 		line += '_' ;
 	}

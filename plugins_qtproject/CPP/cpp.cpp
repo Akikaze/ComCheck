@@ -4,7 +4,7 @@ CPP_Plugin::CPP_Plugin
 ()
 : comment_started_( false )
 {
-	QStringList tmp = { "*.cpp", "*.hpp" } ;
+	QStringList tmp = { "*.c", "*.C", "*.cpp", "*.h", "*.hpp" } ;
 
 	extensions_ = tmp ;
 	language_ = "C++" ;
