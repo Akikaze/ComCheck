@@ -113,10 +113,9 @@ Core::~Core
 	}
 
 	// release reports
-	while( !( map_reports_.empty() ) )
+	if( !( map_reports_.empty() ) )
 	{
-		delete ( map_reports_[ 0 ].second ) ;
-		map_reports_.erase( map_reports_.begin() ) ;
+		release_reports() ;
 	}
 
 	// release tree view
@@ -564,6 +563,22 @@ Core::make_report
 	}
 
 	return report_ ;
+}
+
+///
+/// \brief Release every report
+///
+void
+Core::release_reports
+()
+{
+	while( !( map_reports_.empty() ) )
+	{
+		delete ( map_reports_[ 0 ].second ) ;
+		map_reports_.erase( map_reports_.begin() ) ;
+	}
+
+	report_ = nullptr ;
 }
 
 ///

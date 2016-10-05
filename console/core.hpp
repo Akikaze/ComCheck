@@ -116,6 +116,11 @@ class Core
 		///
 		void release_tree() ;
 
+		///
+		/// \brief Release every report
+		///
+		void release_reports() ;
+
 	private :
 
 		// --- MEMBERS ---

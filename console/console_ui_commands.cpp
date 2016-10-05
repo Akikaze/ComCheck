@@ -75,62 +75,98 @@ ConsoleUI::directory
 {
 	param_list.erase( param_list.begin() ) ;
 
-	QString directory ;
+	QString directory_name ;
 	std::string tmp ;
 	bool try_again = true ;
 
-	while( try_again )
+	if( current_folder_ == nullptr )
 	{
-		// ask for a directory
-		if( param_list.empty() )
+		while( try_again )
 		{
-			std::cout << "Address of project folder ? " ;
+			// ask for a directory
+			if( param_list.empty() )
+			{
+				std::cout << "Address of project folder ? " ;
 
-			// get answer
-			std::getline( std::cin, tmp ) ;
-			directory = tmp.c_str() ;
+				// get answer
+				std::getline( std::cin, tmp ) ;
+				directory_name = tmp.c_str() ;
 
-			// flush
-			tmp = "" ;
+				// flush
+				tmp = "" ;
+			}
+			else
+			{
+				// get the answer in the next parameter
+				directory_name = param_list.front() ;
+				param_list.clear() ;
+			}
+
+			// check if the directory exists
+			QDir test( directory_name ) ;
+			if( directory_name.isEmpty() || test.exists() )
+			{
+				// just quit
+				try_again = false ;
+			}
+			else
+			{
+				std::cout << "This directory is not found by the system." << std::endl ;
+			}
+		}
+
+		if( !( directory_name.isEmpty() ) )
+		{
+			// withdraw a potential slash at the end of the file
+			if( directory_name.at( directory_name.size() - 1 ) == '/' )
+			{
+				directory_name = directory_name.left( directory_name.size() - 1 ) ;
+			}
+
+			// set the directory in the core
+			core_->set_directory( directory_name ) ;
 		}
 		else
 		{
-			// get the answer in the next parameter
-			directory = param_list.front() ;
-			param_list.clear() ;
-		}
-
-		// check if the directory exists
-		QDir test( directory ) ;
-		if( directory.isEmpty() || test.exists() )
-		{
-			// just quit
-			try_again = false ;
-		}
-		else
-		{
-			std::cout << "This directory is not found by the system." << std::endl ;
+			bufferize_text( color_text( "Nothing was done.", CUI_Red ) ) ;
 		}
 	}
-
-	if( !( directory.isEmpty() ) )
+	else
 	{
 		// release a potential previous tree view
 		core_->release_tree() ;
 		current_folder_ = nullptr ;
 
-		// withdraw a potential slash at the end of the file
-		if( directory.at( directory.size() - 1 ) == '/' )
-		{
-			directory = directory.left( directory.size() - 1 ) ;
-		}
+		// release potential reports
+		core_->release_reports() ;
+		current_report_ = nullptr ;
 
-		// set the directory in the core
-		core_->set_directory( directory ) ;
-	}
-	else
-	{
-		bufferize_text( color_text( "Nothing was done.", CUI_Red ) ) ;
+		if( param_list.empty() )
+		{
+			bufferize_text( color_text( "The directory defines the tree view. So changing it means recreate a new tree view. If you want to do that, just use the command 'directory -r <address>' or 'directory --reset <address>'.", CUI_Red ) ) ;
+		}
+		else if( param_list.front() == "-r" ||
+				 param_list.front() == "--reset")
+		{
+			// release a potential previous tree view
+			core_->release_tree() ;
+			current_folder_ = nullptr ;
+
+			param_list.erase( param_list.begin() ) ;
+			QStringList param ;
+
+			// call language another time
+			if( param_list.empty() )
+			{
+				param = { "directory" } ;
+			}
+			else
+			{
+				param = { "directory", param_list.front() } ;
+			}
+
+			directory( param ) ;
+		}
 	}
 
 	display_buffer() ;
@@ -151,6 +187,7 @@ ConsoleUI::help
 	if( param_list.isEmpty() )
 	{
 		// display common help
+		bufferize_text() ;
 		bufferize_title( "What is ComCheck?" ) ;
 		bufferize_text() ;
 
@@ -169,7 +206,17 @@ ConsoleUI::help
 		bufferize_title( "How to use ComCheck?" ) ;
 		bufferize_text() ;
 
-		// speak about the command 'commands'
+		bufferize_text( "ComCheck analyze every interesting files in a specific folder and create a report which contains the number of lines, the number of comments, the percentage of comments in a file, the average percentage of comments in the whole report, ... To do so, ComCheck requires a project directory and a project language. When these two pieces of information are given. ComCheck is going to create a tree view where the root is the project folder and every leaf is a file defined as interesting by the language." ) ;
+		bufferize_text() ;
+
+		bufferize_text( "When the tree view is created, you can make a report on the project directory, or you can move inside to create more precise report. But you can't go outside the tree. If you want to see a folder before the root, you need to change the project directory and recreate the whole tree. It is the same problem with the language: during the creation of the tree, some files were ignored because of a wrong extension. So changing the language requires to recreate the tree another time." ) ;
+		bufferize_text() ;
+
+		bufferize_text( "An analyze is going to check, from the folder, every file above this folder. At this moment, you can't limit an analyze to one folder and ignore other folders inside this one." ) ;
+		bufferize_text() ;
+
+		bufferize_text( "To know more about the possibility, you can use the command " + color_text( "commands", CUI_White ) + " to display the list of commands and use " + color_text( "help <COMMAND>", CUI_White ) + " to get more info about a specific command." ) ;\
+		bufferize_text() ;
 	}
 	else
 	{
@@ -178,67 +225,101 @@ ConsoleUI::help
 		if( param_list.front() == "commands" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " commands" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " commands" ) ;
 			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Display every command associated with a short description." ) ;
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "clear" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " clear" ) ;
-			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Nothing as much as calling 'system( \"clear\" ) ;' on UNIX architecture and 'system( \"cls\" ) ;' on Windows." ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " clear" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Nothing as much as calling " + color_text( "system( \"clear\" ) ;", CUI_White ) + " on UNIX architecture and " + color_text( "system( \"cls\" ) ;", CUI_White ) + " on Windows." ) ;
 			bufferize_text() ;
 		}
 		// COMMANDS
 		else if( param_list.front() == "analyze" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " analyze" ) ;
-			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " analyze" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Analyze a tree view from the current folder thanks to a plugin and make a report counting code lines, comments, ... This analyze is not limited to one folder. It is going to check every interesting file in every folder contained in the current one." ) ;
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "directory" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " directory" ) ;
-			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " directory [OPTION] [ADDRESS]" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "This allows the user to choose a project folder. The tree view will be created from this folder. Changing it means to reset the previous tree view. " + color_text( "ADDRESS", CUI_White ) + " can be absolute or relative." ) ;
+
+			bufferize_text( "\t" + color_text( "-r", CUI_White ) + "," + color_text( "--reset", CUI_White ) ) ;
+			bufferize_text( "reset a tree view" ) ;
+
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "help" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " help" ) ;
-			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " help [COMMAND]" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Do you really need a description of the command " + color_text( "help", CUI_White ) + " ? So it displays a information about a ComCheck or a specific command written at the same place as " + color_text( "COMMAND", CUI_White ) + "." ) ;
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "info" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " info" ) ;
-			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "At the beginning of a normal execution, the command 'info' displays nothing. But it changes when you choose the project directory, when you choose the language, when the tree view is created, when you have done some reports, ..." ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " info" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "At the beginning of a normal execution, the command " + color_text( "info", CUI_White ) + " displays nothing. But it changes when you choose the project directory, when you choose the language, when the tree view is created, when you have done some reports, ..." ) ;
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "language" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " language" ) ;
-			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " language [OPTION] [LANGUAGE]" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "This allows the user to choose between every plugin the right one for a project. Information is the plugin will serve as a filter for the creation of the tree view. This is why the tree view depends on the language. Thus, changing the language means recreate the tree view and reset every analyze done until now. " + color_text( "LANGUAGE", CUI_White ) + " is the name defined by the plugin. The command " + color_text( "language", CUI_White ) + " can list every plugin so the user can find the best one for its use." ) ;
+			bufferize_text() ;
+
+			bufferize_text( "\t" + color_text( "-r", CUI_White ) + "," + color_text( "--reset", CUI_White ) ) ;
+			bufferize_text( "reset a tree view" ) ;
+
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "move" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " move" ) ;
-			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " move [FOLDER]" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "When the tree view is created, by default the current folder is the root of the tree view. But if you want to make a more precise analyze of a specific folder. You need to change the current folder and remake a new analyze. The command " + color_text( "move", CUI_White ) + " give the possibility to climb the tree and change the folder." ) ;
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "preparation" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " preparation" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " preparation" ) ;
 			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "The tree view is made from the project folder. It is defined as the root of the tree. It is created thanks to the plugin to be sure that every file in it is interesting. That means no useless files, no useless folders." ) ;
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "report" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " report" ) ;
-			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " report [OPTION]" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "This command display the report of the current folder. The user can display a more precise report by using options. When a user analyze a folder, a report is created and stored in a list of reports. That means he can make several reports at the same time. But the " + color_text( "report", CUI_White ) + " command display only one report. To change the report displayed, you need to change move in the right folder and use the command " + color_text( "analyze", CUI_White ) + " another time. But if the report was already make, it is just going to display the first report. It is not going to create a copy of the first report." ) ;
+			bufferize_text() ;
+
+			bufferize_text( "\t" + color_text( "-f", CUI_White ) + "," + color_text( "--files", CUI_White ) ) ;
+			bufferize_text( "display the list of files analyzed by the report and use a color to describe the percentage of comments compare to the average percentage. A red file is 20% under the average percentage and a green one is 20% upper. It also displays a short description of the file:" ) ;
+			bufferize_text( color_text( "../console/main.cpp", CUI_Yellow ) + " " + color_text( "%", CUI_White ) + " 33.3333 " + color_text( "TOT:", CUI_White ) + " 18 " + color_text( "COM:", CUI_White ) + " 6 " + color_text( "MIX:", CUI_White ) + " 0 " + color_text( "COD:", CUI_White ) + " 12" ) ;
+			bufferize_text( "\t" + color_text( "%", CUI_White ) + " percentage" ) ;
+			bufferize_text( "\t" + color_text( "TOT", CUI_White ) + " number of lines" ) ;
+			bufferize_text( "\t" + color_text( "COM", CUI_White ) + " number of pure comments" ) ;
+			bufferize_text( "\t" + color_text( "MIX", CUI_White ) + " number of mixed lines" ) ;
+			bufferize_text( "\t" + color_text( "CODE", CUI_White ) + " number of pure code lines" ) ;
+
+			bufferize_text( "\t" + color_text( "-t", CUI_White ) + " [NUMBER]," + color_text( "--top", CUI_White ) + " [NUMBER]" ) ;
+			bufferize_text( "display the " + color_text( "NUMBER", CUI_White ) + " worst files and the " + color_text( "NUMBER", CUI_White ) + " best files (in term of percentage). By default, " + color_text( "NUMBER", CUI_White ) + " is 5." ) ;
+
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "tree" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " tree" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " tree" ) ;
 			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Use a recursive function to display every folder and every file that are contained in the current folder." ) ;
 			bufferize_text() ;
 		}
@@ -246,6 +327,7 @@ ConsoleUI::help
 		else if( param_list.front() == "quit" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " quit" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " quit" ) ;
 			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Close the execution and release every piece of memory that was allocate during the execution." ) ;
 			bufferize_text() ;
 		}
@@ -334,70 +416,106 @@ ConsoleUI::language
 {
 	param_list.erase( param_list.begin() ) ;
 
-	QString language ;
+	QString language_name ;
 	QList< IPlugin * > list = core_->get_list_plugins() ;
 	IPlugin * plugin = nullptr ;
 	std::string tmp ;
 	bool try_again = true ;
 
-	while( try_again )
+	if( current_folder_ == nullptr )
 	{
-		// ask for a plugin language
-		if( param_list.empty() )
+		while( try_again )
 		{
-			std::cout << "The system handles:" << std::endl ;
-			for( int i = 0 ; i < list.size() ; ++i )
+			// ask for a plugin language
+			if( param_list.empty() )
 			{
-                tmp = color_text( list[ i ]->get_language(), CUI_White, false ).toStdString() ;
-				std::cout << "\t" << tmp << std::endl ;
+				std::cout << "The system handles:" << std::endl ;
+				for( int i = 0 ; i < list.size() ; ++i )
+				{
+					tmp = color_text( list[ i ]->get_language(), CUI_White, false ).toStdString() ;
+					std::cout << "\t" << tmp << std::endl ;
+					tmp = "" ;
+				}
+
+				std::cout << "Language? " ;
+
+				// get answer
+				std::getline( std::cin, tmp ) ;
+				language_name = tmp.c_str() ;
+
+				// flush
 				tmp = "" ;
 			}
-
-			std::cout << "Language? " ;
-
-			// get answer
-			std::getline( std::cin, tmp ) ;
-			language = tmp.c_str() ;
-
-			// flush
-			tmp = "" ;
-		}
-		else
-		{
-			// get the answer in the next parameter
-			language = param_list.front() ;
-			param_list.clear() ;
-		}
-
-		if( language.isEmpty() )
-		{
-			// just quit
-			try_again = false ;
-		}
-		else
-		{
-			plugin = core_->find_plugin( language ) ;
-
-			// check if the plugin exists
-			if( plugin != nullptr )
+			else
 			{
+				// get the answer in the next parameter
+				language_name = param_list.front() ;
+				param_list.clear() ;
+			}
+
+			if( language_name.isEmpty() )
+			{
+				// just quit
 				try_again = false ;
 			}
 			else
 			{
-				std::cout << "This language is not handled by the system." << std::endl ;
+				plugin = core_->find_plugin( language_name ) ;
+
+				// check if the plugin exists
+				if( plugin != nullptr )
+				{
+					try_again = false ;
+				}
+				else
+				{
+					std::cout << "This language is not handled by the system." << std::endl ;
+				}
 			}
 		}
-	}
 
-	if( !( language.isEmpty() ) )
-	{
-		// choose the plugin in the core
-		core_->set_plugin( plugin ) ;
+		if( !( language_name.isEmpty() ) )
+		{
+			// choose the plugin in the core
+			core_->set_plugin( plugin ) ;
+		}
+		else
+		{
+			bufferize_text( color_text( "Nothing was done.", CUI_Red ) ) ;
+		}
 	}
 	else
 	{
-		bufferize_text( color_text( "Nothing was done.", CUI_Red ) ) ;
+		if( param_list.empty() )
+		{
+			bufferize_text( color_text( "The language defines the tree view. So changing it means recreate a new tree view. If you want to do that, just use the command 'language -r <language_name>' or 'language --reset <language_name>'.", CUI_Red ) ) ;
+		}
+		else if( param_list.front() == "-r" ||
+				 param_list.front() == "--reset")
+		{
+			// release a potential previous tree view
+			current_folder_ = nullptr ;
+			core_->release_tree() ;
+
+			// release potential reports
+			core_->release_reports() ;
+			current_report_ = nullptr ;
+
+			param_list.erase( param_list.begin() ) ;
+			QStringList param ;
+
+			// call language another time
+			if( param_list.empty() )
+			{
+				param = { "language" } ;
+			}
+			else
+			{
+				param = { "language", param_list.front() } ;
+			}
+
+			language( param ) ;
+		}
 	}
 
 	display_buffer() ;
@@ -633,16 +751,20 @@ ConsoleUI::report
 						CC_File * file = ( *cit ) ;
 						CUI_TextColor tc = CUI_Yellow ;
 
+						// change the color
 						if( current_report_->percents[ pos ] < 0.8 * current_report_->average )
 						{
+							// bad file
 							tc = CUI_Red ;
 						}
 
 						if( current_report_->percents[ pos ] > 1.2 * current_report_->average )
 						{
+							// good file
 							tc = CUI_Green ;
 						}
 
+						// display its information
 						line = color_text( file->name, tc ) ;
 						line += " " + color_text( "% ", CUI_White ) + QString::number( current_report_->percents[ pos ] ) ;
 						line += " " + display_array( file->array, true ) ;
@@ -652,13 +774,6 @@ ConsoleUI::report
 					}
 
 					bufferize_text() ;
-				}
-
-				// histogram
-				if( QString( param_list[ i ] ) == "-h" ||
-					QString( param_list[ i ] ) == "--histogram" )
-				{
-					// display a histogram
 				}
 
 				// level
@@ -713,8 +828,12 @@ ConsoleUI::report
 						pos = sort_list[ sort_list.size() - i ].second ;
 						file = current_report_->list_files[ pos ] ;
 
+						// change the name
+						line = file->name ;
+						line.right( line.size() - current_report_->folder->name.size() ) ;
+
 						// display its information
-						line = color_text( file->name, CUI_Green ) ;
+						line = color_text( line, CUI_Green ) ;
 						line += " " + color_text( "% ", CUI_White ) + QString::number( current_report_->percents[ pos ] ) ;
 						line += " " + display_array( file->array, true ) ;
 
