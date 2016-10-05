@@ -251,7 +251,7 @@ ConsoleUI::help
 			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " directory [OPTION] [ADDRESS]" ) ;
 			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "This allows the user to choose a project folder. The tree view will be created from this folder. Changing it means to reset the previous tree view. " + color_text( "ADDRESS", CUI_White ) + " can be absolute or relative." ) ;
 
-			bufferize_text( "\t" + color_text( "-r", CUI_White ) + "," + color_text( "--reset", CUI_White ) ) ;
+			bufferize_text( "\t" + color_text( "-r", CUI_White ) + ", " + color_text( "--reset", CUI_White ) ) ;
 			bufferize_text( "reset a tree view" ) ;
 
 			bufferize_text() ;
@@ -277,7 +277,7 @@ ConsoleUI::help
 			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "This allows the user to choose between every plugin the right one for a project. Information is the plugin will serve as a filter for the creation of the tree view. This is why the tree view depends on the language. Thus, changing the language means recreate the tree view and reset every analyze done until now. " + color_text( "LANGUAGE", CUI_White ) + " is the name defined by the plugin. The command " + color_text( "language", CUI_White ) + " can list every plugin so the user can find the best one for its use." ) ;
 			bufferize_text() ;
 
-			bufferize_text( "\t" + color_text( "-r", CUI_White ) + "," + color_text( "--reset", CUI_White ) ) ;
+			bufferize_text( "\t" + color_text( "-r", CUI_White ) + ", " + color_text( "--reset", CUI_White ) ) ;
 			bufferize_text( "reset a tree view" ) ;
 
 			bufferize_text() ;
@@ -303,7 +303,7 @@ ConsoleUI::help
 			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "This command display the report of the current folder. The user can display a more precise report by using options. When a user analyze a folder, a report is created and stored in a list of reports. That means he can make several reports at the same time. But the " + color_text( "report", CUI_White ) + " command display only one report. To change the report displayed, you need to change move in the right folder and use the command " + color_text( "analyze", CUI_White ) + " another time. But if the report was already make, it is just going to display the first report. It is not going to create a copy of the first report." ) ;
 			bufferize_text() ;
 
-			bufferize_text( "\t" + color_text( "-f", CUI_White ) + "," + color_text( "--files", CUI_White ) ) ;
+			bufferize_text( "\t" + color_text( "-f", CUI_White ) + ", " + color_text( "--files", CUI_White ) ) ;
 			bufferize_text( "display the list of files analyzed by the report and use a color to describe the percentage of comments compare to the average percentage. A red file is 20% under the average percentage and a green one is 20% upper. It also displays a short description of the file:" ) ;
 			bufferize_text( color_text( "../console/main.cpp", CUI_Yellow ) + " " + color_text( "%", CUI_White ) + " 33.3333 " + color_text( "TOT:", CUI_White ) + " 18 " + color_text( "COM:", CUI_White ) + " 6 " + color_text( "MIX:", CUI_White ) + " 0 " + color_text( "COD:", CUI_White ) + " 12" ) ;
 			bufferize_text( "\t" + color_text( "%", CUI_White ) + " percentage" ) ;
@@ -311,8 +311,13 @@ ConsoleUI::help
 			bufferize_text( "\t" + color_text( "COM", CUI_White ) + " number of pure comments" ) ;
 			bufferize_text( "\t" + color_text( "MIX", CUI_White ) + " number of mixed lines" ) ;
 			bufferize_text( "\t" + color_text( "CODE", CUI_White ) + " number of pure code lines" ) ;
+			bufferize_text() ;
 
-			bufferize_text( "\t" + color_text( "-t", CUI_White ) + " [NUMBER]," + color_text( "--top", CUI_White ) + " [NUMBER]" ) ;
+			bufferize_text( "\t" + color_text( "-h", CUI_White ) + ", " + color_text( "--histogram", CUI_White ) ) ;
+			bufferize_text( "display an histogram which shows every files and their value compared to the average" ) ;
+			bufferize_text() ;
+
+			bufferize_text( "\t" + color_text( "-t", CUI_White ) + " [NUMBER], " + color_text( "--top", CUI_White ) + " [NUMBER]" ) ;
 			bufferize_text( "display the " + color_text( "NUMBER", CUI_White ) + " worst files and the " + color_text( "NUMBER", CUI_White ) + " best files (in term of percentage). By default, " + color_text( "NUMBER", CUI_White ) + " is 5." ) ;
 
 			bufferize_text() ;
