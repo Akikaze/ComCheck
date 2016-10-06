@@ -710,6 +710,11 @@ ConsoleUI::process
 				// choose the project directory
 				directory( param_list ) ;
 			}
+			else if( param_list.front() == "export" )
+			{
+				// choose the project directory
+				export_HTML( param_list ) ;
+			}
 			else if( param_list.front() == "help" )
 			{
 				// display more information about ComCheck or each command

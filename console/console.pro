@@ -15,7 +15,8 @@ SOURCES += main.cpp \
     core.cpp \
     iui.cpp \
     console_ui.cpp \
-    console_ui_commands.cpp
+    console_ui_commands.cpp \
+    core_export.cpp
 
 HEADERS += \
     core.hpp \

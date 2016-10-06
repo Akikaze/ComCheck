@@ -94,6 +94,12 @@ class ConsoleUI
 		void directory( QStringList param_list ) ;
 
 		///
+		/// \brief Display the result of the command 'export'
+		/// \param param_list List of parameters for the command
+		///
+		void export_HTML( QStringList param_list ) ;
+
+		///
 		/// \brief Display the result of the command 'help'
 		/// \param param_list List of parameters for the command
 		///

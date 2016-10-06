@@ -98,6 +98,11 @@ class Core
 		IUI * create_UI() ;
 
 		///
+		/// \brief Export a CC_Report * in HTML
+		///
+		void export_HTML() ;
+
+		///
 		/// \brief Find a plugin associated to a language
 		/// \param language String searched in the plugins' list
 		/// \return Plugin which treats this language
@@ -157,6 +162,18 @@ class Core
 		CC_Folder * create_branch( QString name_folder ) ;
 
 		///
+		/// \brief Export a CSS file for HTML version of report
+		/// \param folder Name of the folder
+		///
+		void export_CSS( QString folder ) ;
+
+		///
+		/// \brief Export a JS file for HTML version of report
+		/// \param folder Name of the folder
+		///
+		void export_JS( QString folder ) ;
+
+		///
 		/// \brief List all plugins
 		/// \return List of plugins found in the folder /plugins
 		///
@@ -164,6 +181,7 @@ class Core
 
 		// --- ATTRIBUTES ---
 
+		bool automatic_ ; ///< Signal an automatic execution
 		QString	directory_ ; ///< Address of project's repository
 		bool interfaced_ ; ///< Signal for graphical interface
 		QList< IPlugin * > list_plugins_ ; ///< List of plugins

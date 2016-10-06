@@ -112,7 +112,8 @@ ConsoleUI::directory
 			}
 			else
 			{
-				std::cout << "This directory is not found by the system." << std::endl ;
+				bufferize_text( color_text( "This directory is not found by the system.", CUI_Red ) ) ;
+				display_buffer() ;
 			}
 		}
 
@@ -171,6 +172,28 @@ ConsoleUI::directory
 	}
 
 	display_buffer() ;
+}
+
+///
+/// \brief Display the result of the command 'export'
+/// \param param_list List of parameters for the command
+///
+void
+ConsoleUI::export_HTML
+(
+	QStringList param_list
+)
+{
+	param_list.erase( param_list.begin() ) ;
+
+	if( current_report_ != nullptr )
+	{
+		core_->export_HTML() ;
+	}
+	else
+	{
+		bufferize_text( color_text( "Impossible to export reports because you have not made any reports.", CUI_Red ) ) ;
+	}
 }
 
 ///
@@ -254,6 +277,13 @@ ConsoleUI::help
 			bufferize_text( "\t" + color_text( "-r", CUI_White ) + ", " + color_text( "--reset", CUI_White ) ) ;
 			bufferize_text( "reset a tree view" ) ;
 
+			bufferize_text() ;
+		}
+		else if( param_list.front() == "export" )
+		{
+			bufferize_text( color_text( "NAME -", CUI_White ) + " export" ) ;
+			bufferize_text( color_text( "SYNOPSIS -", CUI_White ) + " export" ) ;
+			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Export every report made during the execution in HTML file." ) ;
 			bufferize_text() ;
 		}
 		else if( param_list.front() == "help" )
@@ -438,10 +468,9 @@ ConsoleUI::language
 				std::cout << "The system handles:" << std::endl ;
 				for( int i = 0 ; i < list.size() ; ++i )
 				{
-					tmp = color_text( list[ i ]->get_language(), CUI_White, false ).toStdString() ;
-					std::cout << "\t" << tmp << std::endl ;
-					tmp = "" ;
+					bufferize_text( "\t" + color_text( list[ i ]->get_language(), CUI_White, false ) ) ;
 				}
+				display_buffer() ;
 
 				std::cout << "Language? " ;
 
@@ -475,7 +504,8 @@ ConsoleUI::language
 				}
 				else
 				{
-					std::cout << "This language is not handled by the system." << std::endl ;
+					bufferize_text( color_text( "This language is not handled by the system.", CUI_Red ) ) ;
+					display_buffer() ;
 				}
 			}
 		}

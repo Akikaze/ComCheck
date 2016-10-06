@@ -11,6 +11,7 @@ Core::Core
 	char ** argv
 )
 : QCoreApplication( argc, argv )
+, automatic_( false )
 , directory_( "" )
 , interfaced_( false )
 , plugin_( nullptr )
@@ -27,6 +28,27 @@ Core::Core
 	{
 		for( int i = 1 ; i < argc ; ++i )
 		{
+			// automatic
+			if( QString( argv[ i ] ) == "-a" ||
+				QString( argv[ i ] ) == "--automatic" )
+			{
+				if( !( directory_.isEmpty() ) && plugin_ != nullptr )
+				{
+					automatic_ = true ;
+
+					create_tree_view() ;
+					if( root_ != nullptr )
+					{
+						make_report() ;
+						export_HTML() ;
+					}
+					else
+					{
+						std::cout << "The tree view is empty." << std::endl ;
+					}
+				}
+			}
+
 			// directory
 			if( QString( argv[ i ] ) == "-d" ||
 				QString( argv[ i ] ) == "--directory" )
@@ -45,6 +67,7 @@ Core::Core
 					if( !( test.exists() ) )
 					{
 						std::cout << directory_.toStdString() << " is not found by the system." << std::endl ;
+						directory_ = "" ;
 					}
 				}
 			}
@@ -400,15 +423,19 @@ IUI *
 Core::create_UI
 ()
 {
-	// check if the graphical interface is installed
-	if( interfaced_ == true )
+	// check if it's an automatic execution
+	if( automatic_ == false )
 	{
-		std::cout << "Currently, there is no graphical interface available." << std::endl ;
-	}
-	else
-	{
-		// use the console interface
-		UI_ = new ConsoleUI( this, welcomed_ ) ;
+		// check if the graphical interface is installed
+		if( interfaced_ == true )
+		{
+			std::cout << "Currently, there is no graphical interface available." << std::endl ;
+		}
+		else
+		{
+			// use the console interface
+			UI_ = new ConsoleUI( this, welcomed_ ) ;
+		}
 	}
 
 	return UI_ ;

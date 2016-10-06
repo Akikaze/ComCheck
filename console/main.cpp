@@ -11,12 +11,15 @@ int main( int argc, char ** argv )
 	// Creation of the interface
 	IUI * user_interface = c->create_UI() ;
 
-	// Link the destruction of the interface with the destruction of the core
-	QObject::connect( user_interface, SIGNAL( finished() ), c, SLOT( quit() ) ) ;
+	if( user_interface != nullptr )
+	{
+		// Link the destruction of the interface with the destruction of the core
+		QObject::connect( user_interface, SIGNAL( finished() ), c, SLOT( quit() ) ) ;
 
-	// Execute the interface
-	QTimer::singleShot( 0, user_interface, SLOT( run() ) ) ;
-	c->exec() ;
+		// Execute the interface
+		QTimer::singleShot( 0, user_interface, SLOT( run() ) ) ;
+		c->exec() ;
+	}
 
 	// Delete the core
 	delete c ;
