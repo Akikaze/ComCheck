@@ -50,12 +50,11 @@ Core::export_CSS
 
 		ofs << indent << std::endl ;
 
-		// h4 {
-		ofs << indent << "h4 {" << std::endl ;
+		// h5 {
+		ofs << indent << "h5 {" << std::endl ;
 		indent += '\t' ;
 
 			ofs << indent << "margin : 0 ;" << std::endl ;
-			ofs << indent << "margin-bottom : 5px ;" << std::endl ;
 
 		// }
 		indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -85,6 +84,21 @@ Core::export_CSS
 			ofs << indent << "margin-right : auto ;" << std::endl ;
 			ofs << indent << "padding : 10px ;" << std::endl ;
 			ofs << indent << "text-align : center ;" << std::endl ;
+
+		// }
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "}" << std::endl ;
+
+		ofs << indent << std::endl ;
+
+		// table.sortable thead {
+		ofs << indent << "table.sortable thead {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "background-color	: #333333 ;" << std::endl ;
+			ofs << indent << "color : #666666 ;" << std::endl ;
+			ofs << indent << "cursor : pointer ;" << std::endl ;
+			ofs << indent << "font-weight : bold ;" << std::endl ;
 
 		// }
 		indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -354,6 +368,7 @@ Core::export_HTML
 							ofs << indent << "<title>ComCheck report: " << ( *cit ).first->name.toStdString() << "</title>" << std::endl ;
 							ofs << indent << "<link rel=\"stylesheet\" href=\"CC_style.css\" />" << std::endl ;
 							ofs << indent << "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js\"></script>" << std::endl ;
+							ofs << indent << "<script src=\"http://www.kryogenix.org/code/browser/sorttable/sorttable.js\"></script>" << std::endl ;
 							ofs << indent << "<script src=\"https://cdn.plot.ly/plotly-latest.min.js\"></script>" << std::endl ;
 							ofs << indent << std::endl ;
 
@@ -479,7 +494,7 @@ Core::export_HTML
 							ofs << indent << "<div id=\"tree_view\" class=\"show_hide\">" << std::endl ;
 							indent += '\t' ;
 
-								ofs << indent << "<h4 class=\"blue\">" << ( *cit ).first->name.toStdString() << "</h4>" << std::endl ;
+								ofs << indent << "<h5 class=\"blue\">" << ( *cit ).first->name.toStdString() << "</h5>" << std::endl ;
 								export_tree_view( ofs, ( *cit ).first, indent ) ;
 
 							// </div>
@@ -497,8 +512,8 @@ Core::export_HTML
 							ofs << indent << "<div id=\"list_files\" class=\"show_hide\">" << std::endl ;
 							indent += '\t' ;
 
-								// <table>
-								ofs << indent << "<table>" << std::endl ;
+								// <table class="sortable">
+								ofs << indent << "<table class=\"sortable\">" << std::endl ;
 								indent += '\t' ;
 
 									// <tr>
@@ -654,7 +669,7 @@ Core::export_name
 	prefix += "|---&nbsp;" ;
 
 	prefix += name.toStdString() ;
-	prefix = "<h4>" + prefix + "</h4>" ;
+	prefix = "<h5>" + prefix + "</h5>" ;
 
 	// bufferize the name with the prefix
 	return prefix ;
