@@ -25,11 +25,36 @@ Core::export_CSS
 
 		ofs << indent << std::endl ;
 
-		// h1 {
-		ofs << indent << "h1 {" << std::endl ;
+		// h1, h1 {
+		ofs << indent << "h1, h2 {" << std::endl ;
 		indent += '\t' ;
 
 			ofs << indent << "text-align : center ;" << std::endl ;
+
+		// }
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "}" << std::endl ;
+
+		ofs << indent << std::endl ;
+
+		// h3 {
+		ofs << indent << "h3 {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "border-top : 2px solid #000000 ;" << std::endl ;
+			ofs << indent << "padding-top : 20px ;" << std::endl ;
+
+		// }
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "}" << std::endl ;
+
+		ofs << indent << std::endl ;
+
+		// input {
+		ofs << indent << "input {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "float : right ;" << std::endl ;
 
 		// }
 		indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -44,9 +69,33 @@ Core::export_CSS
 			ofs << indent << "border : 1px solid #000000 ;" << std::endl ;
 			ofs << indent << "border-collapse : collapse ;" << std::endl ;
 			ofs << indent << "margin-left : auto ;" << std::endl ;
-			ofs << indent << "margin_right : auto ;" << std::endl ;
+			ofs << indent << "margin-right : auto ;" << std::endl ;
 			ofs << indent << "padding : 10px ;" << std::endl ;
 			ofs << indent << "text-align : center ;" << std::endl ;
+
+		// }
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "}" << std::endl ;
+
+		ofs << indent << std::endl ;
+
+		// #histogram {
+		ofs << indent << "#histogram {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "height : 80% ;" << std::endl ;
+
+		// }
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "}" << std::endl ;
+
+		ofs << indent << std::endl ;
+
+		// .show_hide {
+		ofs << indent << ".show_hide {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "display : none ;" << std::endl ;
 
 		// }
 		indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -58,7 +107,7 @@ Core::export_CSS
 		ofs << indent << ".red {" << std::endl ;
 		indent += '\t' ;
 
-			ofs << indent << "color : #FF0000 ;" << std::endl ;
+			ofs << indent << "color : #A30000 ;" << std::endl ;
 
 		// }
 		indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -70,7 +119,19 @@ Core::export_CSS
 		ofs << indent << ".green {" << std::endl ;
 		indent += '\t' ;
 
-			ofs << indent << "color : #00FF00 ;" << std::endl ;
+			ofs << indent << "color : #00A300 ;" << std::endl ;
+
+		// }
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "}" << std::endl ;
+
+		ofs << indent << std::endl ;
+
+		// .blue {
+		ofs << indent << ".blue {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "color : #0000A3 ;" << std::endl ;
 
 		// }
 		indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -80,6 +141,130 @@ Core::export_CSS
 	{
 		std::cout << "Impossible to create the CSS file." << std::endl ;
 	}
+}
+
+///
+/// \brief Export an histogram for HTML version of report
+/// \param ofs Stream for the HTML
+/// \param report Pointer on the report
+///
+void
+Core::export_histogram
+(
+	std::ostream & ofs,
+	CC_Report * report,
+	std::string indent
+)
+{
+	// js script
+	ofs << indent << "<script>" << std::endl ;
+	indent += '\t' ;
+	ofs << indent << std::endl ;
+
+		double average = report->average ;
+		QList< CC_File * >::const_iterator cit_list ;
+		QList< double >::const_iterator cit_double ;
+		QStringList legend = {} ;
+		QStringList::const_iterator cit_files ;
+
+		for( cit_list = report->list_files.constBegin() ;
+			 cit_list != report->list_files.constEnd() ;
+			 ++cit_list )
+		{
+			legend.push_back( ( *cit_list )->name ) ;
+		}
+
+		ofs << indent << "var average = {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "x: [ " ;
+			for( cit_files = legend.constBegin() ; cit_files != legend.constEnd() ; ++cit_files )
+			{
+				ofs << "'" << ( *cit_files ).toStdString() << "' ," ;
+			}
+			ofs << " ]," << std::endl ;
+
+			ofs << indent << "y: [ " ;
+			for( cit_files = legend.constBegin() ; cit_files != legend.constEnd() ; ++cit_files )
+			{
+				ofs << average << " ," ;
+			}
+			ofs << " ]," << std::endl ;
+			ofs << indent << "name: 'Average'," << std::endl ;
+			ofs << indent << "type: 'scatter'" << std::endl ;
+
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "} ;" << std::endl ;
+		ofs << indent << std::endl ;
+
+		ofs << indent << "var values = {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "x: [ " ;
+			for( cit_files = legend.constBegin() ; cit_files != legend.constEnd() ; ++cit_files )
+			{
+				ofs << "'" << ( *cit_files ).toStdString() << "' ," ;
+			}
+			ofs << " ]," << std::endl ;
+
+			ofs << indent << "y: [ " ;
+			for( cit_double = report->percents.constBegin() ; cit_double != report->percents.constEnd() ; ++cit_double )
+			{
+				ofs << ( *cit_double ) << " ," ;
+			}
+			ofs << " ]," << std::endl ;
+			ofs << indent << "marker: { color: [ " ;
+			for( cit_double = report->percents.constBegin() ; cit_double != report->percents.constEnd() ; ++cit_double )
+			{
+				ofs << "'rgba( " ;
+
+				if( ( *cit_double ) > 1.2 * average )
+				{
+					ofs << "0, 163, 0, 1.0" ;
+				}
+				else if( ( *cit_double ) < 0.8 * average )
+				{
+					ofs << "163, 0, 0, 1.0" ;
+				}
+				else
+				{
+					ofs << "80, 80, 80, 1.0" ;
+				}
+
+				ofs << " )', " ;
+			}
+			ofs << indent << " ] }," << std::endl ;
+			ofs << indent << "name: 'Percentage'," << std::endl ;
+			ofs << indent << "type: 'bar'" << std::endl ;
+
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "} ;" << std::endl ;
+		ofs << indent << std::endl ;
+
+		ofs << indent << "var data = [ values, average ] ;" << std::endl ;
+		ofs << indent << std::endl ;
+
+		ofs << indent << "var layout = [ {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "title: 'Comparison between every file by using the percentage of commented line.'," << std::endl ;
+			ofs << indent << "xaxis: { title: 'File' }," << std::endl ;
+			ofs << indent << "yaxis: { title: 'Percent' }," << std::endl ;
+
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "} ] ;" << std::endl ;
+		ofs << indent << std::endl ;
+
+		// create histogram before ...
+		ofs << indent << "Plotly.newPlot( 'histogram', data, layout ) ;" << std::endl ;
+		ofs << indent << std::endl ;
+
+		// ... and hide it after (perfect size with this trick)
+		ofs << indent << "$( '#histogram' ).toggleClass( 'show_hide' ) ;" << std::endl ;
+
+	ofs << indent << std::endl ;
+	indent = indent.substr( 0, indent.size() - 1 ) ;
+	ofs << indent << "</script>" << std::endl ;
 }
 
 ///
@@ -111,7 +296,6 @@ Core::export_HTML
 		if( result == true )
 		{
 			export_CSS( root + name ) ;
-			export_JS( root + name ) ;
 
 			QList< QPair< CC_Folder *, CC_Report * > >::const_iterator cit ;
 			for( cit = map_reports_.constBegin() ; cit != map_reports_.constEnd() ; ++cit )
@@ -125,6 +309,9 @@ Core::export_HTML
 				std::ofstream ofs( file.toStdString(), std::ios::out ) ;
 				if( ofs )
 				{
+					QList< CC_File * > list_files ;
+					QList< CC_File * >::const_iterator cit_list ;
+					double average = ( *cit ).second->average ;
 					std::string indent = "" ;
 
 					// <html>
@@ -138,10 +325,11 @@ Core::export_HTML
 
 							// title + css + js
 							ofs << indent << std::endl ;
+							ofs << indent << "<meta charset=\"utf-8\" />" << std::endl ;
 							ofs << indent << "<title>ComCheck report: " << ( *cit ).first->name.toStdString() << "</title>" << std::endl ;
 							ofs << indent << "<link rel=\"stylesheet\" href=\"CC_style.css\" />" << std::endl ;
 							ofs << indent << "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js\"></script>" << std::endl ;
-							ofs << indent << "<script src=\"CC_script.js\"></script>" << std::endl ;
+							ofs << indent << "<script src=\"https://cdn.plot.ly/plotly-latest.min.js\"></script>" << std::endl ;
 							ofs << indent << std::endl ;
 
 						// </head>
@@ -161,12 +349,129 @@ Core::export_HTML
 
 							ofs << indent << std::endl ;
 
-							// <div id="short_description">
-							ofs << indent << "<div id=\"short_description\">" << std::endl ;
+							// <table>
+							ofs << indent << "<table>" << std::endl ;
 							indent += '\t' ;
 
-								// h3
-								ofs << indent << "<h3>Short description</h3>" << std::endl ;
+								// <tr>
+								ofs << indent << "<tr>" << std::endl ;
+								indent += '\t' ;
+
+									ofs << indent << "<th rowspan=2>Lines</th>" << std::endl ;
+									ofs << indent << "<th>Total number</th>" << std::endl ;
+									ofs << indent << "<th>Comment lines</th>" << std::endl ;
+									ofs << indent << "<th>Mixed lines</th>" << std::endl ;
+									ofs << indent << "<th>Pure code lines</th>" << std::endl ;
+
+								// </tr>
+								indent = indent.substr( 0, indent.size() - 1 ) ;
+								ofs << indent << "</tr>" << std::endl ;
+
+								// <tr>
+								ofs << indent << "<tr>" << std::endl ;
+								indent += '\t' ;
+
+									// display array value
+									ofs << indent << "<td>" << ( *cit ).second->array[ 0 ] << "</td>" << std::endl ;
+									ofs << indent << "<td>" << ( *cit ).second->array[ 1 ] << "</td>" << std::endl ;
+									ofs << indent << "<td>" << ( *cit ).second->array[ 2 ] << "</td>" << std::endl ;
+									ofs << indent << "<td>" << ( *cit ).second->array[ 3 ] << "</td>" << std::endl ;
+
+								// </tr>
+								indent = indent.substr( 0, indent.size() - 1 ) ;
+								ofs << indent << "</tr>" << std::endl ;
+
+							// </table>
+							indent = indent.substr( 0, indent.size() - 1 ) ;
+							ofs << indent << "</table>" << std::endl ;
+
+							// <br/>
+							ofs << indent << "<br/>" << std::endl ;
+
+							// <table>
+							ofs << indent << "<table>" << std::endl ;
+							indent += '\t' ;
+
+								// <tr>
+								ofs << indent << "<tr>" << std::endl ;
+								indent += '\t' ;
+
+									ofs << indent << "<th rowspan=2>Statistics</th>" << std::endl ;
+									ofs << indent << "<th>Average</th>" << std::endl ;
+									ofs << indent << "<th>Variance</th>" << std::endl ;
+									ofs << indent << "<th>Divergence</th>" << std::endl ;
+
+								// </tr>
+								indent = indent.substr( 0, indent.size() - 1 ) ;
+								ofs << indent << "</tr>" << std::endl ;
+
+								// <tr>
+								ofs << indent << "<tr>" << std::endl ;
+								indent += '\t' ;
+
+									// display report compute value
+									ofs << indent << "<td>" << ( *cit ).second->average << " %</td>" << std::endl ;
+									ofs << indent << "<td>" << ( *cit ).second->variance << "</td>" << std::endl ;
+									ofs << indent << "<td>" << ( *cit ).second->divergence << "</td>" << std::endl ;
+
+								// </tr>
+								indent = indent.substr( 0, indent.size() - 1 ) ;
+								ofs << indent << "</tr>" << std::endl ;
+
+							// </table>
+							indent = indent.substr( 0, indent.size() - 1 ) ;
+							ofs << indent << "</table>" << std::endl ;
+
+							ofs << indent << "<br/>" << std::endl ;
+
+							// h3
+							ofs << indent << "<h3>Long description</h3>" << std::endl ;
+							ofs << indent << "<input type=\"button\" onclick=\"$( '#long_description' ).toggleClass( 'show_hide' ) ;\" value=\"show / hide\" />" << std::endl ;
+							ofs << indent << "<br/><br/>" << std::endl ;
+
+							// <div id="long_description" class="show_hide">
+							ofs << indent << "<div id=\"long_description\" class=\"show_hide\">" << std::endl ;
+							indent += '\t' ;
+
+								/*
+								 * Description of what type of comments, doxygen, todo, ...
+								 */
+
+								ofs << indent << "Nothing here for now. But soon !" << std::endl ;
+
+							// </div
+							indent = indent.substr( 0, indent.size() - 1 ) ;
+							ofs << indent << "</div>" << std::endl ;
+
+							ofs << indent << std::endl ;
+
+							// h3
+							ofs << indent << "<h3>Tree view</h3>" << std::endl ;
+							ofs << indent << "<input type=\"button\" onclick=\"$( '#tree_view' ).toggleClass( 'show_hide' ) ;\" value=\"show / hide\" />" << std::endl ;
+							ofs << indent << "<br/><br/>" << std::endl ;
+
+							// <div id="tree_view" class="show_hide">
+							ofs << indent << "<div id=\"tree_view\" class=\"show_hide\">" << std::endl ;
+							indent += '\t' ;
+
+
+								export_tree_view( ofs, ( *cit ).first, indent ) ;
+
+
+							// </div>
+							indent = indent.substr( 0, indent.size() - 1 ) ;
+							ofs << indent << "</div>" << std::endl ;
+
+							ofs << indent << std::endl ;
+
+							// h3
+							ofs << indent << "<h3>List files</h3>" << std::endl ;
+							ofs << indent << "<input type=\"button\" onclick=\"$( '#list_files' ).toggleClass( 'show_hide' ) ;\" value=\"show / hide\" />" << std::endl ;
+							ofs << indent << "<br/><br/>" << std::endl ;
+
+							// <div id="list_files" class="show_hide">
+							ofs << indent << "<div id=\"list_files\" class=\"show_hide\">" << std::endl ;
+							indent += '\t' ;
 
 								// <table>
 								ofs << indent << "<table>" << std::endl ;
@@ -176,61 +481,55 @@ Core::export_HTML
 									ofs << indent << "<tr>" << std::endl ;
 									indent += '\t' ;
 
-										ofs << indent << "<th>Total number of lines</th>" << std::endl ;
+										ofs << indent << "<th>File</th>" << std::endl ;
+										ofs << indent << "<th>Total number</th>" << std::endl ;
 										ofs << indent << "<th>Comment lines</th>" << std::endl ;
 										ofs << indent << "<th>Mixed lines</th>" << std::endl ;
 										ofs << indent << "<th>Pure code lines</th>" << std::endl ;
+										ofs << indent << "<th>Percentage</th>" << std::endl ;
 
 									// </tr>
 									indent = indent.substr( 0, indent.size() - 1 ) ;
 									ofs << indent << "</tr>" << std::endl ;
 
-									// <tr>
-									ofs << indent << "<tr>" << std::endl ;
-									indent += '\t' ;
+									list_files = ( *cit ).second->list_files ;
+									for( cit_list = list_files.constBegin() ; cit_list != list_files.constEnd() ; ++cit_list )
+									{
 
-										// display array value
-										ofs << indent << "<td>" << ( *cit ).second->array[ 0 ] << "</td>" << std::endl ;
-										ofs << indent << "<td>" << ( *cit ).second->array[ 1 ] << "</td>" << std::endl ;
-										ofs << indent << "<td>" << ( *cit ).second->array[ 2 ] << "</td>" << std::endl ;
-										ofs << indent << "<td>" << ( *cit ).second->array[ 3 ] << "</td>" << std::endl ;
+										// <tr>
+										ofs << indent << "<tr>" << std::endl ;
+										indent += '\t' ;
 
-									// </tr>
-									indent = indent.substr( 0, indent.size() - 1 ) ;
-									ofs << indent << "</tr>" << std::endl ;
+											// display colored name
+											ofs << indent << "<td " ;
 
-								// </table>
-								indent = indent.substr( 0, indent.size() - 1 ) ;
-								ofs << indent << "</table>" << std::endl ;
+											if( ( *cit_list )->percent < 0.8 * average )
+											{
+												ofs << "class=\"red\">" ;
+											}
+											else if( ( *cit_list )->percent > 1.2 * average )
+											{
+												ofs << "class=\"green\">" ;
+											}
+											else
+											{
+												ofs << ">" ;
+											}
 
-								// <table>
-								ofs << indent << "<table>" << std::endl ;
-								indent += '\t' ;
+											ofs << ( *cit_list )->name.toStdString() << "</td>" << std::endl ;
 
-									// <tr>
-									ofs << indent << "<tr>" << std::endl ;
-									indent += '\t' ;
+											// display array value
+											ofs << indent << "<td>" << ( *cit_list )->array[ 0 ] << "</td>" << std::endl ;
+											ofs << indent << "<td>" << ( *cit_list )->array[ 1 ] << "</td>" << std::endl ;
+											ofs << indent << "<td>" << ( *cit_list )->array[ 2 ] << "</td>" << std::endl ;
+											ofs << indent << "<td>" << ( *cit_list )->array[ 3 ] << "</td>" << std::endl ;
+											ofs << indent << "<td>" << ( *cit_list )->percent << " %</td>" << std::endl ;
 
-										ofs << indent << "<th>Average</th>" << std::endl ;
-										ofs << indent << "<th>Divergence</th>" << std::endl ;
-										ofs << indent << "<th>Variance</th>" << std::endl ;
+										// </tr>
+										indent = indent.substr( 0, indent.size() - 1 ) ;
+										ofs << indent << "</tr>" << std::endl ;
 
-									// </tr>
-									indent = indent.substr( 0, indent.size() - 1 ) ;
-									ofs << indent << "</tr>" << std::endl ;
-
-									// <tr>
-									ofs << indent << "<tr>" << std::endl ;
-									indent += '\t' ;
-
-										// display report compute value
-										ofs << indent << "<td>" << ( *cit ).second->average << "</td>" << std::endl ;
-										ofs << indent << "<td>" << ( *cit ).second->divergence << "</td>" << std::endl ;
-										ofs << indent << "<td>" << ( *cit ).second->variance << "</td>" << std::endl ;
-
-									// </tr>
-									indent = indent.substr( 0, indent.size() - 1 ) ;
-									ofs << indent << "</tr>" << std::endl ;
+									}
 
 								// </table>
 								indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -241,6 +540,26 @@ Core::export_HTML
 							ofs << indent << "</div>" << std::endl ;
 
 							ofs << indent << std::endl ;
+
+							// h3
+							ofs << indent << "<h3>Histogram</h3>" << std::endl ;
+							ofs << indent << "<input type=\"button\" onclick=\"$( '#histogram' ).toggleClass( 'show_hide' ) ;\" value=\"show / hide\" />" << std::endl ;
+							ofs << indent << "<br/><br/>" << std::endl ;
+
+							// <div id="histogram">
+							ofs << indent << "<div id=\"histogram\">" << std::endl ;
+							indent += '\t' ;
+
+								export_histogram( ofs, ( *cit ).second, indent ) ;
+
+							// </div>
+							indent = indent.substr( 0, indent.size() - 1 ) ;
+							ofs << indent << "</div>" << std::endl ;
+
+							ofs << indent << std::endl ;
+
+							// <h3>
+							ofs << indent << "<h3></h3>" << std::endl ;
 
 						// </body>
 						indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -267,23 +586,13 @@ Core::export_HTML
 	}
 }
 
-///
-/// \brief Export a JS file for HTML version of report
-/// \param folder Name of the folder
-///
 void
-Core::export_JS
+Core::export_tree_view
 (
-	QString folder
+	std::ostream & ofs,
+	CC_Folder * folder,
+	std::string indent
 )
 {
-	std::ofstream ofs( ( folder + "/CC_script.js" ).toStdString() ) ;
-	if( ofs )
-	{
 
-	}
-	else
-	{
-		std::cout << "Impossible to create the JS file." << std::endl ;
-	}
 }

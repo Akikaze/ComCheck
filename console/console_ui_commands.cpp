@@ -776,7 +776,6 @@ ConsoleUI::report
 					QString( param_list[ i ] ) == "--files" )
 				{
 					// list every file colored in accordance with the average
-					unsigned int pos = 0 ;
 					QString line = "" ;
 
 					for( cit = current_report_->list_files.constBegin() ;
@@ -788,13 +787,13 @@ ConsoleUI::report
 						CUI_TextColor tc = CUI_Yellow ;
 
 						// change the color
-						if( current_report_->percents[ pos ] < 0.8 * current_report_->average )
+						if( ( *cit )->percent < 0.8 * current_report_->average )
 						{
 							// bad file
 							tc = CUI_Red ;
 						}
 
-						if( current_report_->percents[ pos ] > 1.2 * current_report_->average )
+						if( ( *cit )->percent > 1.2 * current_report_->average )
 						{
 							// good file
 							tc = CUI_Green ;
@@ -802,11 +801,10 @@ ConsoleUI::report
 
 						// display its information
 						line = color_text( file->name, tc ) ;
-						line += " " + color_text( "% ", CUI_White ) + QString::number( current_report_->percents[ pos ] ) ;
+						line += " " + color_text( "% ", CUI_White ) + QString::number( ( *cit )->percent ) ;
 						line += " " + display_array( file->array, true ) ;
 
 						bufferize_text( line ) ;
-						pos++ ;
 					}
 
 					bufferize_text() ;

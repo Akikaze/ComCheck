@@ -168,10 +168,20 @@ class Core
 		void export_CSS( QString folder ) ;
 
 		///
-		/// \brief Export a JS file for HTML version of report
-		/// \param folder Name of the folder
+		/// \brief Export an histogram for HTML version of report
+		/// \param ofs Stream for the HTML
+		/// \param report Pointer on the report
+		/// \param indent String which contain indentations
 		///
-		void export_JS( QString folder ) ;
+		void export_histogram( std::ostream & ofs, CC_Report * report, std::string indent ) ;
+
+		///
+		/// \brief Export a tree view for HTML version of report
+		/// \param ofs Stream for the HTML
+		/// \param folder Pointer on the folder
+		/// \param indent String which contain indentations
+		///
+		void export_tree_view( std::ostream & ofs, CC_Folder * folder, std::string indent ) ;
 
 		///
 		/// \brief List all plugins

@@ -569,8 +569,8 @@ Core::make_report
 				report_->list_files.push_back( *cit_File ) ;
 
 				// compute percentage
-				double percent = ( double )( ( ( *cit_File )->array[ 1 ] + ( *cit_File )->array[ 2 ] ) * 100 ) / ( double )( ( *cit_File )->array[ 0 ] ) ;
-				report_->percents.push_back( percent ) ;
+				( *cit_File )->percent = ( double )( ( ( *cit_File )->array[ 1 ] + ( *cit_File )->array[ 2 ] ) * 100 ) / ( double )( ( *cit_File )->array[ 0 ] ) ;
+				report_->percents.push_back( ( *cit_File )->percent ) ;
 
 				// store value
 				report_->array += ( *cit_File )->array ;

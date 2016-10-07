@@ -40,6 +40,7 @@ struct CC_File
 	// content
 	bool analyzed ; ///< true if array is fulfill
 	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for lines' type
+	double percent ; ///< percentage for this file
 } ;
 
 // --- CC_Folder ---
