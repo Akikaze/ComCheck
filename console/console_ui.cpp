@@ -386,6 +386,7 @@ ConsoleUI::display_buffer
 ///
 /// \brief Display a name in tree view
 /// \param name Name of the file or the folder
+/// \param isFile Check if the name should be colored or not
 /// \param level Size of indentation
 ///
 void
@@ -424,7 +425,7 @@ ConsoleUI::display_name
 	// add the last prefix
 	prefix += "|---" ;
 
-	// bufferize th ename with the prefix
+	// bufferize the name with the prefix
 	bufferize_text( prefix + name ) ;
 }
 

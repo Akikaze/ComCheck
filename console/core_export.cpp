@@ -50,6 +50,19 @@ Core::export_CSS
 
 		ofs << indent << std::endl ;
 
+		// h4 {
+		ofs << indent << "h4 {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "margin : 0 ;" << std::endl ;
+			ofs << indent << "margin-bottom : 5px ;" << std::endl ;
+
+		// }
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "}" << std::endl ;
+
+		ofs << indent << std::endl ;
+
 		// input {
 		ofs << indent << "input {" << std::endl ;
 		indent += '\t' ;
@@ -72,6 +85,18 @@ Core::export_CSS
 			ofs << indent << "margin-right : auto ;" << std::endl ;
 			ofs << indent << "padding : 10px ;" << std::endl ;
 			ofs << indent << "text-align : center ;" << std::endl ;
+
+		// }
+		indent = indent.substr( 0, indent.size() - 1 ) ;
+		ofs << indent << "}" << std::endl ;
+
+		ofs << indent << std::endl ;
+
+		// #tree_view {
+		ofs << indent << "#tree_view {" << std::endl ;
+		indent += '\t' ;
+
+			ofs << indent << "padding-left : 5px ;" << std::endl ;
 
 		// }
 		indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -454,9 +479,8 @@ Core::export_HTML
 							ofs << indent << "<div id=\"tree_view\" class=\"show_hide\">" << std::endl ;
 							indent += '\t' ;
 
-
+								ofs << indent << "<h4 class=\"blue\">" << ( *cit ).first->name.toStdString() << "</h4>" << std::endl ;
 								export_tree_view( ofs, ( *cit ).first, indent ) ;
-
 
 							// </div>
 							indent = indent.substr( 0, indent.size() - 1 ) ;
@@ -586,13 +610,80 @@ Core::export_HTML
 	}
 }
 
+///
+/// \brief Export a name for HTML tree view
+/// \param name Name of the file or the folder
+/// \param isFile Check if the name should be colored or not
+/// \param level Size of indentation
+/// \return Standard string which contain the name and the right prefix
+///
+std::string
+Core::export_name
+(
+	QString name,
+	bool isFile,
+	unsigned int level
+)
+{
+	unsigned int pos = name.toStdString().find_last_of( '/' ) + 1 ;
+	name = name.right( name.size() - pos ) ;
+
+	// if its a folder
+	if( !isFile )
+	{
+		// write it in blue
+		name = "<span class=\"blue\">" + name + "</span>" ;
+	}
+
+	// default prefix
+	std::string prefix = "&nbsp;" ;
+
+	if( level != 0 )
+	{
+		// this case is for align the first line
+		prefix += "|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" ;
+	}
+
+	for( unsigned int i = 1 ; i < level ; ++i )
+	{
+		// add as much prefix as the level
+		prefix += "|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" ;
+	}
+
+	// add the last prefix
+	prefix += "|---&nbsp;" ;
+
+	prefix += name.toStdString() ;
+	prefix = "<h4>" + prefix + "</h4>" ;
+
+	// bufferize the name with the prefix
+	return prefix ;
+}
+
 void
 Core::export_tree_view
 (
 	std::ostream & ofs,
 	CC_Folder * folder,
-	std::string indent
+	std::string indent,
+	unsigned int level
 )
 {
+	// display files in first
+	QList< CC_File * > list_files = folder->list_files ;
+	for( int i = 0 ; i < list_files.size() ; ++i )
+	{
+		ofs << indent << export_name( list_files[ i ]->name, true, level ) << std::endl ;
+	}
 
+	// and folders after
+	QList< CC_Folder * > list_folders = folder->list_folders ;
+	for( int i = 0 ; i < list_folders.size() ; ++i )
+	{
+		// display the name
+		ofs << indent << export_name( list_folders[ i ]->name, false, level ) << std::endl ;
+
+		// and be recursive
+		export_tree_view( ofs, list_folders[ i ], indent, level + 1 ) ;
+	}
 }

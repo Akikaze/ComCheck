@@ -176,12 +176,22 @@ class Core
 		void export_histogram( std::ostream & ofs, CC_Report * report, std::string indent ) ;
 
 		///
+		/// \brief Display a name in tree view
+		/// \param name Name of the file or the folder
+		/// \param isFile Check if the name should be colored or not
+		/// \param level Size of indentation
+		/// \return Standard string which contain the name and the right prefix
+		///
+		std::string export_name( QString name, bool isFile, unsigned int level = 0 ) ;
+
+		///
 		/// \brief Export a tree view for HTML version of report
 		/// \param ofs Stream for the HTML
 		/// \param folder Pointer on the folder
-		/// \param indent String which contain indentations
+		/// \param indent String which contain HTML indentations
+		/// \param level Number of indentations for tree view
 		///
-		void export_tree_view( std::ostream & ofs, CC_Folder * folder, std::string indent ) ;
+		void export_tree_view( std::ostream & ofs, CC_Folder * folder, std::string indent, unsigned int level = 0 ) ;
 
 		///
 		/// \brief List all plugins
