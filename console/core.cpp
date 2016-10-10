@@ -94,15 +94,6 @@ Core::Core
 				interfaced_ = true ;
 			}
 
-			/*
-			// plugin
-			if( QString( argv[ i ] ) == "-p" ||
-				QString( argv[ i ] ) == "--plugin" )
-			{
-				create_plugin( argv[ ++i ] ) ;
-			}
-			*/
-
 			// test
 			if( QString( argv[ i ] ) == "-t" ||
 				QString( argv[ i ] ) == "--test" )
@@ -190,6 +181,16 @@ Core::analyze_file
 			}
 		}
 
+		// add every type of comment
+		for( int i = 4 ; i < CC_Flag::CC_Flag_Size ; ++i )
+		{
+			file->array[ 1 ] += file->array[ i ] ;
+		}
+
+		// compute percentage
+		file->com_tot = ( double )( ( file->array[ 1 ] + file->array[ 2 ] ) * 100 ) / ( double )( file->array[ 0 ] ) ;
+		file->com_cod = ( double )( ( file->array[ 1 ] + file->array[ 2 ] ) * 100 ) / ( double )( file->array[ 2 ] + file->array[ 3 ] ) ;
+
 		// signal that this file is already analyzed
 		file->analyzed = true ;
 	}
@@ -267,6 +268,7 @@ Core::compute_report
 	CC_Report * report
 )
 {
+	/*
 	// loop initializer
 	double average = 0 ;
 	QList< double > percents = report->percents ;
@@ -299,6 +301,7 @@ Core::compute_report
 	// compute divergence
 
 	report->divergence = sqrt( report->variance ) ;
+	*/
 }
 
 ///
@@ -566,13 +569,8 @@ Core::make_report
 					analyze_file( *cit_File ) ;
 				}
 
+				// store file information in the report
 				report_->list_files.push_back( *cit_File ) ;
-
-				// compute percentage
-				( *cit_File )->percent = ( double )( ( ( *cit_File )->array[ 1 ] + ( *cit_File )->array[ 2 ] ) * 100 ) / ( double )( ( *cit_File )->array[ 0 ] ) ;
-				report_->percents.push_back( ( *cit_File )->percent ) ;
-
-				// store value
 				report_->array += ( *cit_File )->array ;
 			}
 		}

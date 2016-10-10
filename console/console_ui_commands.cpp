@@ -155,19 +155,16 @@ ConsoleUI::directory
 			current_folder_ = nullptr ;
 
 			param_list.erase( param_list.begin() ) ;
-			QStringList param ;
 
 			// call language another time
 			if( param_list.empty() )
 			{
-				param = { "directory" } ;
+				directory( { "directory" } ) ;
 			}
 			else
 			{
-				param = { "directory", param_list.front() } ;
+				directory( { "directory", param_list.front() } ) ;
 			}
-
-			directory( param ) ;
 		}
 	}
 
@@ -538,19 +535,16 @@ ConsoleUI::language
 			current_report_ = nullptr ;
 
 			param_list.erase( param_list.begin() ) ;
-			QStringList param ;
 
 			// call language another time
 			if( param_list.empty() )
 			{
-				param = { "language" } ;
+				language( { "language" } ) ;
 			}
 			else
 			{
-				param = { "language", param_list.front() } ;
+				language( { "language", param_list.front() } ) ;
 			}
-
-			language( param ) ;
 		}
 	}
 
@@ -787,13 +781,13 @@ ConsoleUI::report
 						CUI_TextColor tc = CUI_Yellow ;
 
 						// change the color
-						if( ( *cit )->percent < 0.8 * current_report_->average )
+						if( ( *cit )->com_tot < 0.8 * current_report_->average )
 						{
 							// bad file
 							tc = CUI_Red ;
 						}
 
-						if( ( *cit )->percent > 1.2 * current_report_->average )
+						if( ( *cit )->com_tot > 1.2 * current_report_->average )
 						{
 							// good file
 							tc = CUI_Green ;
@@ -801,7 +795,7 @@ ConsoleUI::report
 
 						// display its information
 						line = color_text( file->name, tc ) ;
-						line += " " + color_text( "% ", CUI_White ) + QString::number( ( *cit )->percent ) ;
+						line += " " + color_text( "% ", CUI_White ) + QString::number( ( *cit )->com_tot ) ;
 						line += " " + display_array( file->array, true ) ;
 
 						bufferize_text( line ) ;
@@ -823,6 +817,7 @@ ConsoleUI::report
 				if( QString( param_list[ i ] ) == "-t" ||
 					QString( param_list[ i ] ) == "--top" )
 				{
+/*
 					// display best and worst files
 					CC_File * file = nullptr ;
 					QString line = "" ;
@@ -884,6 +879,7 @@ ConsoleUI::report
 					}
 
 					bufferize_text() ;
+*/
 				}
 			}
 

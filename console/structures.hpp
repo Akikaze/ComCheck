@@ -40,7 +40,10 @@ struct CC_File
 	// content
 	bool analyzed ; ///< true if array is fulfill
 	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for lines' type
-	double percent ; ///< percentage for this file
+
+	// percentages
+	double com_tot ; ///< ratio comment / total
+	double com_cod ; ///< ratio comment / code
 } ;
 
 // --- CC_Folder ---
@@ -72,9 +75,12 @@ struct CC_Report
 	// content
 	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for all lines studied
 	QList< CC_File * > list_files ; ///< list of files studied in the report
-	QList< double >	percents ; ///< percentages
 
-	// compute
+	// report's percentage
+	double com_tot ; ///< ratio comment / total
+	double com_cod ; ///< ratio comment / code
+
+	// statistics
 	double average ; ///< average value
 	double variance ; ///< variance value
 	double divergence ; ///< divergence value

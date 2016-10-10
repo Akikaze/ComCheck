@@ -195,6 +195,7 @@ Core::export_histogram
 	std::string indent
 )
 {
+/*
 	// js script
 	ofs << indent << "<script>" << std::endl ;
 	indent += '\t' ;
@@ -304,6 +305,7 @@ Core::export_histogram
 	ofs << indent << std::endl ;
 	indent = indent.substr( 0, indent.size() - 1 ) ;
 	ofs << indent << "</script>" << std::endl ;
+*/
 }
 
 ///
@@ -473,10 +475,7 @@ Core::export_HTML
 							ofs << indent << "<div id=\"long_description\" class=\"show_hide\">" << std::endl ;
 							indent += '\t' ;
 
-								/*
-								 * Description of what type of comments, doxygen, todo, ...
-								 */
-
+								// Description of what type of comments, doxygen, todo, ...
 								ofs << indent << "Nothing here for now. But soon !" << std::endl ;
 
 							// </div
@@ -542,11 +541,11 @@ Core::export_HTML
 											// display colored name
 											ofs << indent << "<td " ;
 
-											if( ( *cit_list )->percent < 0.8 * average )
+											if( ( *cit_list )->com_tot < 0.8 * average )
 											{
 												ofs << "class=\"red\">" ;
 											}
-											else if( ( *cit_list )->percent > 1.2 * average )
+											else if( ( *cit_list )->com_tot > 1.2 * average )
 											{
 												ofs << "class=\"green\">" ;
 											}
@@ -562,7 +561,7 @@ Core::export_HTML
 											ofs << indent << "<td>" << ( *cit_list )->array[ 1 ] << "</td>" << std::endl ;
 											ofs << indent << "<td>" << ( *cit_list )->array[ 2 ] << "</td>" << std::endl ;
 											ofs << indent << "<td>" << ( *cit_list )->array[ 3 ] << "</td>" << std::endl ;
-											ofs << indent << "<td>" << ( *cit_list )->percent << " %</td>" << std::endl ;
+											ofs << indent << "<td>" << ( *cit_list )->com_tot << " %</td>" << std::endl ;
 
 										// </tr>
 										indent = indent.substr( 0, indent.size() - 1 ) ;

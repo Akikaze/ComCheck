@@ -494,8 +494,9 @@ ConsoleUI::draw_histogram
 ()
 {
 	double average = current_report_->average ;
-	QList< double > list = current_report_->percents ;
-	QList< double >::const_iterator cit ;
+	QList< CC_File * >::const_iterator cit ;
+
+	QList< double > list ;
 
 	// console size
 	unsigned int c_height = _rows_ ;
@@ -509,23 +510,24 @@ ConsoleUI::draw_histogram
 	unsigned int max_value = 0 ;
 	unsigned int min_value = 100 ;
 
-	for( cit = list.constBegin() ; cit != list.constEnd() ; ++cit )
+	for( cit = current_report_->list_files.constBegin() ; cit != current_report_->list_files.constEnd() ; ++cit )
 	{
-		if( ( *cit ) < min_value )
+		list.push_back( ( *cit )->com_tot ) ;
+
+		if( list.back() < min_value )
 		{
-			min_value = ( *cit ) ;
+			min_value = list.back() ;
 		}
 
-		if( ( *cit ) > max_value )
+		if( list.back() > max_value )
 		{
-			max_value = ( *cit ) ;
+			max_value = list.back() ;
 		}
 	}
 
 	// get histogram size
 	h_height = 100 ; // max_value - min_value
 	h_width = list.size() ;
-
 
 	while( h_width > c_width )
 	{
