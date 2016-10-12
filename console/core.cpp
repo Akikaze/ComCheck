@@ -189,7 +189,16 @@ Core::analyze_file
 
 		// compute percentage
 		file->com_tot = ( double )( ( file->array[ 1 ] + file->array[ 2 ] ) * 100 ) / ( double )( file->array[ 0 ] ) ;
-		file->com_cod = ( double )( ( file->array[ 1 ] + file->array[ 2 ] ) * 100 ) / ( double )( file->array[ 2 ] + file->array[ 3 ] ) ;
+
+		if( file->array[ 2 ] != 0 &&
+			file->array[ 3 ] != 0 )
+		{
+			file->com_cod = ( double )( ( file->array[ 1 ] + file->array[ 2 ] ) * 100 ) / ( double )( file->array[ 2 ] + file->array[ 3 ] ) ;
+		}
+		else
+		{
+			file->com_cod = -1 ;
+		}
 
 		// signal that this file is already analyzed
 		file->analyzed = true ;
