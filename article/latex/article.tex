@@ -1,23 +1,123 @@
 \documentclass[10pt,a4paper,twoside, openany]{report}
 
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+
+\usepackage{color}
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{quoting}
+\usepackage{enumitem}
+
+\setlist{nosep,before=\vspace{\baselineskip},after=\vspace{\baselineskip}}
+
 \begin{document}
 
 \begin{titlepage}
 \begin{LARGE}
-LES COMMENTAIRES INFORMATIQUES
+LES COMMENTAIRES EN INFORMATIQUE
 \end{LARGE}
 \end{titlepage}
 
 \chapter*{Introduction}
 
-% Blabla a propos de ComCheck
+% Blabla a propos de ComCheck, la qualite logicielle
 \paragraph{}
 
-\chapter{Commentaires et documentation}
+\chapter{D\'efinitions}
 
-\section{Aspect th\'eorique}
+\section{Commentaires et documentation}
 
-\paragraph{}
+\subsection{Commentaires}
 
+Pour tous ceux qui ont d\'ej\`a d\'evelopp\'e le moindre petit programme informatique, les commentaires n'ont pas de secret. Et c'est tout \`a fait normal, car ils n'ont pas vocation \`a en avoir. Pour d\'efinir ce qu'est un commentaire, commen\c cons par regarder la d\'efinition qu'en donne Wikipedia :
+
+\begin{quoting}
+\begin{large}"\end{large}
+Les commentaires sont, en programmation informatique, des portions du code source ignor\'ees par le compilateur ou l'interpr\'eteur, car destin\'es en g\'en\'eral \`a un lecteur humain et non cens\'es influencer l'ex\'ecution du programme.
+\begin{large}"\end{large}
+\end{quoting}
+
+Comme le d\'ecrit cette d\'efinition, un commentaire n'est pas interpret\'e. Il n'a donc aucune incidence sur la compilation, l'interpr\'etation et l'ex\'ecution d'un programme. Il est donc le meilleur outil pour conserver une trace \'ecrite quelconque dans un fichier source sans qu'elle n'est de cons\'equences. Les commentaires peuvent \^etre du texte expliquant un processus, du code \`a analyser ou \`a corriger, des informations \`a propos du fichier ou de son contenu. Ils sont tr\`es utilis\'e durant les diff\'erentes \'etapes de d\'eveloppement : conception, programmation, test, maintenance, ...\newline
+
+Avec la professionnalisation du d\'eveloppement et l'av\`enement de la programmation en \'equipe, il ets devenu vital de cr\'eer un logiciel de qualit\'e suffisamment clair pour qu'utilisateur, comme d\'eveloppeur, sachent ce qu'ils peuvent faire et comment le faire. Certains outils ont alors \'et\'e d\'evelopp\'e pour extraire des informations des commentaires et cr\'eer de la documentation.
+
+\subsection{Documentation}
+
+\begin{quoting}
+\begin{large}"\end{large}
+La documentation logicielle est un texte \'ecrit qui accompagne le logiciel informatique. Elle explique comment le logiciel fonctionne, et/ou comment on doit l'employer.
+\begin{large}"\end{large}
+\end{quoting}
+
+En plus de cette d\'efinition, l'article Wikipedia d\'ecrit cinq types de documentation :
+\begin{itemize}
+\item{L'expression du besoin}
+\item{Architecture / Conception}
+\item{Technique}
+\item{Utilisateur}
+\item{Marketing}
+\end{itemize}
+
+Lors du d\'eveloppement d'un logiciel, l'\'etape de documentation repr\'esente la finalisation du projet. Elle intervient apr\`es que le logiciel ait \'et\'e test\'e et avant de le donner aux clients. Et malgr\'e  son intrication avec le code, elle en est s\'epar\'ee. C'est pourquoi certains d\'eveloppeurs ont con\c cu  des outils pour cr\'eer la documentation directement \`a partir des fichiers source. Or chaque entreprise d\'efinit sa propre mani\`ere de d\'evelopper. Comme il aurait \'et\'e quasiment impossible d'adapter le code de toutes les entreprises sur un m\^eme mod\`ele, ils ont choisi de d\'efinir un mod\`ele de commentaire \`a la place.\newline
+
+Depuis lors, en utilisant des outils comme Doxygen ou Javadoc, il est possible d'automatiser la documentation en d\'etournant les commentaires.
+
+\section{Qualit\'e logicielle}
+
+D\'efinir la qualit\'e logicielle de mani\`ere pr\'ecise prendrait \'enorm\'ement de temps. Je vais simplement me restreindre \`a d\'efinir le concept principal ainsi que le lien entre les commentaires, la documentation et la qualit\'e.\newline
+
+La qualit\'e logicielle repr\'esente un champ du g\'enie logiciel dont le but est d'\'etablir des crit\`eres d'\'evaluation pour les logiciels. Un logiciel de qualit\'e a une dur\'ee de vie plus longue, une communaut\'e d'utilisateur plus importante et est, la plupart du temps, plus performant. Plusieurs normes ont \'et\'e d\'efinis pour qualifier un logiciel : en France, la plus connue est la norme ISO-9126 (compl\'et\'ee par l'ISO 25000) et elle d\'efinit six caract\'eristiques divis\'ees en vingt-sept sous cat\'egories :
+
+\begin{enumerate}
+\item{Capacit\'e fonctionnelle}
+\item{Fiabilit\'e}
+\item{Facilit\'e d'utilisation}
+\item{Rendement / Efficacit\'e}
+\item{Maintenabilit\'e}
+\item{Portabilit\'e}
+\end{enumerate}
+
+Pour ce qui nous concerne, je vais occulter tous ce qui n'est li\'e qu'au code pur pour ne conserver que les sous-caract\'eristiques int\'eressantes de notre point de vue :
+
+\begin{itemize}
+\item{\textbf{Facilit\'e d'utilisation} - Facilit\'e de compr\'ehension}
+\item{\textbf{Facilit\'e d'utilisation} - Facilit\'e d'apprentissage}
+\item{\textbf{Facilit\'e d'utilisation} - Facilit\'e d'exploitation}
+\item{\textbf{Maintenabilit\'e} - Facilit\'e d'analyse}
+\end{itemize}
+
+\'Etant donn\'e que les commentaires n'ont pas d'incidence sur le programme, tout comme la documentation, ils n'ont pour but que de facilit\'e certains processus. Mais ces processus sont vitaux pour la vie d'un projet. Si vous concevez un logiciel que personne ne peut comprendre, personne ne pourra reprendre votre travail pour l'am\'eliorer. S'il est hardu pour de nouveaux d\'eveloppeurs de rentrer dans le projet, vous vous retrouverez dans la m\^eme situation avec personne pour continuer votre projet.\newline
+
+\chapter{\`A l'int\'erieur du code}
+
+\section{Absence de documentation}
+
+Si l'on consid\`ere une documentation qui respecte la qualit\'e logicielle, il lui reste un d\'efaut dont elle ne pourra jamais se s\'eparer : elle est externe au code source. Je vais surement nourrir un clich\'e mais un d\'eveloppeur passe la plupart de son temps \`a regarder du code. Et devoir jongler entre le code et la documentation est une perte de temps qui croit exponentiellement avec les dimensions du logiciel. La documentation est importante, mais les commentaires \`a l'int\'erieur du code aideront les d\'eveloppeurs beaucoup plus rapidement. C'est pourquoi ils ne doivent pas \^etre mis de c\^ot\'e au profit de commentaire pour la documentation.\newline
+
+Tous les langages d\'efinissent des balises de commentaires. D'un point de vue syntaxique, on peut les r\'eunir chaque commentaire dans un de ces trois groupes :
+
+\begin{itemize}
+\item{\textbf{bloc} - commentaire sur plusieurs lignes encadr\'e par deux balises.}
+\item{\textbf{ligne} - commentaire sur une ligne, utilisant une seule balise en d\'ebut de ligne.}
+\item{\textbf{\`a la traine} - commentaire qui termine une ligne de code, encadr\'e par deux balises ou utilisant seulement une balise de d\'ebut de commentaire.}
+\end{itemize}
+
+N\'eanmoins, certains langages n'utilisent que deux groupes : il existe des langages qui d\'efinissent un commentaire comme \'etant du texte compris entre deux balises uniquement. Il n'existe pas de commentaire de type ligne dans ces langages. Parmis ces langages, on trouve le C, le HTML, ... \`A l'inverse, certains langages ne d\'efinissent pas de commentaires bloc car ils n'utilisent qu'une seule et unique balise. Le PHP, le langage Latex ou le Bash sont des langages de ce types.
+
+Pour simplifier l'analyse j'ai choisi de voir un commentaire comme \'etant une ligne du fichier et de d\'efinir alors trois types de lignes :
+
+\begin{itemize}
+\item{Ligne de code}
+\item{Ligne de commentaire}
+\item{Ligne mix (contenant \`a la fois du code et un commentaire)}
+\end{itemize}
+
+Gr\^ace \`a cette simplification, il est possible d'analyser n'importe quel type de commentaire de n'importe quel type de langage.
+
+\section{Type de commentaires}
+
+% Type de commentaire header, todo, temporaire
+% Comment d\'efinir un bon commentaire
 
 \end{document}

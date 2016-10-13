@@ -20,7 +20,6 @@ enum CC_Flag
 	CC_COMMENT,
 	CC_MIXED,
 	CC_CODE,
-	// CC_DOXYGEN
 	CC_Flag_Size
 } ;
 
