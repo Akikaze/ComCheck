@@ -7,3 +7,8 @@ Obviously, C++ comments are not written like HTML comments which don't either lo
 But, for determining if a line is a comment, ComCheck needs to know how are written comments in every langage. And this is really hard for a static system. To be able to understand even future langage still not invented, ComCheck uses a system of modules that you can plug directly in it. By default, ComCheck brings a module for C++. But if you know how to use C++ and QtCreator, you can create your own module for a specific language.
 
 A module defines the file extension, to avoid looking for JAVA comments in Ruby files, and how to get the type of a specific line. Those modules are stored in dynamic librairies (.so or .a and .dll according to your operating system).
+
+# Future evolution
+
+- Understand documentation comments like Doxygen or Javadoc.
+- Subdivide comments into several types : header, temporary, todo, ...
