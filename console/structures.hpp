@@ -23,6 +23,16 @@ enum CC_Flag
 	CC_Flag_Size
 } ;
 
+// --- CC_Statistics ---
+
+struct CC_Statistics
+{
+	double average ; ///< average value
+	double variance ; ///< variance value
+	double divergence ; ///< divergence value
+	double median ; ///< median value
+} ;
+
 // --- CC_File ---
 
 struct CC_Folder ;
@@ -41,8 +51,8 @@ struct CC_File
 	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for lines' type
 
 	// percentages
-	double com_tot ; ///< ratio comment / total
 	double com_cod ; ///< ratio comment / code
+	double com_tot ; ///< ratio comment / total
 } ;
 
 // --- CC_Folder ---
@@ -75,14 +85,13 @@ struct CC_Report
 	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for all lines studied
 	QList< CC_File * > list_files ; ///< list of files studied in the report
 
-	// report's percentage
-	double com_tot ; ///< ratio comment / total
-	double com_cod ; ///< ratio comment / code
+	// list ratio
+	QList< double > list_com_cod ; ///< list of ratio com_cod
+	QList< double > list_com_tot ; ///< list of ratio com_tot
 
 	// statistics
-	double average ; ///< average value
-	double variance ; ///< variance value
-	double divergence ; ///< divergence value
+	CC_Statistics cc_statistics ; ///< statistics values about com_cod
+	CC_Statistics ct_statistics ; ///< statistics values about com_tot
 } ;
 
 #endif // STRUCTURE_HPP

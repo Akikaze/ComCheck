@@ -187,9 +187,7 @@ Core::analyze_file
 			file->array[ 1 ] += file->array[ i ] ;
 		}
 
-		// compute percentage
-		file->com_tot = ( double )( ( file->array[ 1 ] + file->array[ 2 ] ) * 100 ) / ( double )( file->array[ 0 ] ) ;
-
+		// compute ratios
 		if( file->array[ 2 ] != 0 ||
 			file->array[ 3 ] != 0 )
 		{
@@ -199,6 +197,8 @@ Core::analyze_file
 		{
 			file->com_cod = -1 ;
 		}
+
+		file->com_tot = ( double )( ( file->array[ 1 ] + file->array[ 2 ] ) * 100 ) / ( double )( file->array[ 0 ] ) ;
 
 		// signal that this file is already analyzed
 		file->analyzed = true ;
@@ -277,40 +277,100 @@ Core::compute_report
 	CC_Report * report
 )
 {
-	/*
-	// loop initializer
-	double average = 0 ;
-	QList< double > percents = report->percents ;
-	QList< double >::const_iterator cit ;
+	double cc_average = 0 ;
+	double ct_average = 0 ;
+
+	double cc_variance = 0 ;
+	double ct_variance = 0 ;
+
+	double tmp = 0 ;
+
+	QList< double > cc_tmp ;
+	QList< double > ct_tmp ;
+
+	unsigned int size = report->list_files.size() ;
 
 	// compute average
-
-	// add each percent value
-	for( cit = percents.constBegin() ; cit != percents.constEnd() ; ++cit )
+	for( unsigned int i = 0 ; i < size ; ++i )
 	{
-		average += ( *cit ) ;
+		tmp = report->list_com_cod[ i ] ;
+
+		// avoid the storage of broken value
+		if( tmp != -1 )
+		{
+			cc_average += tmp ;
+			cc_tmp.push_back( tmp ) ;
+		}
+
+		tmp = report->list_com_tot[ i ] ;
+		ct_average += tmp ;
+		ct_tmp.push_back( tmp ) ;
 	}
 
-	// divide by the number of elements
-	average /= ( double )( percents.size() ) ;
-	report->average = average ;
+	cc_average /= ( double )( size ) ;
+	ct_average /= ( double )( size ) ;
 
-	// compute variance
+	// store average
+	report->cc_statistics.average = cc_average ;
+	report->ct_statistics.average = ct_average ;
 
-	report->variance = 0 ;
-
-	// add each block of the calcul
-	for( cit = percents.constBegin() ; cit != percents.constEnd() ; ++cit )
+	for( unsigned int i = 0 ; i < size ; ++i )
 	{
-		report->variance += ( ( *cit ) - average ) * ( ( *cit ) - average ) ;
+		if( cc_tmp[ i ] != -1 )
+		{
+			cc_variance += ( cc_tmp[ i ] - cc_average ) * ( cc_tmp[ i ] - cc_average ) ;
+		}
+
+		ct_variance += ( ct_tmp[ i ] - ct_average ) * ( ct_tmp[ i ] - ct_average ) ;
 	}
 
-	report->variance /= ( double )( percents.size() ) ;
+	cc_variance /= ( double )( size ) ;
+	ct_variance /= ( double )( size ) ;
 
-	// compute divergence
+	// store variance and divergence
+	report->cc_statistics.variance = cc_variance ;
+	report->cc_statistics.divergence = sqrt( cc_variance ) ;
 
-	report->divergence = sqrt( report->variance ) ;
-	*/
+	report->ct_statistics.variance = ct_variance ;
+	report->ct_statistics.divergence = sqrt( ct_variance ) ;
+
+	// sort list to find the median
+	std::sort( cc_tmp.begin(), cc_tmp.end() ) ;
+	std::sort( ct_tmp.begin(), ct_tmp.end() ) ;
+
+	// compute the median and the weighted mean
+	if( cc_tmp.size() % 2 == 0 )
+	{
+		unsigned int pos = cc_tmp.size() / 2 ;
+
+		// it's still possible that cc_tmp was empty at this point
+		if( pos != 0 )
+		{
+			tmp = ( cc_tmp[ pos - 1 ] + cc_tmp[ pos ] ) / 2 ;
+		}
+	}
+	else
+	{
+		tmp = cc_tmp[ cc_tmp.size() / 2 ] ;
+	}
+
+	// store median value for com_cod
+	report->cc_statistics.median = tmp ;
+
+	if( ct_tmp.size() % 2 == 0)
+	{
+		unsigned int pos = cc_tmp.size() / 2 ;
+
+		tmp = ( ct_tmp[ pos - 1 ] + ct_tmp[ pos ] ) / 2 ;
+	}
+	else
+	{
+		tmp = ct_tmp[ ct_tmp.size() / 2 ] ;
+	}
+
+	// store median value for com_tot
+	report->ct_statistics.median = tmp ;
+
 }
 
 ///
@@ -580,6 +640,8 @@ Core::make_report
 
 				// store file information in the report
 				report_->list_files.push_back( *cit_File ) ;
+				report_->list_com_tot.push_back( ( *cit_File )->com_tot ) ;
+				report_->list_com_cod.push_back( ( *cit_File )->com_cod ) ;
 				report_->array += ( *cit_File )->array ;
 			}
 		}

@@ -439,17 +439,26 @@ ConsoleUI::display_report
 	CC_Report * report
 )
 {
-	// display the average
-	double dbl = report->average ;
-	bufferize_text( color_text( "Average: ", CUI_White ) + QString::number( dbl ) ) ;
+	CC_Statistics stats ;
 
-	// display the variance
-	dbl = report->variance ;
-	bufferize_text( color_text( "Variance: ", CUI_White ) + QString::number( dbl ) ) ;
+	// start by com_tot
+	stats = report->ct_statistics ;
 
-	// display the divergence
-	dbl = report->divergence ;
-	bufferize_text( color_text( "Divergence: ", CUI_White ) + QString::number( dbl ) ) ;
+	bufferize_text( color_text( "Ratio comments / total - Average: ", CUI_White ) + QString::number( stats.average ) ) ;
+	bufferize_text( color_text( "Ratio comments / total - Variance: ", CUI_White ) + QString::number( stats.variance ) ) ;
+	bufferize_text( color_text( "Ratio comments / total - Divergence: ", CUI_White ) + QString::number( stats.divergence ) ) ;
+	bufferize_text( color_text( "Ratio comments / total - Median: ", CUI_White ) + QString::number( stats.median ) ) ;
+
+	// jump
+	bufferize_text() ;
+
+	// then com_cod
+	stats = report->cc_statistics ;
+
+	bufferize_text( color_text( "Ratio comments / codes - Average: ", CUI_White ) + QString::number( stats.average ) ) ;
+	bufferize_text( color_text( "Ratio comments / codes - Variance: ", CUI_White ) + QString::number( stats.variance ) ) ;
+	bufferize_text( color_text( "Ratio comments / codes - Divergence: ", CUI_White ) + QString::number( stats.divergence ) ) ;
+	bufferize_text( color_text( "Ratio comments / codes - Median: ", CUI_White ) + QString::number( stats.median ) ) ;
 
 	// jump
 	bufferize_text() ;
@@ -493,7 +502,7 @@ void
 ConsoleUI::draw_histogram
 ()
 {
-	double average = current_report_->average ;
+	double average = current_report_->ct_statistics.average ;
 	QList< CC_File * >::const_iterator cit ;
 
 	QList< double > list ;

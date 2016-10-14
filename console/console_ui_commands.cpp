@@ -781,13 +781,13 @@ ConsoleUI::report
 						CUI_TextColor tc = CUI_Yellow ;
 
 						// change the color
-						if( ( *cit )->com_tot < 0.8 * current_report_->average )
+						if( ( *cit )->com_tot < 0.8 * current_report_->ct_statistics.average )
 						{
 							// bad file
 							tc = CUI_Red ;
 						}
 
-						if( ( *cit )->com_tot > 1.2 * current_report_->average )
+						if( ( *cit )->com_tot > 1.2 * current_report_->ct_statistics.average )
 						{
 							// good file
 							tc = CUI_Green ;

@@ -352,7 +352,7 @@ Core::export_HTML
 				{
 					QList< CC_File * > list_files ;
 					QList< CC_File * >::const_iterator cit_list ;
-					double average = ( *cit ).second->average ;
+					double average = ( *cit ).second->ct_statistics.average ;
 					std::string indent = "" ;
 
 					// <html>
@@ -452,9 +452,9 @@ Core::export_HTML
 								indent += '\t' ;
 
 									// display report compute value
-									ofs << indent << "<td>" << ( *cit ).second->average << " %</td>" << std::endl ;
-									ofs << indent << "<td>" << ( *cit ).second->variance << "</td>" << std::endl ;
-									ofs << indent << "<td>" << ( *cit ).second->divergence << "</td>" << std::endl ;
+									ofs << indent << "<td>" << ( *cit ).second->ct_statistics.average << " %</td>" << std::endl ;
+									ofs << indent << "<td>" << ( *cit ).second->ct_statistics.variance << "</td>" << std::endl ;
+									ofs << indent << "<td>" << ( *cit ).second->ct_statistics.divergence << "</td>" << std::endl ;
 
 								// </tr>
 								indent = indent.substr( 0, indent.size() - 1 ) ;
