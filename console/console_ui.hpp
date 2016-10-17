@@ -176,13 +176,22 @@ class ConsoleUI
 		///
 		static void console_size() ;
 
+
 		///
-		/// \brief Display a array correctly
-		/// \param array Array
+		/// \brief Display a description array correctly
+		/// \param array Description array
 		/// \param shortcut Require a beautiful description or the minimal
 		/// \return QString if shortcut is activated
 		///
-		QString display_array( const std::array< unsigned int, CC_Flag::CC_Flag_Size > & array, bool shortcut = false ) ;
+		QString display_array_description( const std::array< unsigned int, desc_size > & array, bool shortcut = false ) ;
+
+		///
+		/// \brief Display a type array correctly
+		/// \param array Type array
+		/// \param shortcut Require a beautiful description or the minimal
+		/// \return QString if shortcut is activated
+		///
+		QString display_array_type( const std::array< unsigned int, type_size > & array, bool shortcut = false ) ;
 
 		///
 		/// \brief Display the whole buffer which contain strings

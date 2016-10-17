@@ -9,28 +9,58 @@
 // --- CC_Flag ---
 
 ///
-/// \brief Flag for ComCheck
+/// \brief Type of a line
 ///
 /// In a file or a report, the value 0 is the number of line but when a plugin
 /// return 0, that signals an error
 ///
-enum CC_Flag
+enum CC_Type
 {
-	CC_ERROR = 0,
-	CC_COMMENT,
-	CC_MIXED,
-	CC_CODE,
-	CC_Flag_Size
+	// Binary description : comment & code
+	ERROR = 0b00,
+	NO_COMMENT = 0b01,
+	ONLY_COMMENT = 0b10,
+	MIX_LINE = 0b11,
+
+	type_size
 } ;
 
-// --- CC_Statistics ---
-
-struct CC_Statistics
+///
+/// \brief Description of a comment
+///
+/// UNDEFINED should never appeared in a code. It is only used for initialize
+/// a CC_Comment without using a real value.
+///
+enum CC_Desc
 {
-	double average ; ///< average value
-	double variance ; ///< variance value
-	double divergence ; ///< divergence value
-	double median ; ///< median value
+	// Binary description : (programmation comment) & (documentation) & (professional use)
+	USELESS = 0b000,
+	UNDEFINED = 0b001,		// nothing => used for the initialization
+	DOCUMENTATION = 0b010,
+	HEADER = 0b011,
+	BUGS = 0b100,
+	TEMPORARY = 0b101,
+	NORMAL = 0b110,
+	EVOLUTION = 0b111,
+
+	desc_size
+} ;
+
+///
+/// \brief Structure of a line
+///
+/// Definition of a line as the association of a type with a description
+///
+struct CC_Line
+{
+	CC_Type type ;
+	CC_Desc description ;
+
+	// constructor
+	CC_Line() :
+		type( ERROR ),
+		description( UNDEFINED )
+	{}
 } ;
 
 // --- CC_File ---
@@ -43,16 +73,13 @@ struct CC_Folder ;
 struct CC_File
 {
 	// definition
-	QString	name ; ///< name of the file
+	QString		name ; ///< name of the file
 	CC_Folder * folder ; ///< folder of the file
 
 	// content
 	bool analyzed ; ///< true if array is fulfill
-	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for lines' type
-
-	// percentages
-	double com_cod ; ///< ratio comment / code
-	double com_tot ; ///< ratio comment / total
+	std::array< unsigned int, type_size > type ; ///< array for lines' type
+	std::array< unsigned int, desc_size > description ; ///< array for lines' description
 } ;
 
 // --- CC_Folder ---
@@ -82,16 +109,9 @@ struct CC_Report
 	 CC_Folder * folder ; ///< folder studied in this report
 
 	// content
-	std::array< unsigned int, CC_Flag::CC_Flag_Size > array ; ///< array for all lines studied
+	std::array< unsigned int, type_size > type ; ///< array for all lines studied (type)
+	std::array< unsigned int, desc_size > description ; ///< array for all lines studied (description)
 	QList< CC_File * > list_files ; ///< list of files studied in the report
-
-	// list ratio
-	QList< double > list_com_cod ; ///< list of ratio com_cod
-	QList< double > list_com_tot ; ///< list of ratio com_tot
-
-	// statistics
-	CC_Statistics cc_statistics ; ///< statistics values about com_cod
-	CC_Statistics ct_statistics ; ///< statistics values about com_tot
 } ;
 
 #endif // STRUCTURE_HPP

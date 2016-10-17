@@ -18,13 +18,13 @@ CPP_Plugin::~CPP_Plugin
 
 }
 
-CC_Flag
+CC_Line
 CPP_Plugin::get_type
 (
 	const std::string & line
 )
 {
-	CC_Flag flag = CC_Flag::CC_ERROR ;
+	CC_Line flag ;
 
 	bool commented = false ;
 	bool initialize_before = false ;
@@ -78,17 +78,17 @@ CPP_Plugin::get_type
 
 	if( copy.empty() )
 	{
-		flag = CC_Flag::CC_COMMENT ; // commented
+		flag.type = ONLY_COMMENT ; // commented
 	}
 	else
 	{
 		if( commented )
 		{
-			flag = CC_Flag::CC_MIXED ; // mixed
+			flag.type = MIX_LINE ; // mixed
 		}
 		else
 		{
-			flag = CC_Flag::CC_CODE ; // uncommented
+			flag.type = NO_COMMENT ; // uncommented
 		}
 	}
 

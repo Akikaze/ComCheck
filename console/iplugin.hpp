@@ -42,9 +42,9 @@ class IPlugin
 		///
 		/// \brief Get the type of a line
 		/// \param Line of the file
-		/// \return CC_Flag which describe the line
+		/// \return CC_Line which describe the line
 		///
-		virtual CC_Flag get_type( const std::string & line ) = 0 ;
+		virtual CC_Line get_type( const std::string & line ) = 0 ;
 
 	protected :
 

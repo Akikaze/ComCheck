@@ -1,0 +1,7 @@
+# Exemple of the config file required for each plugin.
+
+USELESS: --- === *** /// \\\
+HEADER: HEAD
+PROBLEM: BUGS
+TEMPORARY: TEMP
+EVOLUTION: TODO

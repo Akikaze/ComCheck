@@ -17,7 +17,7 @@ TemplatePlugin::~TemplatePlugin
 
 }
 
-CC_Flag
+CC_Line
 TemplatePlugin::get_type
 (
 	const std::string & line

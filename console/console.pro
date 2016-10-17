@@ -28,4 +28,6 @@ HEADERS += \
     console_ui.hpp
 
 OTHER_FILES += \
-    README.md
+    README.md \
+    CC_style.css \
+    prefix.txt
