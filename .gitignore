@@ -31,3 +31,6 @@
 # Qt compilation folder
 build-*
 *.user
+
+# LibreOffice open fil
+*#
