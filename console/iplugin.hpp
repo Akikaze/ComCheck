@@ -112,7 +112,7 @@ class IPlugin
 					list.erase( list.begin() ) ;
 				}
 
-				// --- PROBLEM ---
+				// --- DOCUMENTATION ---
 
 				std::getline( ifs, line ) ; // empty line
 				list = QString( line.c_str() ).split( ' ' ) ; // 1
@@ -120,7 +120,7 @@ class IPlugin
 
 				while( !( list.empty() ) ) // 3
 				{
-					prefix_.push_back( qMakePair( list.first(), BUGS ) ) ;
+					prefix_.push_back( qMakePair( list.first(), DOCUMENTATION ) ) ;
 					list.erase( list.begin() ) ;
 				}
 
@@ -133,6 +133,18 @@ class IPlugin
 				while( !( list.empty() ) ) // 3
 				{
 					prefix_.push_back( qMakePair( list.first(), TEMPORARY ) ) ;
+					list.erase( list.begin() ) ;
+				}
+
+				// --- PROBLEM ---
+
+				std::getline( ifs, line ) ; // empty line
+				list = QString( line.c_str() ).split( ' ' ) ; // 1
+				list.erase( list.begin() ) ; // 2
+
+				while( !( list.empty() ) ) // 3
+				{
+					prefix_.push_back( qMakePair( list.first(), BUGS ) ) ;
 					list.erase( list.begin() ) ;
 				}
 

@@ -33,15 +33,15 @@ enum CC_Type
 ///
 enum CC_Desc
 {
-	// Binary description : (programmation comment) & (documentation) & (professional use)
-	USELESS = 0b000,
-	UNDEFINED = 0b001,		// nothing => used for the initialization
-	DOCUMENTATION = 0b010,
-	HEADER = 0b011,
-	BUGS = 0b100,
-	TEMPORARY = 0b101,
-	NORMAL = 0b110,
-	EVOLUTION = 0b111,
+	// Binary description : (programmation comment) & (documentation) & !(professional use)
+	UNDEFINED = 0b000,		// nothing => used for the initialization
+	USELESS = 0b001,
+	HEADER = 0b010,
+	DOCUMENTATION = 0b011,
+	TEMPORARY = 0b100,
+	BUGS = 0b101,
+	EVOLUTION = 0b110,
+	NORMAL = 0b111,
 
 	desc_size
 } ;
