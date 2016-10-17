@@ -3,6 +3,8 @@
 TemplatePlugin::TemplatePlugin
 ()
 {
+	set_prefix() ;
+
 	QStringList tmp = { "*.???" } ;
 
 	extensions_ = tmp ;
@@ -17,6 +19,16 @@ TemplatePlugin::~TemplatePlugin
 
 }
 
+CC_Desc
+TemplatePlugin::get_description
+(
+	const std::string & comment
+)
+{
+	Q_UNUSED( comment ) ;
+	return UNDEFINED ;
+}
+
 CC_Line
 TemplatePlugin::get_type
 (
@@ -24,7 +36,7 @@ TemplatePlugin::get_type
 )
 {
 	Q_UNUSED( line ) ;
-	return CC_Flag::CC_ERROR ;
+	return CC_Line() ;
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)

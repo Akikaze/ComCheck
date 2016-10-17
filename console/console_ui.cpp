@@ -30,7 +30,7 @@ ConsoleUI::ConsoleUI
 
 #ifdef Q_OS_UNIX
 	// clean the console
-	system( "clear" ) ;
+	// system( "clear" ) ;
 
 	// handle the signal of WINdow CHange
 	signal( SIGWINCH, UNIX_console_size ) ;

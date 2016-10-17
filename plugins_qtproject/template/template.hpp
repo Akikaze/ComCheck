@@ -43,6 +43,18 @@ class TemplatePlugin
 		/// \return CC_Line which describe the line
 		///
 		virtual CC_Line get_type( const std::string & line ) ;
+
+	protected :
+
+		// --- GETTERS ---
+
+		///
+		/// \brief Get the description of a comment
+		/// \param Comment in a line
+		/// \return CC_Desc
+		///
+		virtual CC_Desc get_description( const std::string & comment ) ;
+
 } ;
 
 #endif // TEST_HPP

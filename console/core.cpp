@@ -185,6 +185,8 @@ Core::analyze_file
 			}
 		}
 
+		ifs.close() ;
+
 		// signal that this file is already analyzed
 		file->analyzed = true ;
 	}

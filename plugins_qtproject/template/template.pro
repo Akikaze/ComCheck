@@ -19,3 +19,6 @@ SOURCES += \
 TARGET = plugin_Template
 
 DESTDIR = ../../plugins
+
+OTHER_FILES += \
+    prefix.txt

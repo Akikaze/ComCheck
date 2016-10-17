@@ -4,6 +4,8 @@ CPP_Plugin::CPP_Plugin
 ()
 : comment_started_( false )
 {
+	set_prefix() ;
+
 	QStringList tmp = { "*.c", "*.C", "*.cpp", "*.h", "*.hpp" } ;
 
 	extensions_ = tmp ;
@@ -16,6 +18,16 @@ CPP_Plugin::~CPP_Plugin
 ()
 {
 
+}
+
+CC_Desc
+CPP_Plugin::get_description
+(
+	const std::string & comment
+)
+{
+	Q_UNUSED( comment ) ;
+	return UNDEFINED ;
 }
 
 CC_Line
