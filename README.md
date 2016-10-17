@@ -10,6 +10,6 @@ A module defines the file extension, to avoid looking for JAVA comments in Ruby 
 
 # Evolutions
 
-1 - Change the display of values (which percentages, which data)
-2 - Create an hierachy of comments to be more precise (the hierarchy should be extract from a config file
-3 - Create a custom string for the console display and change the whole system to display a line
+1. Change the display of values (which percentages, which data)
+2. Create an hierachy of comments to be more precise (the hierarchy should be extract from a config file
+3. Create a custom string for the console display and change the whole system to display a line
