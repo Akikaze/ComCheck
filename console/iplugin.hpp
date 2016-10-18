@@ -88,76 +88,17 @@ class IPlugin
 				 * 3 - store every object in the prefix list associated to the right description
 				 */
 
-				// --- USELESS ---
-
-				std::getline( ifs, line ) ; // empty line
-				list = QString( line.c_str() ).split( ' ' ) ; // 1
-				list.erase( list.begin() ) ; // 2
-
-				while( !( list.empty() ) ) // 3
+				for( unsigned int count = 1 ; count < desc_size - 1 ; ++count )
 				{
-					prefix_.push_back( qMakePair( list.first(), USELESS ) ) ;
-					list.erase( list.begin() ) ;
-				}
+					std::getline( ifs, line ) ;
+					list = QString( line.c_str() ).split( ' ' ) ; // 1
+					list.erase( list.begin() ) ; // 2
 
-				// --- HEADER ---
-
-				std::getline( ifs, line ) ; // empty line
-				list = QString( line.c_str() ).split( ' ' ) ; // 1
-				list.erase( list.begin() ) ; // 2
-
-				while( !( list.empty() ) ) // 3
-				{
-					prefix_.push_back( qMakePair( list.first(), HEADER ) ) ;
-					list.erase( list.begin() ) ;
-				}
-
-				// --- DOCUMENTATION ---
-
-				std::getline( ifs, line ) ; // empty line
-				list = QString( line.c_str() ).split( ' ' ) ; // 1
-				list.erase( list.begin() ) ; // 2
-
-				while( !( list.empty() ) ) // 3
-				{
-					prefix_.push_back( qMakePair( list.first(), DOCUMENTATION ) ) ;
-					list.erase( list.begin() ) ;
-				}
-
-				// --- TEMPORARY ---
-
-				std::getline( ifs, line ) ; // empty line
-				list = QString( line.c_str() ).split( ' ' ) ; // 1
-				list.erase( list.begin() ) ; // 2
-
-				while( !( list.empty() ) ) // 3
-				{
-					prefix_.push_back( qMakePair( list.first(), TEMPORARY ) ) ;
-					list.erase( list.begin() ) ;
-				}
-
-				// --- PROBLEM ---
-
-				std::getline( ifs, line ) ; // empty line
-				list = QString( line.c_str() ).split( ' ' ) ; // 1
-				list.erase( list.begin() ) ; // 2
-
-				while( !( list.empty() ) ) // 3
-				{
-					prefix_.push_back( qMakePair( list.first(), BUGS ) ) ;
-					list.erase( list.begin() ) ;
-				}
-
-				// --- EVOLUTION ---
-
-				std::getline( ifs, line ) ; // empty line
-				list = QString( line.c_str() ).split( ' ' ) ; // 1
-				list.erase( list.begin() ) ; // 2
-
-				while( !( list.empty() ) ) // 3
-				{
-					prefix_.push_back( qMakePair( list.first(), EVOLUTION ) ) ;
-					list.erase( list.begin() ) ;
+					while( !( list.empty() ) ) // 3
+					{
+						prefix_.push_back( qMakePair( list.first(), static_cast< CC_Desc >( count ) ) ) ;
+						list.erase( list.begin() ) ;
+					}
 				}
 
 				// close the file

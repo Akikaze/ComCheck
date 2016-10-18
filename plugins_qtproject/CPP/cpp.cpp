@@ -2,7 +2,8 @@
 
 CPP_Plugin::CPP_Plugin
 ()
-: comment_started_( false )
+: block_comment_( false )
+, block_description_( UNDEFINED )
 {
 	set_prefix() ;
 
@@ -26,8 +27,41 @@ CPP_Plugin::get_description
 	const std::string & comment
 )
 {
-	Q_UNUSED( comment ) ;
-	return UNDEFINED ;
+	CC_Desc description = NORMAL ;
+
+	if( !( prefix_.empty() ) )
+	{
+		QList< QPair< QString, CC_Desc > >::iterator itList ;
+		std::string::iterator itString ;
+
+		std::string copy = comment ;
+
+		// erase /* or //
+		if( ffo_iterator( copy, "/*" ) == copy.begin() ||
+			ffo_iterator( copy, "//" ) == copy.begin() )
+		{
+			copy = copy.substr( 2 ) ;
+		}
+
+		itList = prefix_.begin() ;
+
+		while( itList != prefix_.end() && itString != copy.begin() )
+		{
+			itString = ffo_iterator( copy, ( *itList ).first.toStdString() ) ;
+
+			if( itString != copy.begin() )
+			{
+				++itList ;
+			}
+		}
+
+		if( itList != prefix_.end() )
+		{
+			description = ( *itList ).second ;
+		}
+	}
+
+	return description ;
 }
 
 CC_Line
@@ -46,13 +80,17 @@ CPP_Plugin::get_type
 	std::string::iterator itStart = copy.begin() ;
 	std::string::iterator itStop = copy.end() ;
 
-	if( comment_started_ == true )
+	if( block_comment_ == true )
 	{
-		comment_started_ = false ;
+		block_comment_ = false ;
 		initialize_before = true ;
 	}
+	else
+	{
+		block_description_ = UNDEFINED ;
+	}
 
-	while( itStart != itStop ) // erase all comments
+	while( itStart != itStop ) // erase all block comments
 	{
 		if( initialize_before == false )
 		{
@@ -73,11 +111,26 @@ CPP_Plugin::get_type
 			}
 			else
 			{
-				comment_started_ = true ; // signal a non-ended comment
+				block_comment_ = true ; // signal a non-ended comment
 			}
 
 			commented = true ; // signal a comment
+
+			flag.description = get_description( std::string( itStart, itStop ) ) ;
 			copy.erase( itStart, itStop ) ; // erase a comment
+
+			if( block_description_ != UNDEFINED )
+			{
+				if( flag.description == NORMAL )
+				{
+					flag.description = block_description_ ;
+				}
+			}
+
+			if( block_comment_ == true )
+			{
+				block_description_ = flag.description ;
+			}
 		}
 	}
 
@@ -85,6 +138,8 @@ CPP_Plugin::get_type
 	if( itStart != copy.end() )
 	{
 		commented = true ; // signal a comment
+
+		flag.description = get_description( std::string( itStart, copy.end() ) ) ;
 		copy.erase( itStart, copy.end() ) ;
 	}
 
@@ -118,7 +173,7 @@ const
 	std::string::iterator it ;
 	size_t position ;
 
-	position = line.find_first_of( string ) ;
+	position = line.find( string ) ;
 
 	if( position < line.length() )
 	{

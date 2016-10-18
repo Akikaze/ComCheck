@@ -67,7 +67,8 @@ class CPP_Plugin
 
 		// --- ATTRIBUTES ---
 
-		bool comment_started_ ; ///< Signal for a block comment already started
+		bool block_comment_ ; ///< Signal for a block comment already started
+		CC_Desc block_description_ ; ///< Description of a block comment
 } ;
 
 #endif // TEST_HPP
