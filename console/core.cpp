@@ -193,33 +193,35 @@ Core::analyze_file
 
 							file->description[ flag.description ] += 1 ; // if it is a comment, add the description
 
-							if( weight_code == 0 )
-							{
-								if( flag.description == NORMAL )
-								{
-									weight_comment += 1 ;
-								}
-								else if( flag.description == EVOLUTION )
-								{
-									weight_comment += 0.4 ;
-								}
-								else if( flag.description == PROBLEM )
-								{
-									weight_comment += 0.7 ;
-								}
-								else if( flag.description == TEMPORARY )
-								{
-									weight_comment += 0.1 ;
-								}
-								else if( flag.description == DOCUMENTATION )
-								{
-									weight_comment += 0.2 ;
-								}
-							}
-							else
+							if( weight_code != 0 )
 							{
 								file->weight.push_back( weight_comment * 100 / weight_code ) ;
+
+								weight_code = 0 ;
+								weight_comment = 0 ;
 							}
+
+							if( flag.description == NORMAL )
+							{
+								weight_comment += 1 ;
+							}
+							else if( flag.description == EVOLUTION )
+							{
+								weight_comment += 0.4 ;
+							}
+							else if( flag.description == PROBLEM )
+							{
+								weight_comment += 0.7 ;
+							}
+							else if( flag.description == TEMPORARY )
+							{
+								weight_comment += 0.1 ;
+							}
+							else if( flag.description == DOCUMENTATION )
+							{
+								weight_comment += 0.2 ;
+							}
+
 							break ;
 
 						case MIX_LINE :

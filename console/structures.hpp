@@ -113,12 +113,11 @@ struct CC_Statistics
 
 			if( size % 2 == 0 )
 			{
-
-				median = ( list[ size / 2 ] + list[ size / 2 + 1 ] ) / 2 ;
+				median = ( list[ size / 2 - 1 ] + list[ size / 2 ] ) / 2 ;
 			}
 			else
 			{
-				median = list[ size / 2 + 1 ] ;
+				median = list[ size / 2 ] ;
 			}
 
 			// variance and divergence
