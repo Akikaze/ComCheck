@@ -162,6 +162,9 @@ Core::analyze_file
 
 	if( ifs )
 	{
+		double weight_code = 0 ;
+		double weight_comment = 0 ;
+
 		std::string line ;
 
 		while( std::getline( ifs, line ) )
@@ -177,9 +180,63 @@ Core::analyze_file
 				{
 					file->type[ flag.type ] += 1 ; // add info about the line
 
-					if( flag.type != NO_COMMENT )
+					// compute weight
+
+					switch( flag.type )
 					{
-						file->description[ flag.description ] += 1 ; // if it is a comment, add the description
+						case NO_COMMENT :
+
+							weight_code += 1 ;
+							break ;
+
+						case ONLY_COMMENT :
+
+							file->description[ flag.description ] += 1 ; // if it is a comment, add the description
+
+							if( weight_code == 0 )
+							{
+								if( flag.description == NORMAL )
+								{
+									weight_comment += 1 ;
+								}
+								else if( flag.description == EVOLUTION )
+								{
+									weight_comment += 0.4 ;
+								}
+								else if( flag.description == PROBLEM )
+								{
+									weight_comment += 0.7 ;
+								}
+								else if( flag.description == TEMPORARY )
+								{
+									weight_comment += 0.1 ;
+								}
+								else if( flag.description == DOCUMENTATION )
+								{
+									weight_comment += 0.2 ;
+								}
+							}
+							else
+							{
+								file->weight.push_back( weight_comment * 100 / weight_code ) ;
+							}
+							break ;
+
+						case MIX_LINE :
+
+							file->description[ flag.description ] += 1 ; // if it is a comment, add the description
+							weight_code += 1 ;
+
+							// add one even the comment is interesting
+							if( flag.description > HEADER )
+							{
+								weight_comment += 1 ;
+							}
+
+							break ;
+
+						default :
+							break ;
 					}
 				}
 			}
@@ -187,7 +244,9 @@ Core::analyze_file
 
 		ifs.close() ;
 
-		// signal that this file is already analyzed
+		// compute last values and signal that this file is already analyzed
+		file->percentage = ( double )( file->type[ 1 ] + file->type[ 2 ] ) * 100 / ( double )( file->type[ 0 ] ) ;
+		file->coverage = CC_Statistics( file->weight ) ;
 		file->analyzed = true ;
 	}
 }
@@ -264,7 +323,8 @@ Core::compute_report
 	CC_Report * report
 )
 {
-	Q_UNUSED( report ) ;
+	report->coverage = CC_Statistics( report->coverages ) ;
+	report->percentage = CC_Statistics( report->percentages ) ;
 }
 
 ///
@@ -534,6 +594,9 @@ Core::make_report
 
 				// store file information in the report
 				report_->list_files.push_back( *cit_File ) ;
+				report_->percentages.push_back( ( *cit_File )->percentage ) ;
+				report_->coverages.push_back( ( *cit_File )->coverage.average ) ;
+
 				report_->type += ( *cit_File )->type ;
 				report_->description += ( *cit_File )->description ;
 			}

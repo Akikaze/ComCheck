@@ -736,7 +736,43 @@ ConsoleUI::report
 	QStringList param_list
 )
 {
-	Q_UNUSED( param_list ) ;
+	param_list.erase( param_list.begin() ) ;
+
+	if( current_report_ != nullptr )
+	{
+		// display a warning if the user is not at the right place
+		if( current_report_->folder != current_folder_ )
+		{
+			bufferize_text( color_text( "Be careful, you are not displaying the report of the current folder.", CUI_Yellow ) ) ;
+			bufferize_text( "If you want a report about the current folder, you need to use 'analyze' before." ) ;
+			bufferize_text() ;
+		}
+
+		if( param_list.empty() )
+		{
+			// display a little report with average, ...
+			bufferize_text( color_text( "Report folder: ", CUI_White ) + color_text( current_report_->folder->name, CUI_Blue ) ) ;
+			bufferize_text() ;
+
+			display_array_type( current_report_->type ) ;
+			display_array_description( current_report_->description ) ;
+
+			/*
+			display_report( current_report_ ) ;
+			*/
+
+		}
+		else
+		{
+			// display a precise report
+		}
+	}
+	else
+	{
+		bufferize_text( color_text( "The system can't find a report for this position. You need to use 'analyze' to create the report before using 'report'.", CUI_Red ) ) ;
+	}
+
+	display_buffer() ;
 }
 
 ///

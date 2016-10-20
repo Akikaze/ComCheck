@@ -4,9 +4,7 @@
 #include "qt.hpp"
 #include "std.hpp"
 
-// ===== STRUCTURES =====
-
-// --- CC_Flag ---
+// ===== ENUMS =====
 
 ///
 /// \brief Type of a line
@@ -39,28 +37,107 @@ enum CC_Desc
 	HEADER = 0b010,
 	DOCUMENTATION = 0b011,
 	TEMPORARY = 0b100,
-	BUGS = 0b101,
+	PROBLEM = 0b101,
 	EVOLUTION = 0b110,
 	NORMAL = 0b111,
 
 	desc_size
 } ;
 
+// ===== STRUCTURES =====
+// --- CC_Statistics ---
+
 ///
-/// \brief Structure of a line
+/// \brief Statistical value extract from a list
 ///
-/// Definition of a line as the association of a type with a description
+/// Definition of an average, a divergence, a variance and a median
 ///
-struct CC_Line
+struct CC_Statistics
 {
-	CC_Type type ;
-	CC_Desc description ;
+	double average ;
+	double variance ;
+	double divergence ;
+
+	double max ;
+	double median ;
+	double min ;
 
 	// constructor
-	CC_Line() :
-		type( ERROR ),
-		description( UNDEFINED )
-	{}
+	CC_Statistics() {}
+	CC_Statistics( QList< double > list )
+	{
+		/*
+		 * Firstly, it is going to make a first loop to find min, max, size and average.
+		 * Then, the median value will be found with the size.
+		 * At the end, a second loop will give the variance and divergence.
+		 */
+
+		if( !( list.empty() ) )
+		{
+			unsigned int size = 1 ;
+			double value = 0 ;
+
+			QList< double >::iterator it = list.begin() ;
+
+			// min, max, size and average
+
+			value = ( *it ) ;
+			average = value ;
+			max = value ;
+			min = value ;
+
+			++it ;
+
+			while( it != list.end() )
+			{
+				value = ( *it ) ;
+				average += value ;
+
+				if( max < value )
+				{
+					max = value ;
+				}
+
+				if( min > value )
+				{
+					min = value ;
+				}
+
+				++size ;
+				++it ;
+			}
+
+			average /= ( double )( size ) ;
+
+			// median
+
+			if( size % 2 == 0 )
+			{
+
+				median = ( list[ size / 2 ] + list[ size / 2 + 1 ] ) / 2 ;
+			}
+			else
+			{
+				median = list[ size / 2 + 1 ] ;
+			}
+
+			// variance and divergence
+
+			it = list.begin() ;
+			variance = 0 ;
+
+			while( it != list.end() )
+			{
+				value = ( *it ) - average ;
+				variance += value * value ;
+
+				++it ;
+			}
+
+			variance /= ( double )( size ) ;
+			divergence = sqrt( variance ) ;
+		}
+	}
 } ;
 
 // --- CC_File ---
@@ -80,6 +157,11 @@ struct CC_File
 	bool analyzed ; ///< true if array is fulfill
 	std::array< unsigned int, type_size > type ; ///< array for lines' type
 	std::array< unsigned int, desc_size > description ; ///< array for lines' description
+
+	// coverage
+	double percentage ; ///< ratio comment / total
+	QList< double > weight ; ///< weight values for each portion of comment + code
+	CC_Statistics coverage ; ///< average, variance, divergence and median of weights
 } ;
 
 // --- CC_Folder ---
@@ -98,6 +180,25 @@ struct CC_Folder
 	QList< CC_Folder * > list_folders ; ///< list of folder in this folder
 } ;
 
+// --- CC_Line ---
+
+///
+/// \brief Structure of a line
+///
+/// Definition of a line as the association of a type with a description
+///
+struct CC_Line
+{
+	CC_Type type ;
+	CC_Desc description ;
+
+	// constructor
+	CC_Line() :
+		type( ERROR ),
+		description( UNDEFINED )
+	{}
+} ;
+
 // --- CC_Report ---
 
 ///
@@ -112,6 +213,13 @@ struct CC_Report
 	std::array< unsigned int, type_size > type ; ///< array for all lines studied (type)
 	std::array< unsigned int, desc_size > description ; ///< array for all lines studied (description)
 	QList< CC_File * > list_files ; ///< list of files studied in the report
+
+	// coverage
+	QList< double > percentages ; ///< list of ratio comment / total
+	CC_Statistics percentage ;///< average, variance, divergence and median of ratio comment / total
+
+	QList< double > coverages ; ///< list of coverages' average
+	CC_Statistics coverage ; ///< average, variance, divergence and median of coverages
 } ;
 
 #endif // STRUCTURE_HPP

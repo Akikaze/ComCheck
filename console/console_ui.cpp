@@ -30,7 +30,7 @@ ConsoleUI::ConsoleUI
 
 #ifdef Q_OS_UNIX
 	// clean the console
-	// system( "clear" ) ;
+	system( "clear" ) ;
 
 	// handle the signal of WINdow CHange
 	signal( SIGWINCH, UNIX_console_size ) ;
@@ -316,28 +316,28 @@ ConsoleUI::display_array_description
 	if( shortcut == false )
 	{
 		// bufferize text
-		bufferize_text( color_text( "Number of useless comment: ", CUI_White ) + QString::number( array[ USELESS ] ) ) ;
 		bufferize_text( color_text( "Number of undefined comment: ", CUI_White ) + QString::number( array[ UNDEFINED ]  ) ) ;
-		bufferize_text( color_text( "Number of documentation comment: ", CUI_White ) + QString::number( array[ DOCUMENTATION ]  ) ) ;
+		bufferize_text( color_text( "Number of useless comment: ", CUI_White ) + QString::number( array[ USELESS ] ) ) ;
 		bufferize_text( color_text( "Number of header comment: ", CUI_White ) + QString::number( array[ HEADER ] ) ) ;
-		bufferize_text( color_text( "Number of problems comment: ", CUI_White ) + QString::number( array[ BUGS ]  ) ) ;
+		bufferize_text( color_text( "Number of documentation comment: ", CUI_White ) + QString::number( array[ DOCUMENTATION ]  ) ) ;
 		bufferize_text( color_text( "Number of temporary comment: ", CUI_White ) + QString::number( array[ TEMPORARY ] ) ) ;
-		bufferize_text( color_text( "Number of normal comment: ", CUI_White ) + QString::number( array[ NORMAL ] ) ) ;
+		bufferize_text( color_text( "Number of problems comment: ", CUI_White ) + QString::number( array[ PROBLEM ]  ) ) ;
 		bufferize_text( color_text( "Number of evolution comment: ", CUI_White ) + QString::number( array[ EVOLUTION ] ) ) ;
+		bufferize_text( color_text( "Number of normal comment: ", CUI_White ) + QString::number( array[ NORMAL ] ) ) ;
 		bufferize_text() ;
 	}
 	// or a short description like a file array
 	else
 	{
 		// or write directly on a line
-		result += color_text( "USEL: ", CUI_White ) + QString::number( array[ USELESS ] ) + " " ;
 		result += color_text( "UNDE: ", CUI_White ) + QString::number( array[ UNDEFINED ] ) + " " ;
-		result += color_text( "DOCU: ", CUI_White ) + QString::number( array[ DOCUMENTATION ] ) + " " ;
+		result += color_text( "USEL: ", CUI_White ) + QString::number( array[ USELESS ] ) + " " ;
 		result += color_text( "HEAD: ", CUI_White ) + QString::number( array[ HEADER ] ) + " " ;
-		result += color_text( "BUGS: ", CUI_White ) + QString::number( array[ BUGS ] ) + " " ;
+		result += color_text( "DOCU: ", CUI_White ) + QString::number( array[ DOCUMENTATION ] ) + " " ;
 		result += color_text( "TEMP: ", CUI_White ) + QString::number( array[ TEMPORARY ] ) + " " ;
-		result += color_text( "NORM: ", CUI_White ) + QString::number( array[ NORMAL ] ) + " " ;
+		result += color_text( "BUGS: ", CUI_White ) + QString::number( array[ PROBLEM ] ) + " " ;
 		result += color_text( "EVOL: ", CUI_White ) + QString::number( array[ EVOLUTION ] ) + " " ;
+		result += color_text( "NORM: ", CUI_White ) + QString::number( array[ NORMAL ] ) + " " ;
 	}
 
 	// the return is used when you require a short description
