@@ -62,7 +62,7 @@ struct CC_Statistics
 	double median ;
 	double min ;
 
-	// constructor
+	// constructors
 	CC_Statistics() {}
 	CC_Statistics( QList< double > list )
 	{

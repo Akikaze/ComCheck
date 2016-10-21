@@ -229,7 +229,7 @@ Core::analyze_file
 							file->description[ flag.description ] += 1 ; // if it is a comment, add the description
 							weight_code += 1 ;
 
-							// add one even the comment is interesting
+							// the type of comment is not interesting
 							if( flag.description > HEADER )
 							{
 								weight_comment += 1 ;
@@ -247,7 +247,7 @@ Core::analyze_file
 		ifs.close() ;
 
 		// compute last values and signal that this file is already analyzed
-		file->percentage = ( double )( file->type[ 1 ] + file->type[ 2 ] ) * 100 / ( double )( file->type[ 0 ] ) ;
+		file->percentage = ( double )( file->type[ 2 ] + file->type[ 3 ] ) * 100 / ( double )( file->type[ 0 ] ) ;
 		file->coverage = CC_Statistics( file->weight ) ;
 		file->analyzed = true ;
 	}
