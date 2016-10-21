@@ -43,21 +43,24 @@ CPP_Plugin::get_description
 			copy = copy.substr( 2 ) ;
 		}
 
-		itList = prefix_.begin() ;
-
-		while( itList != prefix_.end() && itString != copy.begin() )
+		if( !( copy.empty() ) )
 		{
-			itString = ffo_iterator( copy, ( *itList ).first.toStdString() ) ;
+			itList = prefix_.begin() ;
 
-			if( itString != copy.begin() )
+			while( itList != prefix_.end() && itString != copy.begin() )
 			{
-				++itList ;
-			}
-		}
+				itString = ffo_iterator( copy, ( *itList ).first.toStdString() ) ;
 
-		if( itList != prefix_.end() )
-		{
-			description = ( *itList ).second ;
+				if( itString != copy.begin() )
+				{
+					++itList ;
+				}
+			}
+
+			if( itList != prefix_.end() )
+			{
+				description = ( *itList ).second ;
+			}
 		}
 	}
 
@@ -72,91 +75,86 @@ CPP_Plugin::get_type
 {
 	CC_Line flag ;
 
-	bool commented = false ;
-	bool initialize_before = false ;
+	bool commented = false ; // signal presence of any type of comments
 
 	std::string copy = line ;
 
+	// line could not be empty, thus it's impossible that copy.begin() equal copy.end()
 	std::string::iterator itStart = copy.begin() ;
 	std::string::iterator itStop = copy.end() ;
 
-	if( block_comment_ == true )
-	{
-		block_comment_ = false ;
-		initialize_before = true ;
-	}
-	else
-	{
-		block_description_ = UNDEFINED ;
-	}
+	bool comment_started = block_comment_ ;
+	bool comment_ended = false ;
 
-	while( itStart != itStop ) // erase all block comments
+	while( itStart != copy.end() )
 	{
-		if( initialize_before == false )
+		if( !( comment_started ) )
 		{
 			itStart = ffo_iterator( copy, "/*" ) ;
-		}
-		else
-		{
-			initialize_before = false ;
+			comment_started = ( itStart != copy.end() ) ;
 		}
 
 		itStop = ffo_iterator( copy, "*/" ) ;
-
-		if( itStart != itStop )
+		if( itStop != copy.end() )
 		{
-			if( itStop != copy.end() )
+			comment_ended = true ;
+			itStop += 2 ; // point after the end balise
+		}
+
+		if( comment_started )
+		{
+			commented = true ;
+
+			if( block_description_ == UNDEFINED )
 			{
-				itStop += 2 ;
+				flag.description = get_description( std::string( itStart, itStop ) ) ;
 			}
 			else
 			{
-				block_comment_ = true ; // signal a non-ended comment
+				flag.description = block_description_ ;
 			}
 
-			commented = true ; // signal a comment
+			copy.erase( itStart, itStop ) ; // erase the comment
+			block_comment_ = !( comment_ended ) ;
 
-			flag.description = get_description( std::string( itStart, itStop ) ) ;
-			copy.erase( itStart, itStop ) ; // erase a comment
-
-			if( block_description_ != UNDEFINED )
+			if( comment_ended )
 			{
-				if( flag.description == NORMAL )
-				{
-					flag.description = block_description_ ;
-				}
+				block_description_ = UNDEFINED ;
 			}
-
-			if( block_comment_ == true )
+			else
 			{
 				block_description_ = flag.description ;
 			}
 		}
+
+		// reset signals
+		comment_started = false ;
+		comment_ended = false ;
 	}
 
-	itStart = ffo_iterator( copy, "//" ) ; // line comment
+	itStart = ffo_iterator( copy, "//" ) ;
 	if( itStart != copy.end() )
 	{
-		commented = true ; // signal a comment
+		commented = true ;
 
 		flag.description = get_description( std::string( itStart, copy.end() ) ) ;
 		copy.erase( itStart, copy.end() ) ;
 	}
 
-	if( copy.empty() )
+	if( commented )
 	{
-		flag.type = ONLY_COMMENT ; // commented
-	}
-	else
-	{
-		if( commented )
+		if( copy.empty() )
 		{
-			flag.type = MIX_LINE ; // mixed
+			flag.type = ONLY_COMMENT ;
 		}
 		else
 		{
-			flag.type = NO_COMMENT ; // uncommented
+			flag.type = MIX_LINE ;
 		}
+	}
+	else
+	{
+		flag.type = NO_COMMENT ;
 	}
 
 	return flag ;

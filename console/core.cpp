@@ -226,7 +226,7 @@ Core::analyze_file
 
 						case MIX_LINE :
 
-							file->description[ flag.description ] += 1 ; // if it is a comment, add the description
+							file->description[ flag.description ] += 1 ;
 							weight_code += 1 ;
 
 							// the type of comment is not interesting
@@ -243,8 +243,9 @@ Core::analyze_file
 				}
 			}
 		}
-
 		ifs.close() ;
+
+		file->weight.push_back( weight_comment * 100 / weight_code ) ;
 
 		// compute last values and signal that this file is already analyzed
 		file->percentage = ( double )( file->type[ 2 ] + file->type[ 3 ] ) * 100 / ( double )( file->type[ 0 ] ) ;
