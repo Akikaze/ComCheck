@@ -38,9 +38,9 @@ Les commentaires sont, en programmation informatique, des portions du code sourc
 \begin{large}"\end{large}
 \end{quoting}
 
-Comme le d\'ecrit cette d\'efinition, un commentaire n'est pas interpret\'e. Il n'a donc aucune incidence sur la compilation, l'interpr\'etation et l'ex\'ecution d'un programme. Il est donc le meilleur outil pour conserver une trace \'ecrite quelconque dans un fichier source sans qu'elle n'est de cons\'equences. Les commentaires peuvent \^etre du texte expliquant un processus, du code \`a analyser ou \`a corriger, des informations \`a propos du fichier ou de son contenu. Ils sont tr\`es utilis\'e durant les diff\'erentes \'etapes de d\'eveloppement : conception, programmation, test, maintenance, ...\newline
+Comme le d\'ecrit cette d\'efinition, un commentaire n'est pas interpret\'e. Il n'a donc aucune incidence sur la compilation, l'interpr\'etation et l'ex\'ecution d'un programme. Il est donc le meilleur outil pour conserver une trace \'ecrite quelconque dans un fichier source sans qu'elle n'ait de cons\'equences. Les commentaires peuvent \^etre du texte expliquant un processus, du code \`a analyser ou \`a corriger, des informations \`a propos du fichier ou de son contenu. Ils sont tr\`es utilis\'es durant les diff\'erentes \'etapes de d\'eveloppement : conception, programmation, test, maintenance, ...\newline
 
-Avec la professionnalisation du d\'eveloppement et l'av\`enement de la programmation en \'equipe, il ets devenu vital de cr\'eer un logiciel de qualit\'e suffisamment clair pour qu'utilisateur, comme d\'eveloppeur, sachent ce qu'ils peuvent faire et comment le faire. Certains outils ont alors \'et\'e d\'evelopp\'e pour extraire des informations des commentaires et cr\'eer de la documentation.
+Avec la professionnalisation du d\'eveloppement et l'av\`enement de la programmation en \'equipe, il est devenu vital de cr\'eer un logiciel de qualit\'e suffisamment clair pour qu'utilisateur, comme d\'eveloppeur, sachent ce qu'ils peuvent faire et comment le faire.
 
 \subsection{Documentation}
 
@@ -61,7 +61,7 @@ En plus de cette d\'efinition, l'article Wikipedia d\'ecrit cinq types de docume
 
 Lors du d\'eveloppement d'un logiciel, l'\'etape de documentation repr\'esente la finalisation du projet. Elle intervient apr\`es que le logiciel ait \'et\'e test\'e et avant de le donner aux clients. Et malgr\'e  son intrication avec le code, elle en est s\'epar\'ee. C'est pourquoi certains d\'eveloppeurs ont con\c cu  des outils pour cr\'eer la documentation directement \`a partir des fichiers source. Or chaque entreprise d\'efinit sa propre mani\`ere de d\'evelopper. Comme il aurait \'et\'e quasiment impossible d'adapter le code de toutes les entreprises sur un m\^eme mod\`ele, ils ont choisi de d\'efinir un mod\`ele de commentaire \`a la place.\newline
 
-Depuis lors, en utilisant des outils comme Doxygen ou Javadoc, il est possible d'automatiser la documentation en d\'etournant les commentaires.
+Depuis lors, en utilisant des outils comme Doxygen ou Javadoc, il est possible d'automatiser la documentation en d\'etournant les commentaires de leur utilisation primaire.
 
 \section{Qualit\'e logicielle}
 
@@ -87,7 +87,21 @@ Pour ce qui nous concerne, je vais occulter tous ce qui n'est li\'e qu'au code p
 \item{\textbf{Maintenabilit\'e} - Facilit\'e d'analyse}
 \end{itemize}
 
-\'Etant donn\'e que les commentaires n'ont pas d'incidence sur le programme, tout comme la documentation, ils n'ont pour but que de facilit\'e certains processus. Mais ces processus sont vitaux pour la vie d'un projet. Si vous concevez un logiciel que personne ne peut comprendre, personne ne pourra reprendre votre travail pour l'am\'eliorer. S'il est hardu pour de nouveaux d\'eveloppeurs de rentrer dans le projet, vous vous retrouverez dans la m\^eme situation avec personne pour continuer votre projet.\newline
+\'Etant donn\'e que les commentaires n'ont pas d'incidence sur le programme, tout comme la documentation, ils n'ont pour but que de facilit\'e certains processus. Mais ces processus sont vitaux pour la vie d'un projet. Si vous concevez un logiciel que personne ne peut comprendre, personne ne pourra reprendre votre travail pour l'am\'eliorer. S'il est hardu pour de nouveaux d\'eveloppeurs de rentrer dans le projet, vous vous retrouverez dans la m\^eme situation avec personne pour continuer votre projet.
+
+\section{Couverture commentaire}
+
+Le terme "couverture" prend une multitude de sens lorsqu'il est utilis\'e en informatique. Par exemple, on parle de couverture du logiciel lorsque l'on cherche \`a d\'efinir l'\'etendu de son champ d'action.
+
+En g\'enie logiciel, les couvertures repr\'esentent des metriques servant \`a \'evaluer la qualit\'e d'un logiciel. Les tests unitaires permettent de tester les diff\'erentes possibilit\'ees d'une fonction et de v\'erifier si le comportement r\'esultant correspond au comportement attendu. Ils v\'erifient donc que chaque instruction, chaque boucle, chaque condition est couverte.
+
+Si l'on s'int\'eresse \`a la couverture commentaire, le but est de v\'erifier si chaque portion du code est correctement comment\'ee. Et il est tr\`es compliqu\'e d'automatiser cette v\'erification \`a cause de plusieurs questions que l'on est amen\'e \`a ce poser :
+
+\begin{enumerate}
+\item{Comment d\'efinir un bon commentaire ?}
+\item{Comment d\'efinir la port\'e d'un commentaire ?}
+\item{Comment calculer la couverture commentaire ?}
+\end{enumerate}
 
 \chapter{\`A l'int\'erieur du code}
 
@@ -95,7 +109,7 @@ Pour ce qui nous concerne, je vais occulter tous ce qui n'est li\'e qu'au code p
 
 Si l'on consid\`ere une documentation qui respecte la qualit\'e logicielle, il lui reste un d\'efaut dont elle ne pourra jamais se s\'eparer : elle est externe au code source. Je vais surement nourrir un clich\'e mais un d\'eveloppeur passe la plupart de son temps \`a regarder du code. Et devoir jongler entre le code et la documentation est une perte de temps qui croit exponentiellement avec les dimensions du logiciel. La documentation est importante, mais les commentaires \`a l'int\'erieur du code aideront les d\'eveloppeurs beaucoup plus rapidement. C'est pourquoi ils ne doivent pas \^etre mis de c\^ot\'e au profit de commentaire pour la documentation.\newline
 
-Tous les langages d\'efinissent des balises de commentaires. D'un point de vue syntaxique, on peut les r\'eunir chaque commentaire dans un de ces trois groupes :
+Tous les langages d\'efinissent des balises de commentaires. D'un point de vue syntaxique, on peut r\'eunir chaque commentaire dans un de ces trois groupes :
 
 \begin{itemize}
 \item{\textbf{bloc} - commentaire sur plusieurs lignes encadr\'e par deux balises.}
@@ -117,7 +131,20 @@ Gr\^ace \`a cette simplification, il est possible d'analyser n'importe quel type
 
 \section{Type de commentaires}
 
-% Type de commentaire header, todo, temporaire
-% Comment d\'efinir un bon commentaire
+En analysant plusieurs projets informatiques (personnels et professionels), on peut s\'eparer les commentaires en plusieurs cat\'egories en fonction de l'objectif vis\'e. J'ai alors cr\'e\'e sept cat\'egories de commentaires qui permettent de trier la totalit\'e des commentaires:
+
+\begin{enumerate}
+\item{\textbf{Esth\'etique} - commentaire sans importance pour le fichier. Ce sont, la plupart du temps, des lignes sans texte qui ont pour but de cr\'eer des s\'eparations entre des portions de code.\newline}
+\item{\textbf{En-t\^ete} - commentaire tr\`es rarement utilis\'e lors de d\'eveloppements personnels mais qui sont important dans le domaine professionnel. Il d\'efinisse le nom du fichier, son auteur, la date de cr\'eation, de modification, ... L\`a encore, aucun int\'er\^et pour le code vu qu'il s'agit d'une simple description du fichier.\newline}
+\item{\textbf{Documentation} - commentaire utilis\'e pour g\'en\'erer, de mani\`ere automatique, la documentation externe des fonctions de ce fichier. Ils peuvent donner quelques informations \`a propos de la fonction mais ne doivent pas servir de remplacements aux commentaires standards.\newline}
+\item{\textbf{Temporaire} - commentaire d\'ecrivant une portion de code qui est vou\'ee \`a dispara\^itre avant de livrer le code. Il sert \`a informer les autres d\'eveloppeurs d'une modification \`a faire.\newline}
+\item{\textbf{Probl\`eme} - commentaire d\'ecrivant une portion de code qui provoque, de mani\`ere continuelle ou spontan\'ee, une erreur quelconque. On peut l'assimiler \`a un commentaire temporaire qui provoque une erreur. Un logiciel qui ne provoque pas d'erreur sera alors exempt de commentaires de ce type.\newline}
+\item{\textbf{Evolution} - commentaire qui d\'ecrit une optimisation ou un changement \`a effectuer dans un futur plus lointain. Ce type de commentaires peut se trouver dans un logiciel livr\'e. C'est ce que l'on appelle, g\'en\'eralement, des commentaires TODO.\newline}
+\item{\textbf{Normal} - commentaire qui n'entre dans aucune cat\'egorie. Et par d\'efaut, un commentaire normal est un commentaire donc le but est de d\'ecrire un algorithme, un fonctionnement, le contenu d'un fichier, ... C'est ce type de commentaire qui est important pour un d\'eveloppeur qui cherche \`a comprendre un fichier.\newline}
+\end{enumerate}
+
+\section{Couverture commentaire}
+
+
 
 \end{document}

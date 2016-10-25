@@ -109,17 +109,6 @@ struct CC_Statistics
 
 			average /= ( double )( size ) ;
 
-			// median
-
-			if( size % 2 == 0 )
-			{
-				median = ( list[ size / 2 - 1 ] + list[ size / 2 ] ) / 2 ;
-			}
-			else
-			{
-				median = list[ size / 2 ] ;
-			}
-
 			// variance and divergence
 
 			it = list.begin() ;
@@ -135,6 +124,18 @@ struct CC_Statistics
 
 			variance /= ( double )( size ) ;
 			divergence = sqrt( variance ) ;
+
+			// median
+			std::sort( list.begin(), list.end() ) ;
+
+			if( size % 2 == 0 )
+			{
+				median = ( list[ size / 2 - 1 ] + list[ size / 2 ] ) / 2 ;
+			}
+			else
+			{
+				median = list[ size / 2 ] ;
+			}
 		}
 	}
 } ;
