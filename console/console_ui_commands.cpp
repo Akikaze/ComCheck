@@ -23,6 +23,7 @@ ConsoleUI::commands
 	bufferize_text( color_text( "\tcommands\t", CUI_White ) + "display each command and its description" ) ;
 	bufferize_text( color_text( "\tclear\t\t", CUI_White ) + "clear the screen" ) ;
 	bufferize_text( color_text( "\tdirectory\t", CUI_White ) + "choose the project directory" ) ;
+	bufferize_text( color_text( "\texport\t\t", CUI_White ) + "export reports in HTML files" ) ;
 	bufferize_text( color_text( "\thelp\t\t", CUI_White ) + "display more information about ComCheck or each command" ) ;
 	bufferize_text( color_text( "\tinfo\t\t", CUI_White ) + "display information about the project" ) ;
 	bufferize_text( color_text( "\tlanguage\t", CUI_White ) + "choose the project language" ) ;
@@ -748,23 +749,259 @@ ConsoleUI::report
 			bufferize_text() ;
 		}
 
-		if( param_list.empty() )
+		bool show_comments_info = false ;
+		bool show_lines_info = false ;
+		char show_what = ' ' ;
+
+		while( !( param_list.empty() ) )
 		{
-			// display a little report with average, ...
-			bufferize_text( color_text( "Report folder: ", CUI_White ) + color_text( current_report_->folder->name, CUI_Blue ) ) ;
-			bufferize_text() ;
+			// which info
+			if( param_list.front() == "-a" ||
+				param_list.front() == "--all" )
+			{
+				show_comments_info = true ;
+				show_lines_info = true ;
+			}
+			else if( param_list.front() == "-c" ||
+					 param_list.front() == "--comments" )
+			{
+				show_comments_info = true ;
+			}
+			else if( param_list.front() == "-l" ||
+					 param_list.front() == "--lines" )
+			{
+				show_lines_info = true ;
+			}
+			// which representation
+			else if( param_list.front() == "-f" ||
+					 param_list.front() == "--files" )
+			{
+				show_what = 'f' ;
+			}
+			else if( param_list.front() == "-h" ||
+					 param_list.front() == "--histogram" )
+			{
+				show_what = 'h' ;
+			}
+			else if( param_list.front() == "-t" ||
+					 param_list.front() == "--top" )
+			{
+				show_what = 't' ;
+			}
+			else
+			{
+				// display error
+			}
 
-			display_array_type( current_report_->type ) ;
-			display_array_description( current_report_->description ) ;
-
-			/*
-			display_report( current_report_ ) ;
-			*/
-
+			param_list.erase( param_list.begin() ) ;
 		}
-		else
+
+		if( show_comments_info == false && show_lines_info == false )
 		{
-			// display a precise report
+			// by default, display only lines info
+			show_lines_info = true ;
+		}
+
+		switch( show_what )
+		{
+			case ' ' :
+			{
+				bufferize_text( color_text( "Report folder: ", CUI_White ) + color_text( current_report_->folder->name, CUI_Blue ) ) ;
+				bufferize_text() ;
+
+				if( show_lines_info )
+				{
+					display_array_type( current_report_->type ) ;
+				}
+
+				if( show_comments_info )
+				{
+					display_array_description( current_report_->description ) ;
+				}
+			} break ;
+
+			case 'f' :
+			{
+				CC_File * file = nullptr ;
+				CUI_TextColor tc = CUI_Yellow ;
+				double threshold = 0 ;
+				double value = 0 ;
+				QString line = "" ;
+
+				QList< CC_File * >::const_iterator cit ;
+				for( cit = current_report_->list_files.constBegin() ;
+					 cit != current_report_->list_files.constEnd() ;
+					 ++cit )
+				{
+					line = "" ;
+					file = ( *cit ) ;
+
+					if( show_lines_info )
+					{
+						tc = CUI_Yellow ;
+
+						threshold = current_report_->percentage.average ;
+						value = file->percentage ;
+
+						// change the color
+						if( value < 0.8 * threshold )
+						{
+							// bad file
+							tc = CUI_Red ;
+						}
+						else if( value > 1.2 * threshold )
+						{
+							// good file
+							tc = CUI_Green ;
+						}
+
+						// display its information
+						line = color_text( file->name, tc ) ;
+						line += " " + color_text( "% ", CUI_White ) + QString::number( value ) ;
+						line += " " + display_array_type( file->type, true ) ;
+
+						bufferize_text( line ) ;
+					}
+
+					if( show_comments_info )
+					{
+						tc = CUI_Yellow ;
+
+						threshold = current_report_->coverage.average ;
+						value = file->coverage.average ;
+
+						// change the color
+						if( value < 0.8 * threshold )
+						{
+							// bad file
+							tc = CUI_Red ;
+						}
+						else if( value > 1.2 * threshold )
+						{
+							// good file
+							tc = CUI_Green ;
+						}
+
+						// display its information
+						line = color_text( file->name, tc ) ;
+						line += " " + color_text( "% ", CUI_White ) + QString::number( value ) ;
+						line += " " + display_array_description( file->description, true ) ;
+
+						bufferize_text( line ) ;
+					}
+				}
+
+				bufferize_text() ;
+			} break ;
+
+			case 'h' :
+			{
+				// display a histogram
+				draw_histogram( show_lines_info, show_comments_info ) ;
+				bufferize_text() ;
+			} break ;
+
+			case 't' :
+			{
+				CC_File * file = nullptr ;
+				CUI_TextColor tc = CUI_Yellow ;
+				double value = 0 ;
+				QList< QPair< double, CC_File * > > sorted_list ;
+				QString line = "" ;
+				unsigned int number = 5 ;
+
+				bufferize_text( "By default, it display the top 5 of best and worst file" ) ;
+				bufferize_text() ;
+
+				for( int i = 0 ; i < current_report_->list_files.size() ; ++i )
+				{
+					file = current_report_->list_files[ i ] ;
+					value = 0 ;
+
+					if( show_lines_info )
+					{
+						value = file->percentage ;
+					}
+					else
+					{
+						value = file->coverage.average ;
+					}
+
+					sorted_list.push_back( qMakePair( value, file ) ) ;
+				}
+
+				std::sort( sorted_list.begin(), sorted_list.end() ) ;
+
+				if( show_lines_info )
+				{
+					bufferize_text( "Best and worst files: ratio comments / lines" ) ;
+				}
+				else
+				{
+					bufferize_text( "Best and worst files: coverage" ) ;
+				}
+
+				for( unsigned i = 0 ; i < number ; ++i )
+				{
+					value = sorted_list[ i ].first ;
+					file = sorted_list[ i ].second ;
+
+					tc = CUI_Red ;
+					line = color_text( file->name, tc ) ;
+
+					// display its information
+
+					if( show_lines_info )
+					{
+						line += " " + color_text( "% ", CUI_White ) + QString::number( value ) ;
+						line += " " + display_array_type( file->type, true ) ;
+					}
+					else
+					{
+						line += " " + color_text( "% ", CUI_White ) + QString::number( value ) ;
+						line += " " + display_array_description( file->description, true ) ;
+					}
+
+					bufferize_text( line ) ;
+				}
+
+				bufferize_text() ;
+
+				for( unsigned i = 0 ; i < number ; ++i )
+				{
+					value = sorted_list[ sorted_list.size() - 1 - i ].first ;
+					file = sorted_list[ sorted_list.size() - 1 - i ].second ;
+
+					tc = CUI_Green ;
+					line = color_text( file->name, tc ) ;
+
+					// display its information
+
+					if( show_lines_info )
+					{
+						line += " " + color_text( "% ", CUI_White ) + QString::number( value ) ;
+						line += " " + display_array_type( file->type, true ) ;
+					}
+					else
+					{
+						line += " " + color_text( "% ", CUI_White ) + QString::number( value ) ;
+						line += " " + display_array_description( file->description, true ) ;
+					}
+
+					bufferize_text( line ) ;
+				}
+
+				bufferize_text() ;
+
+				if( show_lines_info && show_comments_info )
+				{
+					report( { "report", "-c", "-t" } ) ;
+				}
+			} break ;
+
+			default :
+				// display error
+				break ;
 		}
 	}
 	else

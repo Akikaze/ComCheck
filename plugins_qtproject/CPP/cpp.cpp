@@ -62,6 +62,12 @@ CPP_Plugin::get_description
 				description = ( *itList ).second ;
 			}
 		}
+
+		// if the comment contain a ;, I consider that it is a dead code
+		if( description == NORMAL && ffo_iterator( copy, ";" ) != copy.end() )
+		{
+			description = USELESS ;
+		}
 	}
 
 	return description ;
@@ -85,6 +91,13 @@ CPP_Plugin::get_type
 
 	bool comment_started = block_comment_ ;
 	bool comment_ended = false ;
+
+	// bypass the search of block comments if a line comment is defined before
+	if( block_comment_ == false &&
+		ffo_iterator( copy, "//" ) < ffo_iterator( copy, "/*" ) )
+	{
+		itStart = copy.end() ;
+	}
 
 	while( itStart != copy.end() )
 	{

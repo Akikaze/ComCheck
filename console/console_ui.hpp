@@ -220,8 +220,10 @@ class ConsoleUI
 
 		///
 		/// \brief Draw report's histogram
+		/// \param percentage Show histogram about ratio comments / lines
+		/// \param coverage Show histogram about coverage
 		///
-		void draw_histogram() ;
+		void draw_histogram( bool percentage = true, bool coverage = false ) ;
 
 		///
 		/// \brief Filter a command thanks to ' '

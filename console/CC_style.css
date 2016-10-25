@@ -17,8 +17,14 @@ h5 {
     margin : 0 ;
 }
 
-input {
+.sh_btn {
     float : right ;
+}
+
+.ch_btn {
+    display : block ;
+    margin-left : auto ;
+    margin-right : auto ;
 }
 
 table, th, td {
@@ -34,7 +40,11 @@ table, th, td {
     padding-left : 5px ;
 }
 
-#histogram {
+#histogram_C {
+    height : 80% ;
+}
+
+#histogram_P {
     height : 80% ;
 }
 

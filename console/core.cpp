@@ -160,6 +160,7 @@ Core::analyze_file
 	// open the file
 	std::ifstream ifs( file->name.toStdString(), std::ios::in ) ;
 
+
 	if( ifs )
 	{
 		double weight_code = 0 ;
@@ -245,7 +246,10 @@ Core::analyze_file
 		}
 		ifs.close() ;
 
-		file->weight.push_back( weight_comment * 100 / weight_code ) ;
+		if( weight_code != 0 )
+		{
+			file->weight.push_back( weight_comment * 100 / weight_code ) ;
+		}
 
 		// compute last values and signal that this file is already analyzed
 		file->percentage = ( double )( file->type[ 2 ] + file->type[ 3 ] ) * 100 / ( double )( file->type[ 0 ] ) ;
