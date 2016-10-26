@@ -206,10 +206,10 @@ class ConsoleUI
 		void display_name( QString name, bool isFile, unsigned int level ) ;
 
 		///
-		/// \brief Display a report average, variance and divergence
-		/// \param report Report
+		/// \brief Display statistics values
+		/// \param statistics CC_Statistics
 		///
-		void display_report( CC_Report * report ) ;
+		void display_statistics( const CC_Statistics & statistics ) ;
 
 		///
 		/// \brief Display the tree view

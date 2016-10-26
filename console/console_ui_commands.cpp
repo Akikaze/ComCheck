@@ -25,7 +25,7 @@ ConsoleUI::commands
 	bufferize_text( color_text( "\tdirectory\t", CUI_White ) + "choose the project directory" ) ;
 	bufferize_text( color_text( "\texport\t\t", CUI_White ) + "export reports in HTML files" ) ;
 	bufferize_text( color_text( "\thelp\t\t", CUI_White ) + "display more information about ComCheck or each command" ) ;
-	bufferize_text( color_text( "\tinfo\t\t", CUI_White ) + "display information about the project" ) ;
+	bufferize_text( color_text( "\tinfo\t\t", CUI_White ) + "display information about the project and reports" ) ;
 	bufferize_text( color_text( "\tlanguage\t", CUI_White ) + "choose the project language" ) ;
 	bufferize_text( color_text( "\tmove\t\t", CUI_White ) + "change the current folder" ) ;
 	bufferize_text( color_text( "\tpreparation\t", CUI_White ) + "create a tree view of the project directory" ) ;
@@ -144,12 +144,8 @@ ConsoleUI::directory
 		core_->release_reports() ;
 		current_report_ = nullptr ;
 
-		if( param_list.empty() )
-		{
-			bufferize_text( color_text( "The directory defines the tree view. So changing it means recreate a new tree view. If you want to do that, just use the command 'directory -r <address>' or 'directory --reset <address>'.", CUI_Red ) ) ;
-		}
-		else if( param_list.front() == "-r" ||
-				 param_list.front() == "--reset")
+		if( param_list.front() == "-r" ||
+			param_list.front() == "--reset")
 		{
 			// release a potential previous tree view
 			core_->release_tree() ;
@@ -166,6 +162,10 @@ ConsoleUI::directory
 			{
 				directory( { "directory", param_list.front() } ) ;
 			}
+		}
+		else
+		{
+			bufferize_text( color_text( "The directory defines the tree view. So changing it means recreate a new tree view. If you want to do that, just use the command 'directory -r <address>' or 'directory --reset <address>'.", CUI_Red ) ) ;
 		}
 	}
 
@@ -802,21 +802,25 @@ ConsoleUI::report
 			show_lines_info = true ;
 		}
 
+
+		bufferize_text( color_text( "Report folder: ", CUI_White ) + color_text( current_report_->folder->name, CUI_Blue ) ) ;
+		bufferize_text( color_text( "Number of files: ", CUI_White ) + QString::number( current_report_->list_files.size() ) ) ;
+		bufferize_text() ;
+
 		switch( show_what )
 		{
 			case ' ' :
 			{
-				bufferize_text( color_text( "Report folder: ", CUI_White ) + color_text( current_report_->folder->name, CUI_Blue ) ) ;
-				bufferize_text() ;
-
 				if( show_lines_info )
 				{
 					display_array_type( current_report_->type ) ;
+					display_statistics( current_report_->percentage ) ;
 				}
 
 				if( show_comments_info )
 				{
 					display_array_description( current_report_->description ) ;
+					display_statistics( current_report_->coverage ) ;
 				}
 			} break ;
 

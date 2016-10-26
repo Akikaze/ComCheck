@@ -476,16 +476,23 @@ ConsoleUI::display_name
 }
 
 ///
-/// \brief Display a report average, variance and divergence
-/// \param report Report
+/// \brief Display statistics values
+/// \param statistics CC_Statistics
 ///
 void
-ConsoleUI::display_report
+ConsoleUI::display_statistics
 (
-	CC_Report * report
+	const CC_Statistics & statistics
 )
 {
-	Q_UNUSED( report ) ;
+	// bufferize text
+	bufferize_text( color_text( "Average: ", CUI_White ) + QString::number( statistics.average ) ) ;
+	bufferize_text( color_text( "Variance: ", CUI_White ) + QString::number( statistics.variance ) ) ;
+	bufferize_text( color_text( "Divergence: ", CUI_White ) + QString::number( statistics.divergence ) ) ;
+	bufferize_text( color_text( "Min: ", CUI_White ) + QString::number( statistics.min ) ) ;
+	bufferize_text( color_text( "Median: ", CUI_White ) + QString::number( statistics.median ) ) ;
+	bufferize_text( color_text( "Max: ", CUI_White ) + QString::number( statistics.max ) ) ;
+	bufferize_text() ;
 }
 
 ///
