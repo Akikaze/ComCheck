@@ -25,8 +25,8 @@ Core::export_CSS
 
 		ofs << indent << std::endl ;
 
-		// h1, h1 {
-		ofs << indent << "h1, h2 {" << std::endl ;
+		// h1, h2, h4 {
+		ofs << indent << "h1, h2, h4 {" << std::endl ;
 		indent += '\t' ;
 
 			ofs << indent << "text-align : center ;" << std::endl ;
@@ -496,6 +496,8 @@ Core::export_HTML
 							ofs << indent << std::endl ;
 							ofs << indent << "<h1>ComCheck report</h1>" << std::endl ;
 							ofs << indent << "<h2>" << ( *cit ).first->name.toStdString() << "</h2>" << std::endl ;
+							ofs << indent << "<br/>" << std::endl ;
+							ofs << indent << "<h4>" << ( *cit ).second->list_files.size() << " analyzed files</h4>" << std::endl ;
 
 							ofs << indent << std::endl ;
 
