@@ -46,7 +46,6 @@ class IPlugin
 		///
 		virtual CC_Line get_type( const std::string & line ) = 0 ;
 
-
 	protected :
 
 		// --- GETTERS ---

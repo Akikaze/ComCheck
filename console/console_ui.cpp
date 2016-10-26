@@ -235,14 +235,13 @@ ConsoleUI::color_text
 	QString hashtag = "" ;
 
 	// by default, it is bold (to be clearer)
+	// QString tmp = "\x1B[4m" ; // underline
 	QString tmp = "\x1B[1m" ; // bold
 
-	// QString tmp = "\x1B[4m" ; // underline
-
 #ifdef Q_OS_WIN
-	// change the color because Blue is invisible
 	if( color == CUI_Blue )
 	{
+		tmp = "" ;
 		color = CUI_Cyan ;
 	}
 #endif
