@@ -21,7 +21,6 @@ LES COMMENTAIRES EN INFORMATIQUE
 
 \chapter*{Introduction}
 
-% Blabla a propos de ComCheck, la qualite logicielle
 \paragraph{}
 
 \chapter{D\'efinitions}
@@ -91,17 +90,15 @@ Pour ce qui nous concerne, je vais occulter tous ce qui n'est li\'e qu'au code p
 
 \section{Couverture commentaire}
 
-Le terme "couverture" prend une multitude de sens lorsqu'il est utilis\'e en informatique. Par exemple, on parle de couverture du logiciel lorsque l'on cherche \`a d\'efinir l'\'etendu de son champ d'action.
+En informatique, le terme de couverture prend une multitude de sens en fonction du contexte : on peut parler du champ d'action d'un logiciel, du nombre de besoins clients couvert, ...\newline
 
-En g\'enie logiciel, les couvertures repr\'esentent des metriques servant \`a \'evaluer la qualit\'e d'un logiciel. Les tests unitaires permettent de tester les diff\'erentes possibilit\'ees d'une fonction et de v\'erifier si le comportement r\'esultant correspond au comportement attendu. Ils v\'erifient donc que chaque instruction, chaque boucle, chaque condition est couverte.
+En g\'enie logiciel, les couvertures repr\'esentent des metriques servant \`a \'evaluer la qualit\'e d'un logiciel. Par exemple, les tests unitaires servent \`a analyser la couverture de code lors d'une ex\'ecution. Ces m\'etriques sont un gages de qualit\'e qui peux servir de comparateur entre deux logiciels.\newline
 
-Si l'on s'int\'eresse \`a la couverture commentaire, le but est de v\'erifier si chaque portion du code est correctement comment\'ee. Et il est tr\`es compliqu\'e d'automatiser cette v\'erification \`a cause de plusieurs questions que l'on est amen\'e \`a ce poser :
+Mais alors, comment mesurer la qualit\'e des commentaires ?\newline
 
-\begin{enumerate}
-\item{Comment d\'efinir un bon commentaire ?}
-\item{Comment d\'efinir la port\'e d'un commentaire ?}
-\item{Comment calculer la couverture commentaire ?}
-\end{enumerate}
+La couverture commentaire repr\'esente le moyen d'\'evaluer un logiciel en observant ses commentaires et plus particuli\`erement si chaque portion de code est correctement comment\'ee. Ce n'est pas quelque chose d'ais\'ee \`a faire car les commentaires ne sont pas reglement\'es par une syntaxe (mise \`a part les balises qui ouvre et ferme un commentaire). Il est tout \`a fait possible d'\'ecrire une ligne de commentaire qui va parfaitement expliquer les dix lignes de codes qui suivent, ou \'ecrire dix lignes de commentaires pour simplement clarifier une ligne de code. Certains d\'eveloppeurs vont m\^eme jusqu'\`a ne pas utiliser de commentaires de mani\`ere volontaire.\newline
+
+Il existe peu de d\'efinitions de la couverture commentaire et encore moins de logiciel pour la mesurer. En C, la norme ISO 9126 d\'efinit la fr\'equence des commentaires comme \'etant le rapport entre le nombre de blocs de commentaires (avant et dans la fonction) et le nombre d'instructions de la fonction. Sonarqube, qui est le plus connu des logiciels \'evaluant la qualit\'e d'un code source, d\'efinit deux m\'etriques int\'eressantes \`a propos des commentaires : la premi\`ere est le nombre de commentaire utile (non vide et non esth\'etique), la seconde repr\'esente la densit\'e de commentaires qui correspond au pourcentage de commentaires dans le code.
 
 \chapter{\`A l'int\'erieur du code}
 
@@ -134,7 +131,7 @@ Gr\^ace \`a cette simplification, il est possible d'analyser n'importe quel type
 En analysant plusieurs projets informatiques (personnels et professionels), on peut s\'eparer les commentaires en plusieurs cat\'egories en fonction de l'objectif vis\'e. J'ai alors cr\'e\'e sept cat\'egories de commentaires qui permettent de trier la totalit\'e des commentaires:
 
 \begin{enumerate}
-\item{\textbf{Esth\'etique} - commentaire sans importance pour le fichier. Ce sont, la plupart du temps, des lignes sans texte qui ont pour but de cr\'eer des s\'eparations entre des portions de code.\newline}
+\item{\textbf{Inutile} - commentaire sans importance pour le fichier. Ce sont, la plupart du temps, des lignes sans texte qui ont pour but de cr\'eer des s\'eparations entre des portions de code. Mais cela peut tout aussi bien \^etre du code mort qui devrait \^etre supprim\'e.\newline}
 \item{\textbf{En-t\^ete} - commentaire tr\`es rarement utilis\'e lors de d\'eveloppements personnels mais qui sont important dans le domaine professionnel. Il d\'efinisse le nom du fichier, son auteur, la date de cr\'eation, de modification, ... L\`a encore, aucun int\'er\^et pour le code vu qu'il s'agit d'une simple description du fichier.\newline}
 \item{\textbf{Documentation} - commentaire utilis\'e pour g\'en\'erer, de mani\`ere automatique, la documentation externe des fonctions de ce fichier. Ils peuvent donner quelques informations \`a propos de la fonction mais ne doivent pas servir de remplacements aux commentaires standards.\newline}
 \item{\textbf{Temporaire} - commentaire d\'ecrivant une portion de code qui est vou\'ee \`a dispara\^itre avant de livrer le code. Il sert \`a informer les autres d\'eveloppeurs d'une modification \`a faire.\newline}
@@ -143,7 +140,9 @@ En analysant plusieurs projets informatiques (personnels et professionels), on p
 \item{\textbf{Normal} - commentaire qui n'entre dans aucune cat\'egorie. Et par d\'efaut, un commentaire normal est un commentaire donc le but est de d\'ecrire un algorithme, un fonctionnement, le contenu d'un fichier, ... C'est ce type de commentaire qui est important pour un d\'eveloppeur qui cherche \`a comprendre un fichier.\newline}
 \end{enumerate}
 
-\section{Couverture commentaire}
+En divisant de cette mani\`ere les commentaires, il devient possible de donner une valeur \`a chaque commentaire. Et par extension, de donner une valeur \`a une portion de code pr\'ec\'edamment comment\'ee.
+
+\section{Analyse de commentaires}
 
 
 
