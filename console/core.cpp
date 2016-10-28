@@ -610,7 +610,7 @@ Core::make_report
 
 		}
 
-		// compute average and divergence
+		// compute average and deviation
 		compute_report( report_ ) ;
 
 		// add this report in the list

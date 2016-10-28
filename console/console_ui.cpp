@@ -488,7 +488,7 @@ ConsoleUI::display_statistics
 	// bufferize text
 	bufferize_text( color_text( "Average: ", CUI_White ) + QString::number( statistics.average ) ) ;
 	bufferize_text( color_text( "Variance: ", CUI_White ) + QString::number( statistics.variance ) ) ;
-	bufferize_text( color_text( "Divergence: ", CUI_White ) + QString::number( statistics.divergence ) ) ;
+	bufferize_text( color_text( "Deviation: ", CUI_White ) + QString::number( statistics.deviation ) ) ;
 	bufferize_text( color_text( "Min: ", CUI_White ) + QString::number( statistics.min ) ) ;
 	bufferize_text( color_text( "Median: ", CUI_White ) + QString::number( statistics.median ) ) ;
 	bufferize_text( color_text( "Max: ", CUI_White ) + QString::number( statistics.max ) ) ;

@@ -600,7 +600,7 @@ Core::export_HTML
 										ofs << indent << "<th rowspan=2>Statistics</th>" << std::endl ;
 										ofs << indent << "<th>Average</th>" << std::endl ;
 										ofs << indent << "<th>Variance</th>" << std::endl ;
-										ofs << indent << "<th>Divergence</th>" << std::endl ;
+										ofs << indent << "<th>Deviation</th>" << std::endl ;
 										ofs << indent << "<th>Min</th>" << std::endl ;
 										ofs << indent << "<th>Median</th>" << std::endl ;
 										ofs << indent << "<th>Max</th>" << std::endl ;
@@ -616,7 +616,7 @@ Core::export_HTML
 										// display report compute value
 										ofs << indent << "<td>" << ( *cit ).second->percentage.average << "</td>" << std::endl ;
 										ofs << indent << "<td>" << ( *cit ).second->percentage.variance << "</td>" << std::endl ;
-										ofs << indent << "<td>" << ( *cit ).second->percentage.divergence << "</td>" << std::endl ;
+										ofs << indent << "<td>" << ( *cit ).second->percentage.deviation << "</td>" << std::endl ;
 										ofs << indent << "<td>" << ( *cit ).second->percentage.min << "</td>" << std::endl ;
 										ofs << indent << "<td>" << ( *cit ).second->percentage.median << "</td>" << std::endl ;
 										ofs << indent << "<td>" << ( *cit ).second->percentage.max << "</td>" << std::endl ;
@@ -693,7 +693,7 @@ Core::export_HTML
 										ofs << indent << "<th rowspan=2>Statistics</th>" << std::endl ;
 										ofs << indent << "<th>Average</th>" << std::endl ;
 										ofs << indent << "<th>Variance</th>" << std::endl ;
-										ofs << indent << "<th>Divergence</th>" << std::endl ;
+										ofs << indent << "<th>Deviation</th>" << std::endl ;
 										ofs << indent << "<th>Min</th>" << std::endl ;
 										ofs << indent << "<th>Median</th>" << std::endl ;
 										ofs << indent << "<th>Max</th>" << std::endl ;
@@ -709,7 +709,7 @@ Core::export_HTML
 										// display report compute value
 										ofs << indent << "<td>" << ( *cit ).second->coverage.average << "</td>" << std::endl ;
 										ofs << indent << "<td>" << ( *cit ).second->coverage.variance << "</td>" << std::endl ;
-										ofs << indent << "<td>" << ( *cit ).second->coverage.divergence << "</td>" << std::endl ;
+										ofs << indent << "<td>" << ( *cit ).second->coverage.deviation << "</td>" << std::endl ;
 										ofs << indent << "<td>" << ( *cit ).second->coverage.min << "</td>" << std::endl ;
 										ofs << indent << "<td>" << ( *cit ).second->coverage.median << "</td>" << std::endl ;
 										ofs << indent << "<td>" << ( *cit ).second->coverage.max << "</td>" << std::endl ;

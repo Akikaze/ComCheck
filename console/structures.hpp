@@ -50,13 +50,13 @@ enum CC_Desc
 ///
 /// \brief Statistical value extract from a list
 ///
-/// Definition of an average, a divergence, a variance and a median
+/// Definition of an average, a deviation, a variance and a median
 ///
 struct CC_Statistics
 {
 	double average ;
 	double variance ;
-	double divergence ;
+	double deviation ;
 
 	double max ;
 	double median ;
@@ -69,7 +69,7 @@ struct CC_Statistics
 		/*
 		 * Firstly, it is going to make a first loop to find min, max, size and average.
 		 * Then, the median value will be found with the size.
-		 * At the end, a second loop will give the variance and divergence.
+		 * At the end, a second loop will give the variance and deviation.
 		 */
 
 		if( !( list.empty() ) )
@@ -109,7 +109,7 @@ struct CC_Statistics
 
 			average /= ( double )( size ) ;
 
-			// variance and divergence
+			// variance and deviation
 
 			it = list.begin() ;
 			variance = 0 ;
@@ -123,7 +123,7 @@ struct CC_Statistics
 			}
 
 			variance /= ( double )( size ) ;
-			divergence = sqrt( variance ) ;
+			deviation = sqrt( variance ) ;
 
 			// median
 			std::sort( list.begin(), list.end() ) ;
@@ -161,7 +161,7 @@ struct CC_File
 	// coverage
 	double percentage ; ///< ratio comment / total
 	QList< double > weight ; ///< weight values for each portion of comment + code
-	CC_Statistics coverage ; ///< average, variance, divergence and median of weights
+	CC_Statistics coverage ; ///< average, variance, deviation and median of weights
 } ;
 
 // --- CC_Folder ---
@@ -216,10 +216,10 @@ struct CC_Report
 
 	// coverage
 	QList< double > percentages ; ///< list of ratio comment / total
-	CC_Statistics percentage ;///< average, variance, divergence and median of ratio comment / total
+	CC_Statistics percentage ;///< average, variance, deviation and median of ratio comment / total
 
 	QList< double > coverages ; ///< list of coverages' average
-	CC_Statistics coverage ; ///< average, variance, divergence and median of coverages
+	CC_Statistics coverage ; ///< average, variance, deviation and median of coverages
 } ;
 
 #endif // STRUCTURE_HPP
