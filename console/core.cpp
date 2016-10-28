@@ -571,7 +571,7 @@ Core::make_report
 		report_->folder = folder ;
 
 		// loop preparation
-		QList< CC_Folder * > list_folder = folder->list_folders ;
+		QList< CC_Folder * > list_folder ;
 		list_folder.push_front( folder ) ;
 
 		QList< CC_File * >::const_iterator cit_File ;
@@ -607,6 +607,7 @@ Core::make_report
 				report_->type += ( *cit_File )->type ;
 				report_->description += ( *cit_File )->description ;
 			}
+
 		}
 
 		// compute average and divergence
