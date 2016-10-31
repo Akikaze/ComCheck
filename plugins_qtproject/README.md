@@ -45,6 +45,7 @@ At the end, you just need to build this project (Ctrl+B or bottom right button) 
                       click on 'Search & Replace'
                       write 'CPP_Plugin' in 'Replace with'
                       click on 'Replace'
-    9: in the .cpp, in the Q_EXPORT_PLUGIN2 macro, replace 'plugin_Template' by 'plugin_CPP'
+    9: change guardians to CPP_HPP
+    10: in the .cpp, in the Q_EXPORT_PLUGIN2 macro, replace 'plugin_Template' by 'plugin_CPP'
 
 Now, We just need to implement the CPP algorithm in the `get_type` method and the `get_description` method, and build the project.
