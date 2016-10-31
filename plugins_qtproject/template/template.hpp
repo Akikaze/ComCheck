@@ -1,5 +1,5 @@
-#ifndef TEST_HPP
-#define TEST_HPP
+#ifndef TEMPLATE_HPP
+#define TEMPLATE_HPP
 
 #include <qglobal.h>
 
@@ -57,4 +57,4 @@ class TemplatePlugin
 
 } ;
 
-#endif // TEST_HPP
+#endif // TEMPLATE_HPP

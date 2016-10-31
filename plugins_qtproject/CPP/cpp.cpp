@@ -62,9 +62,17 @@ CPP_Plugin::get_description
 				description = ( *itList ).second ;
 			}
 		}
+		else
+		{
+			// if the comment line is empty, it's a useless comment
+			description = USELESS ;
+		}
 
-		// if the comment contain a ;, I consider that it is a dead code
-		if( description == NORMAL && ffo_iterator( copy, ";" ) != copy.end() )
+		// if the comment contain a ;, { or },  I consider that it is a dead code
+		if( description == NORMAL &&
+			( ffo_iterator( copy, ";" ) != copy.end() ||
+			  ffo_iterator( copy, "{" ) != copy.end() ||
+			  ffo_iterator( copy, "}" ) != copy.end() ) )
 		{
 			description = USELESS ;
 		}
@@ -118,9 +126,10 @@ CPP_Plugin::get_type
 		{
 			commented = true ;
 
-			if( block_description_ == UNDEFINED )
+			CC_Desc description = get_description( std::string( itStart, itStop ) ) ;
+			if( block_description_ == UNDEFINED || description == USELESS )
 			{
-				flag.description = get_description( std::string( itStart, itStop ) ) ;
+				flag.description = description ;
 			}
 			else
 			{

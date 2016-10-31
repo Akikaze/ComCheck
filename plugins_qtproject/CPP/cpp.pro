@@ -19,6 +19,3 @@ SOURCES += \
 TARGET = plugin_CPP
 
 DESTDIR = ../../plugins
-
-OTHER_FILES += \
-    prefix.txt

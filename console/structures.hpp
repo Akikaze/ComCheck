@@ -137,6 +137,15 @@ struct CC_Statistics
 				median = list[ size / 2 ] ;
 			}
 		}
+		else
+		{
+			average = 0 ;
+			variance = 0 ;
+			deviation = 0 ;
+			min = 0 ;
+			median = 0 ;
+			max = 0 ;
+		}
 	}
 } ;
 

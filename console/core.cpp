@@ -192,7 +192,7 @@ Core::analyze_file
 
 						case ONLY_COMMENT :
 
-							file->description[ flag.description ] += 1 ; // if it is a comment, add the description
+							file->description[ flag.description ] += 1 ; // add the description
 
 							if( weight_code != 0 )
 							{
@@ -252,7 +252,13 @@ Core::analyze_file
 		}
 
 		// compute last values and signal that this file is already analyzed
-		file->percentage = ( double )( file->type[ 2 ] + file->type[ 3 ] ) * 100 / ( double )( file->type[ 0 ] ) ;
+		file->percentage = 0 ;
+
+		if( file->type[ 0 ] != 0 )
+		{
+			file->percentage = ( double )( file->type[ 2 ] + file->type[ 3 ] ) * 100 / ( double )( file->type[ 0 ] ) ;
+		}
+
 		file->coverage = CC_Statistics( file->weight ) ;
 		file->analyzed = true ;
 	}
