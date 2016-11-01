@@ -45,6 +45,7 @@ enum CC_Desc
 } ;
 
 // ===== STRUCTURES =====
+
 // --- CC_Statistics ---
 
 ///
@@ -67,10 +68,10 @@ struct CC_Statistics
 	CC_Statistics( QList< double > list )
 	{
 		/*
-		 * Firstly, it is going to make a first loop to find min, max, size and average.
-		 * Then, the median value will be found with the size.
-		 * At the end, a second loop will give the variance and deviation.
-		 */
+		Firstly, it is going to make a first loop to find min, max, size and average.
+		Then, a second loop will give the variance and deviation.
+		At the end, it sorts the list to find the median value.
+		*/
 
 		if( !( list.empty() ) )
 		{

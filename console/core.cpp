@@ -98,7 +98,7 @@ Core::Core
 			if( QString( argv[ i ] ) == "-t" ||
 				QString( argv[ i ] ) == "--test" )
 			{
-				directory_ = ".." ;
+				directory_ = "../console" ;
 				interfaced_ = false ;
 				plugin_ = find_plugin( "C++" ) ;
 			}
@@ -159,7 +159,6 @@ Core::analyze_file
 {
 	// open the file
 	std::ifstream ifs( file->name.toStdString(), std::ios::in ) ;
-
 
 	if( ifs )
 	{

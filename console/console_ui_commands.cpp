@@ -1,6 +1,15 @@
 #include "console_ui.hpp"
 #include "core.hpp"
 
+/*
+'commands' exist to help the user and show the list of commands he can use
+directly in the command line.
+
+The idea is that the user will list the commands with this command and call
+the command help following by one of this word.
+
+The display of commands is a copy of what we can find in the shell (cf 'man stdio')
+*/
 ///
 /// \brief Display the result of the command 'commands'
 /// \param param_list List of parameters for the command
@@ -13,9 +22,8 @@ ConsoleUI::commands
 {
 	param_list.erase( param_list.begin() ) ;
 
-	// display the list of commands like function in the shell (cf 'man stdio')
 	bufferize_text() ;
-	bufferize_text( color_text( "\tFunction\tDescription", CUI_White ) ) ;
+	bufferize_text( color_text( "\tFunction\tDescription", CUI_White ) ) ; // table format
 	bufferize_text( color_text( "\t__________________________________________________________________", CUI_White ) ) ;
 	bufferize_text() ;
 
@@ -37,6 +45,14 @@ ConsoleUI::commands
 	display_buffer() ;
 }
 
+/*
+When the user launches an analyze, the system is going to check if this report was created before
+or create it if it's not.
+
+An analyze could only be made after the call of 'preparation'.
+The creation of the report is followed by the call of the 'report' command without parameter.
+*/
+
 ///
 /// \brief Display the result of the command 'analyze'
 /// \param param_list List of parameters for the command
@@ -51,10 +67,7 @@ ConsoleUI::analyze
 
 	if( current_folder_ != nullptr )
 	{
-		// create the report of the current folder
 		current_report_ = core_->make_report( current_folder_ ) ;
-
-		// display the report just after
 		report( { "report" } ) ;
 	}
 	else
@@ -64,6 +77,19 @@ ConsoleUI::analyze
 	}
 
 }
+
+/*
+To find the root of the tree-view, the system requires a root folder.
+The user can choose the directory with this command.
+
+Before calling 'preparation', the user can modify the directory without any
+problem. But when the tree-view is created, a modification of the directory
+means the destruction of the tree-view and every reports made inside.
+
+To change the directory after calling 'preparation', the user need to use
+the parameter '-r' or '--reset' to release the tree-view and start everything
+from scratch.
+*/
 
 ///
 /// \brief Display the result of the command 'directory'
@@ -85,30 +111,26 @@ ConsoleUI::directory
 	{
 		while( try_again )
 		{
-			// ask for a directory
 			if( param_list.empty() )
 			{
-				std::cout << "Address of project folder ? " ;
+				// The user doesn't give a name after the command, so the system ask for one
 
-				// get answer
+				std::cout << "Address of project folder ? " ;
 				std::getline( std::cin, tmp ) ;
 				directory_name = tmp.c_str() ;
-
-				// flush
 				tmp = "" ;
 			}
 			else
 			{
-				// get the answer in the next parameter
+				// The system will use the name given in parameter
+
 				directory_name = param_list.front() ;
 				param_list.clear() ;
 			}
 
-			// check if the directory exists
 			QDir test( directory_name ) ;
 			if( directory_name.isEmpty() || test.exists() )
 			{
-				// just quit
 				try_again = false ;
 			}
 			else
@@ -120,13 +142,17 @@ ConsoleUI::directory
 
 		if( !( directory_name.isEmpty() ) )
 		{
-			// withdraw a potential slash at the end of the file
+			/*
+			To be coherent, the name of the directory must not end by a slash.
+			But sometimes, user could are used to write the last slash so the system
+			erase this last character before saving it.
+			*/
+
 			if( directory_name.at( directory_name.size() - 1 ) == '/' )
 			{
 				directory_name = directory_name.left( directory_name.size() - 1 ) ;
 			}
 
-			// set the directory in the core
 			core_->set_directory( directory_name ) ;
 		}
 		else
@@ -136,24 +162,22 @@ ConsoleUI::directory
 	}
 	else
 	{
-		// release a potential previous tree view
-		core_->release_tree() ;
-		current_folder_ = nullptr ;
-
-		// release potential reports
-		core_->release_reports() ;
-		current_report_ = nullptr ;
+		/*
+		If the folder is already define and the tree-view created, that means the system
+		should release everything (tree-view and reports) if the user wants a new root.
+		*/
 
 		if( param_list.front() == "-r" ||
 			param_list.front() == "--reset")
 		{
-			// release a potential previous tree view
 			core_->release_tree() ;
 			current_folder_ = nullptr ;
 
+			core_->release_reports() ;
+			current_report_ = nullptr ;
+
 			param_list.erase( param_list.begin() ) ;
 
-			// call language another time
 			if( param_list.empty() )
 			{
 				directory( { "directory" } ) ;

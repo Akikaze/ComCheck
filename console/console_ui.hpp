@@ -20,9 +20,9 @@
 // ===== CUI_TextAlignment =====
 
 /*
- * To give the opportunity to align the text to left, right or center.
- * It is used in the align_line method.
- */
+To give the opportunity to align the text to left, right or center.
+It is used in the align_line method.
+*/
 
 enum CUI_TextAlignment
 {
@@ -34,9 +34,9 @@ enum CUI_TextAlignment
 // ===== CUI_TextColor =====
 
 /*
- * To give the opportunity to color the text regardless the operating system.
- * It is used in the color_text method.
- */
+To give the opportunity to color the text regardless the operating system.
+It is used in the color_text method.
+*/
 
 enum CUI_TextColor
 {

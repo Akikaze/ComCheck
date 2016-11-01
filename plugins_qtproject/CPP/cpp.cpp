@@ -43,6 +43,12 @@ CPP_Plugin::get_description
 			copy = copy.substr( 2 ) ;
 		}
 
+		// erase */
+		if( ffo_iterator( copy, "*/" ) == copy.end() - 2 )
+		{
+			copy = copy.substr( 0, copy.length() - 2 ) ;
+		}
+
 		if( !( copy.empty() ) )
 		{
 			itList = prefix_.begin() ;
@@ -127,7 +133,8 @@ CPP_Plugin::get_type
 			commented = true ;
 
 			CC_Desc description = get_description( std::string( itStart, itStop ) ) ;
-			if( block_description_ == UNDEFINED || description == USELESS )
+
+			if( block_description_ < HEADER || description == USELESS )
 			{
 				flag.description = description ;
 			}

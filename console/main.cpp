@@ -1,28 +1,28 @@
 #include "qt.hpp"
 #include "core.hpp"
 
-// Gate to ComCheck
+/*
+Main entrance to ComCheck
+
+The main creates a Core, plugs an interface to it.
+If everything works, it is going to launch the interface and wait for a signal.
+
+At the end, it will destroy the Core.
+*/
 
 int main( int argc, char ** argv )
 {
-	// Creation of the core
 	Core * c = new Core( argc, argv ) ;
-
-	// Creation of the interface
 	IUI * user_interface = c->create_UI() ;
 
+	// create_UI return a nullptr only if the automatic flag is used
 	if( user_interface != nullptr )
 	{
-		// Link the destruction of the interface with the destruction of the core
 		QObject::connect( user_interface, SIGNAL( finished() ), c, SLOT( quit() ) ) ;
-
-		// Execute the interface
-		QTimer::singleShot( 0, user_interface, SLOT( run() ) ) ;
+		QTimer::singleShot( 0, user_interface, SLOT( run() ) ) ; // Execute the interface
 		c->exec() ;
 	}
 
-	// Delete the core
 	delete c ;
-
 	return 0 ;
 }

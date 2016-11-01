@@ -65,10 +65,10 @@ class IPlugin
 		inline void set_prefix()
 		{
 			/*
-			 * In a normal case, I will never put code in a header file.
-			 * But this case is not normal, I cannot use a .cpp in the interface
-			 * of a plugin. This is why I put the whole function here.
-			 */
+			In a normal case, I will never put code in a header file.
+			But this case is not normal, I cannot use a .cpp in the interface
+			of a plugin. This is why I put the whole function here.
+			*/
 
 			std::ifstream ifs( "prefix.txt" ) ;
 
@@ -81,11 +81,11 @@ class IPlugin
 				std::getline( ifs, line ) ; // empty line
 
 				/*
-				 * The process is always the same :
-				 * 1 - divide the line into words
-				 * 2 - erase the first one because it's only a description for the user
-				 * 3 - store every object in the prefix list associated to the right description
-				 */
+				The process is always the same :
+				1 - divide the line into words
+				2 - erase the first one because it's only a description for the user
+				3 - store every object in the prefix list associated to the right description
+				*/
 
 				for( unsigned int count = 1 ; count < desc_size - 1 ; ++count )
 				{

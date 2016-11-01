@@ -2,14 +2,27 @@
 #define STD_HPP
 
 /*
- * Include every standard object that is required by ComCheck
- */
+Include every Qt object that is required by ComCheck.
+It could be not optimised but it's way simpler to use.
+
+But this method increase the time for maintainance because we need to check
+at every moment if the modification of a code requires a new include or if
+we could withdraw an include without creating errors.
+*/
 
 #include <array>
 #include <ctime>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+
+/*
+This operator is going to be used when I would add two arrays where columns are identical.
+It's going to simplify the gathering of every data from files in the report.
+
+The operator just add data from a column of the second array in the first array at the same column.
+It is used to create the report.
+*/
 
 ///
 /// \brief Operator += for array
