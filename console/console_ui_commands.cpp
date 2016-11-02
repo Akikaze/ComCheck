@@ -86,7 +86,7 @@ Before calling 'preparation', the user can modify the directory without any
 problem. But when the tree-view is created, a modification of the directory
 means the destruction of the tree-view and every reports made inside.
 
-To change the directory after calling 'preparation', the user need to use
+To change the directory after calling 'preparation', the user needs to use
 the parameter '-r' or '--reset' to release the tree-view and start everything
 from scratch.
 */
@@ -128,6 +128,11 @@ ConsoleUI::directory
 				param_list.clear() ;
 			}
 
+			/*
+			If the user doesn't give a name, the system will quit the 'directory' command.
+			The same thing happens if the directory exists.
+			*/
+
 			QDir test( directory_name ) ;
 			if( directory_name.isEmpty() || test.exists() )
 			{
@@ -163,12 +168,16 @@ ConsoleUI::directory
 	else
 	{
 		/*
-		If the folder is already define and the tree-view created, that means the system
+		If the folder is already defined and the tree-view created, that means the system
 		should release everything (tree-view and reports) if the user wants a new root.
 		*/
 
-		if( param_list.front() == "-r" ||
-			param_list.front() == "--reset")
+		if( param_list.empty() )
+		{
+			bufferize_text( color_text( "The directory defines the tree view. So changing it means recreate a new tree view. If you want to do that, just use the command 'directory -r <address>' or 'directory --reset <address>'.", CUI_Red ) ) ;
+		}
+		else if( param_list.front() == "-r" ||
+				 param_list.front() == "--reset")
 		{
 			core_->release_tree() ;
 			current_folder_ = nullptr ;
@@ -187,14 +196,18 @@ ConsoleUI::directory
 				directory( { "directory", param_list.front() } ) ;
 			}
 		}
-		else
-		{
-			bufferize_text( color_text( "The directory defines the tree view. So changing it means recreate a new tree view. If you want to do that, just use the command 'directory -r <address>' or 'directory --reset <address>'.", CUI_Red ) ) ;
-		}
 	}
 
 	display_buffer() ;
 }
+
+/*
+If we want to use ComCheck on several project rapidly, we can only use a console report
+that will disappear at the end of the execution.
+
+To allows user to watch report even after the end of the execution, the system can export
+reports in HTML directly after an analyze.
+*/
 
 ///
 /// \brief Display the result of the command 'export'
@@ -218,6 +231,16 @@ ConsoleUI::export_HTML
 	}
 }
 
+/*
+The help command is a simple man for the system.
+
+By just using 'help', the user can display a small resume of the use of ComCheck and
+how it works.
+
+But by adding the name of a command after 'help', the system will describe the behavior
+of this command and precise every parameter that can be used with this command.
+*/
+
 ///
 /// \brief Display the result of the command 'help'
 /// \param param_list List of parameters for the command
@@ -232,7 +255,8 @@ ConsoleUI::help
 
 	if( param_list.isEmpty() )
 	{
-		// display common help
+		// Common help contains a description of ComCheck, its use, its work, ...
+
 		bufferize_text() ;
 		bufferize_title( "What is ComCheck?" ) ;
 		bufferize_text() ;
@@ -266,7 +290,7 @@ ConsoleUI::help
 	}
 	else
 	{
-		// display help for a specific command
+		// Specific help shows name, description and how to use specific commands.
 
 		if( param_list.front() == "commands" )
 		{
@@ -282,7 +306,6 @@ ConsoleUI::help
 			bufferize_text( color_text( "DESCRIPTION - ", CUI_White ) + "Nothing as much as calling " + color_text( "system( \"clear\" ) ;", CUI_White ) + " on UNIX architecture and " + color_text( "system( \"cls\" ) ;", CUI_White ) + " on Windows." ) ;
 			bufferize_text() ;
 		}
-		// COMMANDS
 		else if( param_list.front() == "analyze" )
 		{
 			bufferize_text( color_text( "NAME -", CUI_White ) + " analyze" ) ;
@@ -401,6 +424,17 @@ ConsoleUI::help
 	display_buffer() ;
 }
 
+/*
+The 'info' command shows the evolution of an execution.
+
+There is 4 differents steps :
+Step 1 - When a directory is chosen, the system shows it.
+Step 2 - When a language is chosen, the system shows it.
+Step 3 - After the 'preparation' call, the system shows the current folder.
+Step 4 - After the first 'analyze', the system shows the current report and
+the list of folder already analyzed.
+*/
+
 ///
 /// \brief Display the result of the command 'info'
 /// \param param_list List of parameters for the command
@@ -413,14 +447,12 @@ ConsoleUI::info
 {
 	param_list.erase( param_list.begin() ) ;
 
-	// display the project directory
 	const QString directory = core_->get_directory() ;
 	if( !( directory.isEmpty() ) )
 	{
 		bufferize_text( color_text( "Project directory: ", CUI_White ) + core_->get_directory() ) ;
 	}
 
-	// display the project language
 	const IPlugin * plugin = core_->get_plugin() ;
 	if( plugin != nullptr )
 	{
@@ -433,26 +465,22 @@ ConsoleUI::info
 		bufferize_text() ;
 	}
 
-	// display the current folder
 	if( current_folder_ != nullptr )
 	{
 		bufferize_text( color_text( "Current folder: ", CUI_White ) + current_folder_->name ) ;
 	}
 
-	// display the current report folder
 	if( current_report_ != nullptr )
 	{
 		bufferize_text( color_text( "Current report folder: ", CUI_White ) + current_report_->folder->name ) ;
 	}
 
-	// display list of reports folder
 	QList< QPair< CC_Folder *, CC_Report * > > map = core_->get_map_reports() ;
 	if( map.size() > 1 )
 	{
 		bufferize_text() ;
 		bufferize_text( color_text( "List of folder already analyzed: ", CUI_White )  ) ;
 
-		// display each report folder
 		for( int i = 0 ; i < map.size() ; ++i )
 		{
 			bufferize_text( map[ i ].first->name ) ;
@@ -461,6 +489,20 @@ ConsoleUI::info
 
 	display_buffer() ;
 }
+
+/*
+To be able to find interesting files from the root folder, the user needs to define
+the language of the source files. The choice of the language defines several precise
+extension that will be searched in the name of each file.
+
+Before calling 'preparation', the user can modify the language without any
+problem. But when the tree-view is created, a modification of the language
+means the destruction of the tree-view and every reports made inside.
+
+To change the language after calling 'preparation', the user needs to use
+the parameter '-r' or '--reset' to release the tree-view and start everything
+from scratch.
+*/
 
 ///
 /// \brief Display the result of the command 'language'
@@ -484,9 +526,14 @@ ConsoleUI::language
 	{
 		while( try_again )
 		{
-			// ask for a plugin language
 			if( param_list.empty() )
 			{
+				/*
+				The user doesn't give a language after the command, so the system ask for one.
+				But to be sure that plugins are correctly loaded, the system shows before the
+				list of languages currently supported.
+				*/
+
 				std::cout << "The system handles:" << std::endl ;
 				for( int i = 0 ; i < list.size() ; ++i )
 				{
@@ -496,30 +543,32 @@ ConsoleUI::language
 
 				std::cout << "Language? " ;
 
-				// get answer
 				std::getline( std::cin, tmp ) ;
 				language_name = tmp.c_str() ;
-
-				// flush
 				tmp = "" ;
 			}
 			else
 			{
-				// get the answer in the next parameter
+				// The system will use the language given in parameter
+
 				language_name = param_list.front() ;
 				param_list.clear() ;
 			}
 
+			/*
+			If the user doesn't give a language, the system will quit the 'language' command.
+			If there is a language, the system should check if a plugin is associated to this
+			name and ask a new try if it doesn't.
+			*/
+
 			if( language_name.isEmpty() )
 			{
-				// just quit
 				try_again = false ;
 			}
 			else
 			{
 				plugin = core_->find_plugin( language_name ) ;
 
-				// check if the plugin exists
 				if( plugin != nullptr )
 				{
 					try_again = false ;
@@ -534,7 +583,6 @@ ConsoleUI::language
 
 		if( !( language_name.isEmpty() ) )
 		{
-			// choose the plugin in the core
 			core_->set_plugin( plugin ) ;
 		}
 		else
@@ -544,6 +592,11 @@ ConsoleUI::language
 	}
 	else
 	{
+		/*
+		If the language is already defined and the tree-view created, that means the system
+		should release everything (tree-view and reports) if the user wants another language.
+		*/
+
 		if( param_list.empty() )
 		{
 			bufferize_text( color_text( "The language defines the tree view. So changing it means recreate a new tree view. If you want to do that, just use the command 'language -r <language_name>' or 'language --reset <language_name>'.", CUI_Red ) ) ;
@@ -551,17 +604,14 @@ ConsoleUI::language
 		else if( param_list.front() == "-r" ||
 				 param_list.front() == "--reset")
 		{
-			// release a potential previous tree view
 			current_folder_ = nullptr ;
 			core_->release_tree() ;
 
-			// release potential reports
 			core_->release_reports() ;
 			current_report_ = nullptr ;
 
 			param_list.erase( param_list.begin() ) ;
 
-			// call language another time
 			if( param_list.empty() )
 			{
 				language( { "language" } ) ;
@@ -575,6 +625,14 @@ ConsoleUI::language
 
 	display_buffer() ;
 }
+
+/*
+The 'move' command has two goals:
+1 - shows the position of the user, the files which could be analyzed in this folder
+and the list of folders reachable from this one.
+2 - move the position of the user in a precise folder by adding the name of a folder
+present in this folder (or the parent name) at the end of the command.
+*/
 
 ///
 /// \brief Display the result of the command 'move'
@@ -591,14 +649,18 @@ ConsoleUI::move
 	bool possible_move = false ;
 	size_t pos = 0 ;
 
-	// check if you have a tree view
 	if( current_folder_ != nullptr )
 	{
 		QList< CC_Folder * >::const_iterator cit_Folder ;
 
-		// by default, display every possibilities
 		if( param_list.empty() )
 		{
+			/*
+			Without parameter, the system will show what is inside the current folder.
+			It starts by interesting files in the folder, then it shows the list of
+			folder that can be reach from here.
+			*/
+
 			name = current_folder_->name + "/" ;
 
 			bufferize_text( color_text( "Current folder: ", CUI_White ) + name ) ;
@@ -606,7 +668,6 @@ ConsoleUI::move
 
 			QList< CC_File * >::const_iterator cit_File ;
 
-			// display list of files that can be analyzed in this folder
 			if( !( current_folder_->list_files.empty() ) )
 			{
 				bufferize_text( "In this folder, you can find:" ) ;
@@ -629,7 +690,6 @@ ConsoleUI::move
 				bufferize_text() ;
 			}
 
-			// display possible movement
 			if( !( current_folder_->list_folders.empty() ) )
 			{
 				bufferize_text( "You can move to: " ) ;
@@ -638,7 +698,8 @@ ConsoleUI::move
 					 cit_Folder != ( current_folder_->list_folders ).constEnd() ;
 					 ++cit_Folder )
 				{
-					// display the name correctly to be sure that the user can fo there
+					// It is important to withdraw the slash at the end, to be coherent.
+
 					name = ( *cit_Folder )->name ;
 					pos = name.toStdString().find_last_of( '/' ) ;
 
@@ -654,7 +715,6 @@ ConsoleUI::move
 				possible_move = true ;
 			}
 
-			// display the parent folder to allow back step
 			if( current_folder_->parent != nullptr )
 			{
 				name = current_folder_->parent->name ;
@@ -671,13 +731,20 @@ ConsoleUI::move
 
 			if( possible_move == true )
 			{
-				// display the command
 				bufferize_text( "You just need to write 'move <name_folder>' to change the current folder." ) ;
 			}
 		}
 		else
 		{
-			// create a list of possibilities
+			/*
+			To check if the parameter is a real name, the system should only care
+			about the name of folders and no more the complete address.
+
+			First of all, we create a list of all folders that could be reach in this folder.
+			Then we check if the last part of the address of one of these folder (name)
+			matches with the name given in parameter.
+			*/
+
 			QList< CC_Folder * > list_folders = current_folder_->list_folders ;
 			if( current_folder_->parent != nullptr )
 			{
@@ -687,7 +754,6 @@ ConsoleUI::move
 			QString address = param_list.front() ;
 			cit_Folder = list_folders.constBegin() ;
 
-			// check if this address is reachable from here
 			while( name != address && cit_Folder != list_folders.constEnd() )
 			{
 				name = ( *cit_Folder )->name ;
@@ -706,7 +772,6 @@ ConsoleUI::move
 				++cit_Folder ;
 			}
 
-			// display the result
 			if( name == address )
 			{
 				bufferize_text( "The current folder has changed." ) ;
@@ -714,8 +779,6 @@ ConsoleUI::move
 			else
 			{
 				bufferize_text( color_text( "Impossible to move to this folder. Check if ", CUI_Red ) + address + color_text( " is the following list.", CUI_Red ) ) ;
-
-				// display possibilities if there is an error
 				move( { "move" } ) ;
 			}
 		}
@@ -728,6 +791,14 @@ ConsoleUI::move
 	display_buffer() ;
 }
 
+/*
+After deciding the directory and the language for its project. The system should be able
+create a tree-view from this directory and sort files to be sure that only interesting
+files in this tree-view.
+
+The 'preparation' command is going to call the creation of the tree-view by the Core.
+*/
+
 ///
 /// \brief Display the result of the command 'preparation'
 /// \param param_list List of parameters for the command
@@ -739,17 +810,37 @@ ConsoleUI::preparation
 )
 {
 	param_list.erase( param_list.begin() ) ;
-	// create the tree view
+
 	current_folder_ = core_->create_tree_view() ;
 
 	if( current_folder_ == nullptr )
 	{
-		// display error if the folder is useless
 		bufferize_text( color_text( "This project folder doesn't contain any file which match with language's extensions. Maybe you forgot to choose the language.", CUI_Red ) ) ;
 	}
 
 	display_buffer() ;
 }
+
+/*
+The 'report' command display the current report. But it is possible that the folder analyzed in
+the current report is not the same as the current position of the user.
+
+To change the current report, the user need to call the 'analyze' command before.
+
+Display a report means three possibilites :
+1 - the user wants information about lines.
+2 - the user wants more precise information about comments.
+3 - the user wants both type of information.
+
+By using this command, you can display information in different shapes :
+1 - default information : statistics values (deviation, ...).
+2 - short description for each files.
+3 - histogram for comparing levels.
+4 - top list that shows best and worst files.
+
+So the user can choose a possibility for the type of data and a special way to display it by
+composing the parameters (-a, -c, -l) and (-f, -t, -h).
+*/
 
 ///
 /// \brief Display the result of the command 'report'
@@ -765,7 +856,6 @@ ConsoleUI::report
 
 	if( current_report_ != nullptr )
 	{
-		// display a warning if the user is not at the right place
 		if( current_report_->folder != current_folder_ )
 		{
 			bufferize_text( color_text( "Be careful, you are not displaying the report of the current folder.", CUI_Yellow ) ) ;
@@ -814,7 +904,7 @@ ConsoleUI::report
 			}
 			else
 			{
-				// display error
+				// TODO display error
 			}
 
 			param_list.erase( param_list.begin() ) ;
@@ -822,8 +912,7 @@ ConsoleUI::report
 
 		if( show_comments_info == false && show_lines_info == false )
 		{
-			// by default, display only lines info
-			show_lines_info = true ;
+			show_lines_info = true ; // by default, the system shows line information
 		}
 
 
@@ -874,7 +963,6 @@ ConsoleUI::report
 						// change the color
 						if( value < 0.8 * threshold )
 						{
-							// bad file
 							tc = CUI_Red ;
 						}
 						else if( value > 1.2 * threshold )
@@ -1028,7 +1116,7 @@ ConsoleUI::report
 			} break ;
 
 			default :
-				// display error
+				// TODO display error
 				break ;
 		}
 	}
@@ -1039,6 +1127,12 @@ ConsoleUI::report
 
 	display_buffer() ;
 }
+
+/*
+To display the whole contain of the tree-view, the user can use the command 'tree'.
+It works exactly like the shell command 'tree' but shows only interesting file sorted
+thanks to the language.
+*/
 
 ///
 /// \brief Display the result of the command 'tree'
@@ -1054,10 +1148,7 @@ ConsoleUI::tree
 
 	if( current_folder_ != nullptr )
 	{
-		// display the name of the current folder
 		bufferize_text( color_text( current_folder_->name, CUI_Blue ) ) ;
-
-		// display the tree view from this current folder
 		display_tree( current_folder_ ) ;
 	}
 	else
