@@ -869,7 +869,6 @@ ConsoleUI::report
 
 		while( !( param_list.empty() ) )
 		{
-			// which info
 			if( param_list.front() == "-a" ||
 				param_list.front() == "--all" )
 			{
@@ -886,7 +885,6 @@ ConsoleUI::report
 			{
 				show_lines_info = true ;
 			}
-			// which representation
 			else if( param_list.front() == "-f" ||
 					 param_list.front() == "--files" )
 			{
@@ -904,7 +902,8 @@ ConsoleUI::report
 			}
 			else
 			{
-				// TODO display error
+				bufferize_text( color_text( "One of the parameter was not recognized by the system.", CUI_Red ) ) ;
+				show_what = '.' ;
 			}
 
 			param_list.erase( param_list.begin() ) ;
@@ -919,6 +918,23 @@ ConsoleUI::report
 		bufferize_text( color_text( "Report folder: ", CUI_White ) + color_text( current_report_->folder->name, CUI_Blue ) ) ;
 		bufferize_text( color_text( "Number of files: ", CUI_White ) + QString::number( current_report_->list_files.size() ) ) ;
 		bufferize_text() ;
+
+		/*
+		Possibility thanks to show_what value :
+
+		' ' : display the default report with data information and statistical value
+		calculate with these pieces of information.
+
+		'f' : display the list of files and their own data information. If every type
+		of data are commanded, every file will be shown twice.
+		Every file will be compared its own value with the average and be displayed in red
+		if the value is under 0.8 * average or green if the value is over 1.2 * average.
+
+		'h' : display an histogram but just ration comment / total for instance. Because
+		making a shell histogram with value not framed between 0 and 100 will be harder.
+
+		't' : display a top list which give the five worst files and the five best files
+		*/
 
 		switch( show_what )
 		{
@@ -960,14 +976,12 @@ ConsoleUI::report
 						threshold = current_report_->percentage.average ;
 						value = file->percentage ;
 
-						// change the color
 						if( value < 0.8 * threshold )
 						{
 							tc = CUI_Red ;
 						}
 						else if( value > 1.2 * threshold )
 						{
-							// good file
 							tc = CUI_Green ;
 						}
 
@@ -986,19 +1000,15 @@ ConsoleUI::report
 						threshold = current_report_->coverage.average ;
 						value = file->coverage.average ;
 
-						// change the color
 						if( value < 0.8 * threshold )
 						{
-							// bad file
 							tc = CUI_Red ;
 						}
 						else if( value > 1.2 * threshold )
 						{
-							// good file
 							tc = CUI_Green ;
 						}
 
-						// display its information
 						line = color_text( file->name, tc ) ;
 						line += " " + color_text( "% ", CUI_White ) + QString::number( value ) ;
 						line += " " + display_array_description( file->description, true ) ;
@@ -1012,8 +1022,7 @@ ConsoleUI::report
 
 			case 'h' :
 			{
-				// display a histogram
-				draw_histogram( show_lines_info, show_comments_info ) ;
+				draw_histogram( show_lines_info, show_comments_info ) ; // TODO on statistical value too
 				bufferize_text() ;
 			} break ;
 
@@ -1116,7 +1125,7 @@ ConsoleUI::report
 			} break ;
 
 			default :
-				// TODO display error
+				bufferize_text( color_text( "Nothing was done.", CUI_Red ) ) ;
 				break ;
 		}
 	}
