@@ -448,29 +448,28 @@ ConsoleUI::info
 	param_list.erase( param_list.begin() ) ;
 
 	const QString directory = core_->get_directory() ;
-	if( !( directory.isEmpty() ) )
+	if( !( directory.isEmpty() ) ) // STEP 1
 	{
 		bufferize_text( color_text( "Project directory: ", CUI_White ) + core_->get_directory() ) ;
 	}
 
 	const IPlugin * plugin = core_->get_plugin() ;
-	if( plugin != nullptr )
+	if( plugin != nullptr ) // STEP 2
 	{
 		bufferize_text( color_text( "Project language: ", CUI_White ) + core_->get_plugin()->get_language() ) ;
 	}
 
-	// jump a line
 	if( !( buffer_.empty() ) )
 	{
 		bufferize_text() ;
 	}
 
-	if( current_folder_ != nullptr )
+	if( current_folder_ != nullptr ) // STEP 3
 	{
 		bufferize_text( color_text( "Current folder: ", CUI_White ) + current_folder_->name ) ;
 	}
 
-	if( current_report_ != nullptr )
+	if( current_report_ != nullptr ) // STEP 4
 	{
 		bufferize_text( color_text( "Current report folder: ", CUI_White ) + current_report_->folder->name ) ;
 	}
